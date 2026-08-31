@@ -8,6 +8,11 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/supabase-client.js"></script>
   <style>
+    * { scrollbar-width:thin; scrollbar-color:var(--ui-red-bright) #17171b; }
+    *::-webkit-scrollbar { width:10px; height:10px; }
+    *::-webkit-scrollbar-track { background:#17171b; border-radius:10px; }
+    *::-webkit-scrollbar-thumb { border:2px solid #17171b; border-radius:10px; background:linear-gradient(180deg,var(--ui-red-bright),var(--ui-red)); }
+    *::-webkit-scrollbar-thumb:hover { background:var(--ui-coral); }
     .editorial-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin: 0 0 22px; }
     .editorial-toolbar .toolbar-spacer { flex:1; }
     .view-switcher { display:inline-flex; gap:4px; padding:4px; border:1px solid var(--ui-line-soft); border-radius:12px; background:rgba(255,255,255,.04); }
