@@ -1,16 +1,467 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-	<title>Bitaxus Community Manager</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Bitaxus Community Manager</title>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+	<style>
+		:root {
+			--red: #D1232E;
+			--dark: #0A0A1A;
+			--card: #1A1A2E;
+			--border: #2D2D44;
+			--text: #E5E5E5;
+			--gray: #999999;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+			background: var(--dark);
+			color: var(--text);
+			overflow-x: hidden;
+		}
+
+		/* Hero Section */
+		.hero {
+			min-height: 100vh;
+			background: linear-gradient(135deg, var(--dark) 0%, #0f0520 100%);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 2rem;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.hero::before {
+			content: '';
+			position: absolute;
+			width: 600px;
+			height: 600px;
+			background: radial-gradient(circle, rgba(209, 35, 46, 0.15) 0%, transparent 70%);
+			top: -200px;
+			right: -200px;
+			border-radius: 50%;
+		}
+
+		.hero::after {
+			content: '';
+			position: absolute;
+			width: 400px;
+			height: 400px;
+			background: radial-gradient(circle, rgba(209, 35, 46, 0.1) 0%, transparent 70%);
+			bottom: -150px;
+			left: -150px;
+			border-radius: 50%;
+		}
+
+		.hero-content {
+			position: relative;
+			z-index: 1;
+			text-align: center;
+			max-width: 800px;
+		}
+
+		.logo-text {
+			font-size: 1.2rem;
+			font-weight: 600;
+			color: var(--red);
+			letter-spacing: 0.15em;
+			text-transform: uppercase;
+			margin-bottom: 2rem;
+		}
+
+		h1 {
+			font-size: 3.5rem;
+			font-weight: 700;
+			line-height: 1.1;
+			margin-bottom: 1rem;
+		}
+
+		.highlight {
+			background: linear-gradient(135deg, var(--red), #ff6b6b);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-clip: text;
+		}
+
+		.subtitle {
+			font-size: 1.3rem;
+			color: var(--gray);
+			margin-bottom: 3rem;
+			line-height: 1.6;
+		}
+
+		.cta-buttons {
+			display: flex;
+			gap: 1.5rem;
+			justify-content: center;
+			flex-wrap: wrap;
+			margin-bottom: 4rem;
+		}
+
+		.btn {
+			padding: 1rem 2rem;
+			border-radius: 8px;
+			font-weight: 600;
+			font-size: 1rem;
+			text-decoration: none;
+			cursor: pointer;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			border: none;
+			font-family: inherit;
+		}
+
+		.btn-primary {
+			background: var(--red);
+			color: white;
+		}
+
+		.btn-primary:hover {
+			background: #B81C28;
+			transform: translateY(-4px);
+			box-shadow: 0 12px 24px rgba(209, 35, 46, 0.3);
+		}
+
+		.btn-secondary {
+			background: var(--card);
+			color: var(--text);
+			border: 1px solid var(--border);
+		}
+
+		.btn-secondary:hover {
+			border-color: var(--red);
+			background: rgba(209, 35, 46, 0.05);
+			transform: translateY(-4px);
+		}
+
+		/* Features Grid */
+		.features {
+			padding: 4rem 2rem;
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+
+		.features-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			gap: 2rem;
+			margin-top: 2rem;
+		}
+
+		.feature-card {
+			background: var(--card);
+			border: 1px solid var(--border);
+			padding: 2rem;
+			border-radius: 12px;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+
+		.feature-card:hover {
+			border-color: var(--red);
+			box-shadow: 0 8px 32px rgba(209, 35, 46, 0.15);
+			transform: translateY(-8px);
+		}
+
+		.feature-icon {
+			font-size: 2.5rem;
+			margin-bottom: 1rem;
+		}
+
+		.feature-title {
+			font-size: 1.3rem;
+			font-weight: 600;
+			margin-bottom: 0.75rem;
+		}
+
+		.feature-desc {
+			color: var(--gray);
+			line-height: 1.6;
+			margin-bottom: 1rem;
+		}
+
+		.feature-items {
+			list-style: none;
+			font-size: 0.9rem;
+		}
+
+		.feature-items li {
+			padding: 0.35rem 0;
+			display: flex;
+			gap: 0.5rem;
+			color: var(--gray);
+		}
+
+		.feature-items li::before {
+			content: "✓";
+			color: var(--red);
+			font-weight: 600;
+			flex-shrink: 0;
+		}
+
+		.feature-card .btn {
+			width: 100%;
+			margin-top: 1.5rem;
+			padding: 0.75rem 1rem;
+			font-size: 0.95rem;
+		}
+
+		/* Stats */
+		.stats {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+			gap: 1.5rem;
+			margin-bottom: 3rem;
+			padding: 2rem;
+			background: rgba(209, 35, 46, 0.05);
+			border-radius: 12px;
+			border: 1px solid var(--border);
+		}
+
+		.stat-item {
+			text-align: center;
+		}
+
+		.stat-value {
+			font-size: 2.5rem;
+			font-weight: 700;
+			color: var(--red);
+			line-height: 1;
+		}
+
+		.stat-label {
+			font-size: 0.9rem;
+			color: var(--gray);
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			margin-top: 0.5rem;
+		}
+
+		/* Section Title */
+		.section-title {
+			font-size: 2rem;
+			font-weight: 700;
+			margin-bottom: 1rem;
+			text-align: center;
+		}
+
+		.section-subtitle {
+			text-align: center;
+			color: var(--gray);
+			margin-bottom: 2rem;
+			font-size: 1.1rem;
+		}
+
+		/* Footer */
+		.footer {
+			text-align: center;
+			padding: 2rem;
+			color: var(--gray);
+			border-top: 1px solid var(--border);
+			margin-top: 4rem;
+		}
+
+		/* Animations */
+		@keyframes fadeInUp {
+			from {
+				opacity: 0;
+				transform: translateY(30px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		.hero-content {
+			animation: fadeInUp 0.8s ease-out;
+		}
+
+		.feature-card {
+			animation: fadeInUp 0.8s ease-out;
+			animation-fill-mode: both;
+		}
+
+		.feature-card:nth-child(1) { animation-delay: 0.1s; }
+		.feature-card:nth-child(2) { animation-delay: 0.2s; }
+		.feature-card:nth-child(3) { animation-delay: 0.3s; }
+		.feature-card:nth-child(4) { animation-delay: 0.4s; }
+
+		@media (max-width: 768px) {
+			h1 {
+				font-size: 2.5rem;
+			}
+
+			.subtitle {
+				font-size: 1rem;
+			}
+
+			.cta-buttons {
+				flex-direction: column;
+			}
+
+			.btn {
+				width: 100%;
+			}
+
+			.section-title {
+				font-size: 1.5rem;
+			}
+		}
+	</style>
 </head>
 <body>
-	<script>
-		// Redirect to the main guide
-		window.location.href = 'bitaxus-cm-guide.html';
-	</script>
-	<p>Redirigiendo a Bitaxus Community Manager...</p>
-	<p>Si no se redirige automáticamente, <a href="bitaxus-cm-guide.html">haz clic aquí</a>.</p>
+	<!-- HERO SECTION -->
+	<section class="hero">
+		<div class="hero-content">
+			<div class="logo-text">Bitaxus</div>
+			<h1>Community Manager <span class="highlight">Suite</span></h1>
+			<p class="subtitle">Planeación mensual, ejecución diaria, análisis semanal. Todo lo que necesitas para gestionar la comunidad de Bitaxus en un solo lugar.</p>
+
+			<div class="cta-buttons">
+				<button class="btn btn-primary" onclick="document.querySelector('.features').scrollIntoView({behavior: 'smooth'})">
+					🚀 Empezar Ahora
+				</button>
+				<a href="https://github.com/alejagoguti-cpu/Redes_sociales" target="_blank" class="btn btn-secondary">
+					📖 Ver en GitHub
+				</a>
+			</div>
+
+			<div class="stats">
+				<div class="stat-item">
+					<div class="stat-value">36</div>
+					<div class="stat-label">Posts Q1</div>
+				</div>
+				<div class="stat-item">
+					<div class="stat-value">3</div>
+					<div class="stat-label">Posts/Semana</div>
+				</div>
+				<div class="stat-item">
+					<div class="stat-value">4</div>
+					<div class="stat-label">Plataformas</div>
+				</div>
+				<div class="stat-item">
+					<div class="stat-value">∞</div>
+					<div class="stat-label">Posibilidades</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- FEATURES SECTION -->
+	<section class="features">
+		<div class="section-title">Herramientas Principales</div>
+		<p class="section-subtitle">Acceso a planeación, recursos y documentación desde un solo lugar</p>
+
+		<div class="features-grid">
+			<!-- Dashboard -->
+			<div class="feature-card">
+				<div class="feature-icon">📊</div>
+				<div class="feature-title">Master Dashboard</div>
+				<p class="feature-desc">Planeación mes a mes, brand kit y recursos en una sola página.</p>
+				<ul class="feature-items">
+					<li>36 posts con horarios</li>
+					<li>Brand kit completo</li>
+					<li>Links a todas las herramientas</li>
+					<li>Imprimible</li>
+				</ul>
+				<button class="btn btn-primary" onclick="window.location.href='dashboard.html'">
+					Abrir Dashboard
+				</button>
+			</div>
+
+			<!-- Planeacion Simple -->
+			<div class="feature-card">
+				<div class="feature-icon">📅</div>
+				<div class="feature-title">Planeación Simple</div>
+				<p class="feature-desc">Vista clara de qué publicar cada día con fechas y horarios.</p>
+				<ul class="feature-items">
+					<li>Mes a mes visual</li>
+					<li>Día, hora, plataforma</li>
+					<li>Click para detalles</li>
+					<li>Fácil de copiar</li>
+				</ul>
+				<button class="btn btn-primary" onclick="window.location.href='planeacion.html'">
+					Ver Planeación
+				</button>
+			</div>
+
+			<!-- Guía Completa -->
+			<div class="feature-card">
+				<div class="feature-icon">📖</div>
+				<div class="feature-title">Guía Completa</div>
+				<p class="feature-desc">Brand kit, moderación, workflow, todo lo que necesitas saber.</p>
+				<ul class="feature-items">
+					<li>Brand kit detallado</li>
+					<li>Guía de moderación</li>
+					<li>Proceso semanal</li>
+					<li>Navegable</li>
+				</ul>
+				<button class="btn btn-primary" onclick="window.location.href='bitaxus-cm-guide.html'">
+					Abrir Guía
+				</button>
+			</div>
+
+			<!-- Hub de Herramientas -->
+			<div class="feature-card">
+				<div class="feature-icon">🎛️</div>
+				<div class="feature-title">Hub de Herramientas</div>
+				<p class="feature-desc">Analytics, cheat sheet, parrilla detallada y más recursos.</p>
+				<ul class="feature-items">
+					<li>Analytics dashboard</li>
+					<li>Respuestas rápidas</li>
+					<li>Parrilla detallada</li>
+					<li>Todos los recursos</li>
+				</ul>
+				<button class="btn btn-primary" onclick="window.location.href='dashboards/index.html'">
+					Explorar Hub
+				</button>
+			</div>
+		</div>
+	</section>
+
+	<!-- QUICK LINKS -->
+	<section class="features" style="margin-top: 2rem;">
+		<div class="section-title">Acceso Rápido</div>
+
+		<div class="features-grid">
+			<a href="dashboards/calendar-view.html" class="feature-card" style="text-decoration: none; cursor: pointer;">
+				<div class="feature-icon">📋</div>
+				<div class="feature-title">Parrilla de Contenido</div>
+				<p class="feature-desc">Visualiza todos los posts Q1 por semana y mes →</p>
+			</a>
+
+			<a href="dashboards/analytics.html" class="feature-card" style="text-decoration: none; cursor: pointer;">
+				<div class="feature-icon">📊</div>
+				<div class="feature-title">Analytics</div>
+				<p class="feature-desc">Importa datos, mira métricas, exporta reportes →</p>
+			</a>
+
+			<a href="dashboards/cheat-sheet.html" class="feature-card" style="text-decoration: none; cursor: pointer;">
+				<div class="feature-icon">⚡</div>
+				<div class="feature-title">Cheat Sheet</div>
+				<p class="feature-desc">Respuestas copy-paste para FAQ frecuentes →</p>
+			</a>
+
+			<a href="docs/WORKFLOW_PROCESS.md" class="feature-card" style="text-decoration: none; cursor: pointer;">
+				<div class="feature-icon">⏱️</div>
+				<div class="feature-title">Workflow Real</div>
+				<p class="feature-desc">Lunes-Viernes con tiempos exactos y checklist →</p>
+			</a>
+		</div>
+	</section>
+
+	<!-- FOOTER -->
+	<footer class="footer">
+		<p>Bitaxus Community Manager Suite v1.0.0 | Agosto 2024</p>
+		<p style="margin-top: 1rem; font-size: 0.85rem;">Desarrollado con ❤️ | <a href="https://github.com/alejagoguti-cpu/Redes_sociales" style="color: var(--red); text-decoration: none;">GitHub Repository</a></p>
+	</footer>
 </body>
 </html>
