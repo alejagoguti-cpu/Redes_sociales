@@ -358,6 +358,7 @@
 				<div class="month-title" id="monthTitle">Enero 2025</div>
 				<button onclick="nextMonth()">Siguiente →</button>
 			</div>
+			<button onclick="refreshCalendar()" style="background: var(--border); border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; color: var(--text); font-weight: 600;">🔄 Refrescar</button>
 		</div>
 
 		<div class="calendar">
@@ -384,6 +385,7 @@
 
 	<script>
 		let calendarData = {};
+		let customPosts = []; // Posts del Content Manager
 		let currentMonth = 0; // 0 = Enero, 1 = Febrero, 2 = Marzo
 		const months = ['Enero', 'Febrero', 'Marzo'];
 		const monthDays = [31, 28, 31];
@@ -393,12 +395,26 @@
 			try {
 				const response = await fetch('../calendar.json');
 				calendarData = await response.json();
+				loadCustomPosts();
 				renderCalendar();
 				updateStats();
 			} catch (error) {
 				console.error('Error loading calendar:', error);
 			}
 		}
+
+		function loadCustomPosts() {
+			customPosts = JSON.parse(localStorage.getItem('bitaxusPosts')) || [];
+		}
+
+		// Listen for changes in localStorage (from Content Manager in another tab/window)
+		window.addEventListener('storage', (e) => {
+			if (e.key === 'bitaxusPosts') {
+				loadCustomPosts();
+				renderCalendar();
+				updateStats();
+			}
+		});
 
 		function renderCalendar() {
 			const container = document.getElementById('daysContainer');
@@ -466,6 +482,8 @@
 
 		function getPostsForDate(dateStr) {
 			const posts = [];
+
+			// Posts from calendar.json
 			calendarData.weeks?.forEach(week => {
 				week.posts?.forEach(post => {
 					if (post.date === dateStr) {
@@ -473,6 +491,21 @@
 					}
 				});
 			});
+
+			// Posts from Content Manager (localStorage)
+			customPosts.forEach(post => {
+				if (post.date === dateStr) {
+					posts.push({
+						platform: post.platform,
+						time: post.time,
+						title: post.title,
+						pillar: post.pillar,
+						description: post.description,
+						isCustom: true
+					});
+				}
+			});
+
 			return posts;
 		}
 
@@ -493,11 +526,15 @@
 
 			const postsList = document.getElementById('postsList');
 			postsList.innerHTML = posts.map(post => `
-				<div class="post-item">
-					<div class="post-platform">${post.platform}</div>
+				<div class="post-item" ${post.isCustom ? 'style="border-left-color: #10b981; background: rgba(16, 185, 129, 0.08);"' : ''}>
+					<div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+						<div class="post-platform">${post.platform}</div>
+						${post.isCustom ? '<div style="background: #10b981; color: white; padding: 0.2rem 0.5rem; border-radius: 3px; font-size: 0.7rem; font-weight: 600;">NUEVO</div>' : ''}
+					</div>
 					<div class="post-time">${post.time || '9:00 AM'}</div>
 					<div class="post-title">${post.title || 'Sin título'}</div>
 					<div class="post-pillar">${post.pillar || 'General'}</div>
+					${post.description ? `<div style="color: var(--gray); font-size: 0.85rem; margin-top: 0.5rem;">${post.description}</div>` : ''}
 				</div>
 			`).join('');
 
@@ -523,11 +560,18 @@
 			document.getElementById('monthTitle').textContent = `${months[currentMonth]} 2025`;
 		}
 
+		function refreshCalendar() {
+			loadCustomPosts();
+			renderCalendar();
+			updateStats();
+		}
+
 		function updateStats() {
 			let totalPosts = 0;
 			let totalBlogs = 0;
 			const platforms = new Set();
 
+			// Count posts from calendar.json
 			calendarData.weeks?.forEach(week => {
 				week.posts?.forEach(post => {
 					totalPosts++;
@@ -535,6 +579,12 @@
 					if (post.platform) platforms.add(post.platform);
 				});
 				week.blogs?.forEach(() => totalBlogs++);
+			});
+
+			// Count posts from Content Manager
+			customPosts.forEach(post => {
+				totalPosts++;
+				if (post.platform) platforms.add(post.platform);
 			});
 
 			document.getElementById('totalPosts').textContent = totalPosts;
