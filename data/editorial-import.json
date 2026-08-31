@@ -3,7 +3,7 @@
   "imported_at": "2026-08-31T22:50:27",
   "posts": [
     {
-      "scheduled_date": "2025-01-02",
+      "scheduled_date": "2026-09-02",
       "scheduled_time": "09:00:00",
       "weekday": "Lunes",
       "platform": "LinkedIn",
@@ -22,7 +22,7 @@
       "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
     },
     {
-      "scheduled_date": "2025-01-04",
+      "scheduled_date": "2026-09-04",
       "scheduled_time": "18:00:00",
       "weekday": "Miércoles",
       "platform": "Instagram",
@@ -41,7 +41,7 @@
       "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
     },
     {
-      "scheduled_date": "2025-01-05",
+      "scheduled_date": "2026-09-05",
       "scheduled_time": "07:00:00",
       "weekday": "Jueves",
       "platform": "Twitter",
@@ -60,7 +60,7 @@
       "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
     },
     {
-      "scheduled_date": "2025-01-09",
+      "scheduled_date": "2026-09-09",
       "scheduled_time": "09:00:00",
       "weekday": "Lunes",
       "platform": "LinkedIn",
@@ -79,7 +79,7 @@
       "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
     },
     {
-      "scheduled_date": "2025-01-11",
+      "scheduled_date": "2026-09-11",
       "scheduled_time": "18:00:00",
       "weekday": "Miércoles",
       "platform": "Instagram",
@@ -98,7 +98,7 @@
       "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
     },
     {
-      "scheduled_date": "2025-01-12",
+      "scheduled_date": "2026-09-12",
       "scheduled_time": "07:00:00",
       "weekday": "Jueves",
       "platform": "Twitter",
@@ -117,7 +117,7 @@
       "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
     },
     {
-      "scheduled_date": "2025-01-16",
+      "scheduled_date": "2026-09-16",
       "scheduled_time": "09:00:00",
       "weekday": "Lunes",
       "platform": "LinkedIn",
@@ -136,7 +136,7 @@
       "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
     },
     {
-      "scheduled_date": "2025-01-18",
+      "scheduled_date": "2026-09-18",
       "scheduled_time": "18:00:00",
       "weekday": "Miércoles",
       "platform": "Instagram",
@@ -155,7 +155,7 @@
       "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
     },
     {
-      "scheduled_date": "2025-01-19",
+      "scheduled_date": "2026-09-19",
       "scheduled_time": "07:00:00",
       "weekday": "Jueves",
       "platform": "Twitter",
@@ -174,7 +174,7 @@
       "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
     },
     {
-      "scheduled_date": "2025-01-23",
+      "scheduled_date": "2026-09-23",
       "scheduled_time": "09:00:00",
       "weekday": "Lunes",
       "platform": "LinkedIn",
@@ -193,7 +193,7 @@
       "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
     },
     {
-      "scheduled_date": "2025-01-25",
+      "scheduled_date": "2026-09-25",
       "scheduled_time": "18:00:00",
       "weekday": "Miércoles",
       "platform": "Instagram",
@@ -212,7 +212,7 @@
       "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
     },
     {
-      "scheduled_date": "2025-01-26",
+      "scheduled_date": "2026-09-26",
       "scheduled_time": "07:00:00",
       "weekday": "Jueves",
       "platform": "Twitter",
@@ -230,5 +230,7 @@
       "kpi_target": "2K+ retweets",
       "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
     }
-  ]
+  ],
+  "calendar_month": "2026-09",
+  "date_note": "Las fechas del Excel se interpretan como publicaciones de septiembre de 2026."
 }
