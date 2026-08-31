@@ -1,16 +1,716 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-	<title>Bitaxus Community Manager</title>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Centro de operaciones de comunidad Bitaxus: planeación, recursos, moderación y analítica en un solo lugar.">
+  <title>Bitaxus — Community Operations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #050506;
+      --black-soft: #0b0b0d;
+      --panel: #111114;
+      --panel-raised: #17171b;
+      --line: rgba(255, 255, 255, .12);
+      --line-soft: rgba(255, 255, 255, .07);
+      --white: #f7f7f5;
+      --muted: #a3a3a8;
+      --muted-dark: #6f6f76;
+      --red: #e12c37;
+      --red-bright: #ff4d55;
+      --red-soft: rgba(225, 44, 55, .16);
+      --coral: #ffaaa5;
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+      --ease-out: cubic-bezier(.23, 1, .32, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--white);
+      background: var(--black);
+      font-family: 'Manrope', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      content: '';
+      opacity: .24;
+      background-image: radial-gradient(rgba(255, 255, 255, .20) .7px, transparent .7px);
+      background-size: 23px 23px;
+      mask-image: linear-gradient(to bottom, black, transparent 72%);
+    }
+
+    body::after {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      pointer-events: none;
+      content: '';
+      background:
+        radial-gradient(circle at 74% 17%, rgba(225, 44, 55, .22), transparent 27rem),
+        radial-gradient(circle at 12% 62%, rgba(136, 35, 62, .10), transparent 24rem),
+        linear-gradient(180deg, #0e0708 0%, var(--black) 45%, #080809 100%);
+    }
+
+    a { color: inherit; }
+
+    .shell {
+      width: min(1180px, calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 88px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+
+    .brand img {
+      display: block;
+      width: 116px;
+      height: auto;
+      image-rendering: auto;
+    }
+
+    .brand-context {
+      padding-left: 14px;
+      color: var(--muted-dark);
+      border-left: 1px solid var(--line);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .14em;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav a {
+      padding: 10px 14px;
+      color: var(--muted);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: color 180ms ease, background 180ms ease, transform 180ms ease;
+    }
+
+    .nav a:hover,
+    .nav a:focus-visible {
+      color: var(--white);
+      background: rgba(255, 255, 255, .08);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .nav .nav-cta {
+      margin-left: 10px;
+      color: var(--white);
+      background: var(--red);
+      box-shadow: 0 8px 24px rgba(225, 44, 55, .18);
+    }
+
+    .nav .nav-cta:hover,
+    .nav .nav-cta:focus-visible {
+      background: var(--red-bright);
+    }
+
+    .hero {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(300px, .88fr);
+      gap: clamp(40px, 7vw, 108px);
+      align-items: center;
+      min-height: 610px;
+      padding: 82px 0 76px;
+    }
+
+    .hero::after {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 42%;
+      height: 1px;
+      content: '';
+      background: linear-gradient(90deg, transparent, var(--red), transparent);
+      opacity: .75;
+    }
+
+    .eyebrow,
+    .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--coral);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before,
+    .section-kicker::before {
+      width: 7px;
+      height: 7px;
+      content: '';
+      border-radius: 50%;
+      background: var(--red-bright);
+      box-shadow: 0 0 0 5px rgba(255, 77, 85, .10), 0 0 18px rgba(255, 77, 85, .7);
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      max-width: 690px;
+      margin: 24px 0 24px;
+      color: var(--white);
+      font-size: clamp(3.4rem, 7vw, 6.7rem);
+      font-weight: 800;
+      letter-spacing: -.075em;
+      line-height: .94;
+    }
+
+    h1 span {
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255, 255, 255, .78);
+      text-stroke: 1px rgba(255, 255, 255, .78);
+    }
+
+    .hero-copy {
+      max-width: 540px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 11px;
+      min-height: 49px;
+      padding: 0 20px;
+      color: var(--white);
+      border: 1px solid transparent;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 160ms var(--ease-out), background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .button::after {
+      content: '↗';
+      font-size: 17px;
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .button:hover,
+    .button:focus-visible {
+      transform: translateY(-2px);
+      outline: none;
+    }
+
+    .button:active { transform: scale(.97); }
+
+    .button-primary {
+      background: var(--red);
+      box-shadow: 0 13px 34px rgba(225, 44, 55, .20);
+    }
+
+    .button-primary:hover,
+    .button-primary:focus-visible { background: var(--red-bright); }
+
+    .button-secondary {
+      border-color: var(--line);
+      background: rgba(255, 255, 255, .045);
+    }
+
+    .button-secondary:hover,
+    .button-secondary:focus-visible { border-color: rgba(255, 255, 255, .28); background: rgba(255, 255, 255, .09); }
+
+    .hero-card {
+      position: relative;
+      isolation: isolate;
+      padding: 26px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: var(--radius-lg);
+      background: linear-gradient(145deg, rgba(255, 255, 255, .10), rgba(255, 255, 255, .035));
+      box-shadow: 0 34px 100px rgba(0, 0, 0, .44), inset 0 1px 0 rgba(255, 255, 255, .13);
+      transform: rotate(2deg);
+    }
+
+    .hero-card::before {
+      position: absolute;
+      top: -70px;
+      right: -40px;
+      z-index: -1;
+      width: 280px;
+      height: 280px;
+      content: '';
+      border-radius: 50%;
+      background: var(--red);
+      filter: blur(95px);
+      opacity: .36;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .window-dots { display: flex; gap: 6px; }
+    .window-dots i { width: 7px; height: 7px; border-radius: 50%; background: #59595f; }
+    .window-dots i:first-child { background: var(--red-bright); }
+
+    .card-status {
+      color: #9ff1bd;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .metric-label {
+      margin: 31px 0 9px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .metric-value {
+      margin: 0;
+      color: var(--white);
+      font-size: clamp(2.8rem, 6vw, 4.3rem);
+      font-weight: 800;
+      letter-spacing: -.07em;
+      line-height: 1;
+    }
+
+    .metric-value span { color: var(--red-bright); }
+
+    .chart {
+      position: relative;
+      display: flex;
+      align-items: end;
+      gap: 10px;
+      height: 122px;
+      margin: 32px 0 12px;
+      padding: 0 3px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .chart::before,
+    .chart::after {
+      position: absolute;
+      right: 0;
+      left: 0;
+      height: 1px;
+      content: '';
+      background: var(--line-soft);
+    }
+
+    .chart::before { top: 34%; }
+    .chart::after { top: 68%; }
+
+    .bar {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      min-width: 8px;
+      border-radius: 6px 6px 0 0;
+      background: linear-gradient(180deg, var(--red-bright), #8c2029);
+      opacity: .85;
+    }
+
+    .bar:nth-child(1) { height: 35%; opacity: .45; }
+    .bar:nth-child(2) { height: 52%; opacity: .55; }
+    .bar:nth-child(3) { height: 43%; opacity: .5; }
+    .bar:nth-child(4) { height: 66%; opacity: .68; }
+    .bar:nth-child(5) { height: 56%; opacity: .6; }
+    .bar:nth-child(6) { height: 83%; }
+    .bar:nth-child(7) { height: 100%; }
+
+    .chart-foot {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted-dark);
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .section {
+      padding: 112px 0;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 32px;
+      margin-bottom: 34px;
+    }
+
+    h2 {
+      max-width: 570px;
+      margin: 15px 0 0;
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -.065em;
+      line-height: 1;
+    }
+
+    .section-intro {
+      max-width: 330px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
+
+    .tool-card {
+      position: relative;
+      display: flex;
+      min-height: 256px;
+      flex-direction: column;
+      grid-column: span 4;
+      overflow: hidden;
+      padding: 25px;
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius-md);
+      background: linear-gradient(150deg, rgba(255, 255, 255, .075), rgba(255, 255, 255, .02));
+      text-decoration: none;
+      transition: border-color 180ms ease, background 180ms ease, transform 180ms var(--ease-out), box-shadow 180ms ease;
+    }
+
+    .tool-card:nth-child(1) { grid-column: span 5; }
+    .tool-card:nth-child(2) { grid-column: span 7; }
+    .tool-card:nth-child(3) { grid-column: span 7; }
+    .tool-card:nth-child(4) { grid-column: span 5; }
+
+    .tool-card::after {
+      position: absolute;
+      right: -55px;
+      bottom: -72px;
+      width: 180px;
+      height: 180px;
+      content: '';
+      border-radius: 50%;
+      background: var(--red);
+      filter: blur(70px);
+      opacity: 0;
+      transition: opacity 180ms ease;
+    }
+
+    .tool-card:hover,
+    .tool-card:focus-visible {
+      border-color: rgba(255, 77, 85, .55);
+      background: linear-gradient(150deg, rgba(225, 44, 55, .14), rgba(255, 255, 255, .04));
+      box-shadow: 0 20px 50px rgba(0, 0, 0, .22);
+      outline: none;
+      transform: translateY(-4px);
+    }
+
+    .tool-card:hover::after,
+    .tool-card:focus-visible::after { opacity: .22; }
+
+    .tool-number {
+      color: var(--red-bright);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .1em;
+    }
+
+    .tool-icon {
+      display: grid;
+      width: 46px;
+      height: 46px;
+      place-items: center;
+      margin: 30px 0 20px;
+      color: var(--coral);
+      border: 1px solid rgba(255, 170, 165, .3);
+      border-radius: 13px;
+      background: rgba(225, 44, 55, .12);
+    }
+
+    .tool-icon svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.6; }
+
+    .tool-card h3 {
+      position: relative;
+      z-index: 1;
+      margin: 0 0 8px;
+      font-size: 20px;
+      letter-spacing: -.03em;
+    }
+
+    .tool-card p {
+      position: relative;
+      z-index: 1;
+      max-width: 420px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .tool-arrow {
+      position: relative;
+      z-index: 1;
+      align-self: end;
+      margin-top: auto;
+      color: var(--white);
+      font-size: 22px;
+    }
+
+    .workflow {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: clamp(42px, 8vw, 130px);
+      align-items: start;
+      padding-top: 30px;
+      border-top: 1px solid var(--line);
+    }
+
+    .workflow-list { display: grid; gap: 0; }
+
+    .workflow-item {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 20px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .workflow-item:last-child { border-bottom: 0; }
+
+    .workflow-index {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      color: var(--coral);
+      border: 1px solid rgba(225, 44, 55, .55);
+      border-radius: 50%;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+    }
+
+    .workflow-item h3 { margin: 0 0 6px; font-size: 16px; }
+    .workflow-item p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+    .footer {
+      padding: 30px 0 42px;
+      border-top: 1px solid var(--line-soft);
+    }
+
+    .footer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .footer small { color: var(--muted-dark); font-size: 11px; }
+    .footer a { color: var(--muted); font-size: 12px; text-decoration: none; }
+    .footer a:hover { color: var(--white); }
+
+    @media (max-width: 860px) {
+      .shell { width: min(100% - 36px, 680px); }
+      .topbar { min-height: 76px; }
+      .brand-context, .nav a:not(.nav-cta) { display: none; }
+      .nav .nav-cta { margin-left: 0; }
+      .hero { grid-template-columns: 1fr; min-height: auto; padding: 72px 0 64px; }
+      h1 { max-width: 630px; font-size: clamp(3.4rem, 12vw, 5.4rem); }
+      .hero-card { max-width: 520px; margin: 10px auto 0; transform: rotate(1deg); }
+      .section { padding: 78px 0; }
+      .section-heading { display: block; }
+      .section-intro { margin-top: 20px; }
+      .tool-card,
+      .tool-card:nth-child(n) { grid-column: span 6; }
+      .workflow { grid-template-columns: 1fr; gap: 28px; }
+    }
+
+    @media (max-width: 560px) {
+      .shell { width: min(100% - 28px, 480px); }
+      .brand img { width: 100px; }
+      .hero { padding-top: 58px; }
+      h1 { font-size: clamp(3rem, 15vw, 4.6rem); }
+      .hero-copy { font-size: 15px; }
+      .hero-actions { display: grid; }
+      .button { width: 100%; }
+      .hero-card { padding: 20px; border-radius: 21px; }
+      .metric-value { font-size: 3.25rem; }
+      .tool-card,
+      .tool-card:nth-child(n) { grid-column: span 12; min-height: 224px; }
+      .tool-icon { margin-top: 22px; }
+      .footer-row { align-items: flex-start; flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
 </head>
 <body>
-	<script>
-		// Redirect to the main guide
-		window.location.href = 'bitaxus-cm-guide.html';
-	</script>
-	<p>Redirigiendo a Bitaxus Community Manager...</p>
-	<p>Si no se redirige automáticamente, <a href="bitaxus-cm-guide.html">haz clic aquí</a>.</p>
+  <header class="topbar shell" aria-label="Navegación principal">
+    <a class="brand" href="index.html" aria-label="Bitaxus, inicio">
+      <img src="assets/bitaxus-logo-white.png" alt="Bitaxus">
+      <span class="brand-context">Community<br>Operations</span>
+    </a>
+    <nav class="nav">
+      <a href="#herramientas">Herramientas</a>
+      <a href="#flujo">Flujo</a>
+      <a class="nav-cta" href="bitaxus-cm-guide.html">Abrir guía</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero shell" aria-labelledby="hero-title">
+      <div>
+        <div class="eyebrow">Centro de operaciones · 2025</div>
+        <h1 id="hero-title">Gestiona la comunidad <span>sin fricción.</span></h1>
+        <p class="hero-copy">Planea el contenido, responde con claridad y convierte cada conversación en contexto para Bitaxus. Todo el sistema de trabajo, en un solo lugar.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="planeacion.html">Ver planeación</a>
+          <a class="button button-secondary" href="bitaxus-cm-guide.html">Explorar el sistema</a>
+        </div>
+      </div>
+
+      <aside class="hero-card" aria-label="Resumen de actividad">
+        <div class="card-top">
+          <div class="window-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="card-status">● sistema activo</div>
+        </div>
+        <p class="metric-label">Contenido organizado</p>
+        <p class="metric-value">36 <span>posts</span></p>
+        <div class="chart" aria-hidden="true"><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i><i class="bar"></i></div>
+        <div class="chart-foot"><span>Q1 2025</span><span>+12.8% ritmo</span></div>
+      </aside>
+    </section>
+
+    <section class="section shell" id="herramientas" aria-labelledby="tools-title">
+      <div class="section-heading">
+        <div>
+          <div class="section-kicker">Un sistema, cuatro frentes</div>
+          <h2 id="tools-title">Todo lo que necesitas para avanzar.</h2>
+        </div>
+        <p class="section-intro">Accede a la información correcta en el momento correcto: menos pestañas abiertas, más consistencia en cada publicación.</p>
+      </div>
+
+      <div class="tool-grid">
+        <a class="tool-card" href="planeacion.html">
+          <span class="tool-number">01 / PLANEAR</span>
+          <span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M16 2v4M8 2v4M3 9h18M8 13h.01M12 13h.01M16 13h.01M8 17h.01M12 17h.01"></path></svg></span>
+          <h3>Planeación editorial</h3>
+          <p>Visualiza el calendario de contenidos y llega a cada semana con una ruta clara.</p>
+          <span class="tool-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="tool-card" href="dashboards/index.html">
+          <span class="tool-number">02 / OPERAR</span>
+          <span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h17M8 16v-5M12 16V7M16 16v-3M20 16V4"></path></svg></span>
+          <h3>Hub de herramientas</h3>
+          <p>Reúne dashboards, cheat sheets y recursos prácticos para el trabajo diario del equipo.</p>
+          <span class="tool-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="tool-card" href="bitaxus-cm-guide.html">
+          <span class="tool-number">03 / ALINEAR</span>
+          <span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H20v17H7.5A2.5 2.5 0 0 0 5 21.5z"></path><path d="M5 4.5v17M9 7h7M9 11h7M9 15h4"></path></svg></span>
+          <h3>Guía de marca y moderación</h3>
+          <p>Consulta tono, palabras clave y respuestas para mantener una voz humana y consistente.</p>
+          <span class="tool-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="tool-card" href="dashboards/analytics.html">
+          <span class="tool-number">04 / APRENDER</span>
+          <span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h17"></path><path d="m7 15 3-4 3 2 5-7"></path><path d="M16 6h2v2"></path></svg></span>
+          <h3>Analytics</h3>
+          <p>Convierte los datos de engagement en decisiones para el siguiente ciclo de contenido.</p>
+          <span class="tool-arrow" aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section shell" id="flujo" aria-labelledby="workflow-title">
+      <div class="workflow">
+        <div>
+          <div class="section-kicker">Cadencia semanal</div>
+          <h2 id="workflow-title">Un ritmo que se puede repetir.</h2>
+        </div>
+        <div class="workflow-list">
+          <article class="workflow-item">
+            <span class="workflow-index">01</span>
+            <div><h3>Lunes · Planificar</h3><p>Revisa el contexto de la semana, elige los contenidos y programa las publicaciones prioritarias.</p></div>
+          </article>
+          <article class="workflow-item">
+            <span class="workflow-index">02</span>
+            <div><h3>Martes — jueves · Conversar</h3><p>Responde preguntas con claridad, acompaña las conversaciones y registra nuevos insights de la comunidad.</p></div>
+          </article>
+          <article class="workflow-item">
+            <span class="workflow-index">03</span>
+            <div><h3>Viernes · Aprender</h3><p>Lee las métricas, identifica patrones y convierte lo aprendido en la siguiente decisión editorial.</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-row shell">
+      <small>BITAXUS · Community Operations</small>
+      <a href="https://bitaxus.com/" target="_blank" rel="noopener noreferrer">Visitar bitaxus.com ↗</a>
+    </div>
+  </footer>
 </body>
 </html>
