@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Bitaxus - Master Dashboard</title>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+	<style>
+		:root {
+			--red: #D1232E;
+			--dark: #0A0A1A;
+			--card: #1A1A2E;
+			--border: #2D2D44;
+			--text: #E5E5E5;
+			--gray: #999999;
+		}
+
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+
+		body {
+			font-family: 'Inter', system-ui;
+			background: var(--dark);
+			color: var(--text);
+		}
+
+		.wrapper {
+			display: grid;
+			grid-template-columns: 280px 1fr;
+			min-height: 100vh;
+		}
+
+		/* SIDEBAR */
+		.sidebar {
+			background: linear-gradient(135deg, #1a1a2e 0%, #0a0a1a 100%);
+			border-right: 1px solid var(--red);
+			padding: 2rem 1.5rem;
+			position: sticky;
+			top: 0;
+			height: 100vh;
+			overflow-y: auto;
+		}
+
+		.logo {
+			font-size: 1.5rem;
+			font-weight: 700;
+			margin-bottom: 2rem;
+			background: linear-gradient(135deg, var(--red), #ff6b6b);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-clip: text;
+		}
+
+		.nav-section {
+			margin-bottom: 2rem;
+		}
+
+		.nav-title {
+			font-size: 0.7rem;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			color: var(--red);
+			font-weight: 600;
+			margin-bottom: 0.75rem;
+		}
+
+		.nav-link {
+			display: block;
+			padding: 0.75rem 1rem;
+			color: var(--gray);
+			text-decoration: none;
+			border-radius: 6px;
+			margin-bottom: 0.5rem;
+			cursor: pointer;
+			transition: all 0.2s;
+			font-size: 0.9rem;
+		}
+
+		.nav-link:hover, .nav-link.active {
+			background: rgba(209, 35, 46, 0.1);
+			color: var(--red);
+		}
+
+		.divider {
+			height: 1px;
+			background: var(--border);
+			margin: 1.5rem 0;
+		}
+
+		/* MAIN */
+		.main {
+			padding: 2rem;
+			overflow-y: auto;
+			max-height: 100vh;
+		}
+
+		.header {
+			margin-bottom: 2rem;
+		}
+
+		h1 {
+			font-size: 2rem;
+			font-weight: 700;
+			margin-bottom: 0.5rem;
+		}
+
+		.header-text {
+			color: var(--gray);
+			font-size: 0.95rem;
+		}
+
+		/* CONTENT SECTIONS */
+		.content {
+			display: none;
+		}
+
+		.content.active {
+			display: block;
+			animation: fadeIn 0.3s ease-in;
+		}
+
+		@keyframes fadeIn {
+			from { opacity: 0; transform: translateY(10px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+
+		/* PLANNING SECTION */
+		.stats {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+			gap: 1rem;
+			margin-bottom: 2rem;
+		}
+
+		.stat {
+			background: var(--card);
+			border: 1px solid var(--border);
+			padding: 1.25rem;
+			border-radius: 8px;
+			text-align: center;
+		}
+
+		.stat-value {
+			font-size: 1.8rem;
+			font-weight: 700;
+			color: var(--red);
+		}
+
+		.stat-label {
+			font-size: 0.8rem;
+			color: var(--gray);
+			text-transform: uppercase;
+			margin-top: 0.5rem;
+			letter-spacing: 0.05em;
+		}
+
+		.controls {
+			display: flex;
+			gap: 1rem;
+			margin-bottom: 2rem;
+			flex-wrap: wrap;
+		}
+
+		select, button {
+			padding: 0.75rem 1rem;
+			background: var(--card);
+			border: 1px solid var(--border);
+			color: var(--text);
+			border-radius: 6px;
+			font-family: inherit;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		button {
+			background: var(--red);
+			color: white;
+			border: none;
+		}
+
+		button:hover {
+			background: #B81C28;
+		}
+
+		/* TABLE */
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		th {
+			background: rgba(209, 35, 46, 0.1);
+			padding: 0.75rem;
+			text-align: left;
+			font-weight: 600;
+			color: var(--red);
+			font-size: 0.9rem;
+			border: 1px solid var(--border);
+		}
+
+		td {
+			padding: 0.75rem;
+			border: 1px solid var(--border);
+			font-size: 0.9rem;
+		}
+
+		tr:hover {
+			background: rgba(209, 35, 46, 0.05);
+		}
+
+		.badge {
+			display: inline-block;
+			padding: 0.3rem 0.6rem;
+			background: rgba(209, 35, 46, 0.15);
+			color: var(--red);
+			border-radius: 3px;
+			font-size: 0.75rem;
+			font-weight: 600;
+		}
+
+		/* BRAND KIT */
+		.brand-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 1.5rem;
+			margin-bottom: 2rem;
+		}
+
+		.brand-card {
+			background: var(--card);
+			border: 1px solid var(--border);
+			padding: 1.5rem;
+			border-radius: 8px;
+		}
+
+		.color-swatch {
+			width: 100%;
+			height: 80px;
+			border-radius: 6px;
+			margin-bottom: 0.75rem;
+			border: 1px solid var(--border);
+		}
+
+		.color-code {
+			font-family: monospace;
+			font-size: 0.85rem;
+			color: var(--gray);
+		}
+
+		.feature-list {
+			list-style: none;
+		}
+
+		.feature-list li {
+			padding: 0.5rem 0;
+			display: flex;
+			gap: 0.5rem;
+		}
+
+		.feature-list li::before {
+			content: "→";
+			color: var(--red);
+			font-weight: 600;
+			flex-shrink: 0;
+		}
+
+		/* RESOURCES */
+		.resources-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+			gap: 1rem;
+		}
+
+		.resource-card {
+			background: var(--card);
+			border: 1px solid var(--border);
+			padding: 1.25rem;
+			border-radius: 8px;
+			transition: all 0.2s;
+			cursor: pointer;
+		}
+
+		.resource-card:hover {
+			border-color: var(--red);
+			box-shadow: 0 4px 12px rgba(209, 35, 46, 0.15);
+		}
+
+		.resource-icon {
+			font-size: 2rem;
+			margin-bottom: 0.75rem;
+		}
+
+		.resource-title {
+			font-weight: 600;
+			margin-bottom: 0.5rem;
+		}
+
+		.resource-desc {
+			font-size: 0.85rem;
+			color: var(--gray);
+		}
+
+		/* MODAL */
+		.modal {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0, 0, 0, 0.8);
+			z-index: 1000;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.modal.active {
+			display: flex;
+		}
+
+		.modal-content {
+			background: var(--card);
+			border: 1px solid var(--border);
+			padding: 2rem;
+			border-radius: 8px;
+			max-width: 600px;
+			max-height: 80vh;
+			overflow-y: auto;
+		}
+
+		.modal-close {
+			float: right;
+			font-size: 1.5rem;
+			cursor: pointer;
+			color: var(--gray);
+		}
+
+		.modal-close:hover {
+			color: var(--red);
+		}
+
+		h2 {
+			font-size: 1.5rem;
+			margin-bottom: 1rem;
+			margin-top: 1.5rem;
+		}
+
+		h2:first-child {
+			margin-top: 0;
+		}
+
+		@media (max-width: 1024px) {
+			.wrapper {
+				grid-template-columns: 1fr;
+			}
+
+			.sidebar {
+				max-height: 200px;
+				overflow-x: auto;
+				overflow-y: hidden;
+				display: flex;
+				gap: 2rem;
+				border-right: none;
+				border-bottom: 1px solid var(--red);
+				position: static;
+				padding: 1rem 1.5rem;
+				height: auto;
+			}
+
+			.nav-section {
+				min-width: max-content;
+				margin-bottom: 0;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.main {
+				padding: 1rem;
+			}
+
+			h1 {
+				font-size: 1.5rem;
+			}
+
+			table {
+				font-size: 0.8rem;
+			}
+
+			th, td {
+				padding: 0.5rem;
+			}
+
+			.stats {
+				grid-template-columns: repeat(2, 1fr);
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<!-- SIDEBAR -->
+		<div class="sidebar">
+			<div class="logo">BITAXUS</div>
+
+			<div class="nav-section">
+				<div class="nav-title">📊 Principal</div>
+				<a class="nav-link active" onclick="showSection('planning')">📅 Planeación</a>
+				<a class="nav-link" onclick="showSection('brand')">🎨 Brand Kit</a>
+				<a class="nav-link" onclick="showSection('resources')">📁 Recursos</a>
+			</div>
+
+			<div class="divider"></div>
+
+			<div class="nav-section">
+				<div class="nav-title">🛠️ Herramientas</div>
+				<a class="nav-link" href="dashboards/calendar-view.html" target="_blank">📋 Parrilla (Detalle)</a>
+				<a class="nav-link" href="dashboards/analytics.html" target="_blank">📊 Analytics</a>
+				<a class="nav-link" href="dashboards/cheat-sheet.html" target="_blank">⚡ Cheat Sheet</a>
+				<a class="nav-link" href="bitaxus-cm-guide.html" target="_blank">📖 Guía Completa</a>
+			</div>
+
+			<div class="divider"></div>
+
+			<div class="nav-section">
+				<div class="nav-title">📚 Documentación</div>
+				<a class="nav-link" href="docs/WORKFLOW_PROCESS.md" target="_blank">⏱️ Workflow</a>
+				<a class="nav-link" href="docs/MODERATION_GUIDE.md" target="_blank">💬 Moderación</a>
+				<a class="nav-link" href="docs/DEPLOYMENT.md" target="_blank">🚀 Deployment</a>
+			</div>
+
+			<div class="divider"></div>
+
+			<button onclick="window.print()" style="width: 100%;">🖨️ Imprimir</button>
+		</div>
+
+		<!-- MAIN CONTENT -->
+		<div class="main">
+			<!-- PLANNING SECTION -->
+			<section id="planning" class="content active">
+				<div class="header">
+					<h1>📅 Planeación Q1 2025</h1>
+					<p class="header-text">Qué publicar cada día, mes a mes, con horarios</p>
+				</div>
+
+				<div class="stats">
+					<div class="stat">
+						<div class="stat-value">36</div>
+						<div class="stat-label">Posts Q1</div>
+					</div>
+					<div class="stat">
+						<div class="stat-value">3</div>
+						<div class="stat-label">Posts/Semana</div>
+					</div>
+					<div class="stat">
+						<div class="stat-value">3</div>
+						<div class="stat-label">Blogs</div>
+					</div>
+					<div class="stat">
+						<div class="stat-value">4</div>
+						<div class="stat-label">Pilares</div>
+					</div>
+				</div>
+
+				<div class="controls">
+					<select id="monthSelect" onchange="loadMonth()">
+						<option value="january">Enero</option>
+						<option value="february">Febrero</option>
+						<option value="march">Marzo</option>
+					</select>
+					<button onclick="window.print()">🖨️ Imprimir Mes</button>
+				</div>
+
+				<table id="planningTable">
+					<thead>
+						<tr>
+							<th>Fecha</th>
+							<th>Plataforma</th>
+							<th>Hora</th>
+							<th>Pilar</th>
+							<th>Tema</th>
+						</tr>
+					</thead>
+					<tbody id="planningBody"></tbody>
+				</table>
+			</section>
+
+			<!-- BRAND KIT SECTION -->
+			<section id="brand" class="content">
+				<div class="header">
+					<h1>🎨 Brand Kit Bitaxus</h1>
+					<p class="header-text">Identidad visual, tono, guidelines</p>
+				</div>
+
+				<h2>Paleta de Colores</h2>
+				<div class="brand-grid">
+					<div class="brand-card">
+						<div class="color-swatch" style="background: #D1232E;"></div>
+						<div style="font-weight: 600; margin-bottom: 0.5rem;">Rojo Primario</div>
+						<div class="color-code">#D1232E</div>
+					</div>
+					<div class="brand-card">
+						<div class="color-swatch" style="background: #0A0A1A;"></div>
+						<div style="font-weight: 600; margin-bottom: 0.5rem;">Dark Base</div>
+						<div class="color-code">#0A0A1A</div>
+					</div>
+					<div class="brand-card">
+						<div class="color-swatch" style="background: #999999;"></div>
+						<div style="font-weight: 600; margin-bottom: 0.5rem;">Gris Secundario</div>
+						<div class="color-code">#999999</div>
+					</div>
+					<div class="brand-card">
+						<div class="color-swatch" style="background: #1A1A2E;"></div>
+						<div style="font-weight: 600; margin-bottom: 0.5rem;">Card Dark</div>
+						<div class="color-code">#1A1A2E</div>
+					</div>
+				</div>
+
+				<h2>Tono de Voz</h2>
+				<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+					<div class="brand-card">
+						<div style="font-weight: 600; color: var(--red); margin-bottom: 1rem;">✅ USA ESTOS</div>
+						<ul class="feature-list">
+							<li>Inteligente</li>
+							<li>Cálido</li>
+							<li>Directo</li>
+							<li>Colaborativo</li>
+							<li>Con contexto</li>
+						</ul>
+					</div>
+					<div class="brand-card">
+						<div style="font-weight: 600; color: #EF4444; margin-bottom: 1rem;">❌ EVITA ESTOS</div>
+						<ul class="feature-list">
+							<li>Innovación</li>
+							<li>Soluciones escalables</li>
+							<li>Empoderamiento</li>
+							<li>Jargon cripto</li>
+							<li>Hype</li>
+						</ul>
+					</div>
+				</div>
+
+				<h2>Palabras Clave</h2>
+				<div class="brand-card">
+					<strong>Claridad • Contexto • Acompañamiento • Sin fricción</strong>
+				</div>
+
+				<h2>Tipografía</h2>
+				<div class="brand-card">
+					<ul class="feature-list">
+						<li><strong>Familia:</strong> Inter (400, 500, 600, 700)</li>
+						<li><strong>H1:</strong> 28px, 700 - Títulos</li>
+						<li><strong>Body:</strong> 16px, 400 - Párrafos</li>
+						<li><strong>Caption:</strong> 13px, 400 - Labels</li>
+					</ul>
+				</div>
+
+				<div style="margin-top: 2rem; padding: 1.5rem; background: rgba(209, 35, 46, 0.1); border-radius: 8px;">
+					<p>✅ <strong>Ver Brand Kit completo:</strong> Abre <code>docs/BRAND_KIT.md</code></p>
+				</div>
+			</section>
+
+			<!-- RESOURCES SECTION -->
+			<section id="resources" class="content">
+				<div class="header">
+					<h1>📁 Recursos & Templates</h1>
+					<p class="header-text">Documentación, templates, tools</p>
+				</div>
+
+				<h2>📊 Dashboards & Herramientas</h2>
+				<div class="resources-grid">
+					<div class="resource-card" onclick="window.open('dashboards/calendar-view.html')">
+						<div class="resource-icon">📋</div>
+						<div class="resource-title">Parrilla de Contenido</div>
+						<div class="resource-desc">Visualiza 36 posts Q1 por semana y mes. Click para abrir →</div>
+					</div>
+					<div class="resource-card" onclick="window.open('dashboards/analytics.html')">
+						<div class="resource-icon">📊</div>
+						<div class="resource-title">Analytics Dashboard</div>
+						<div class="resource-desc">Importa CSV, mira métricas, exporta reportes →</div>
+					</div>
+					<div class="resource-card" onclick="window.open('dashboards/cheat-sheet.html')">
+						<div class="resource-icon">⚡</div>
+						<div class="resource-title">Cheat Sheet</div>
+						<div class="resource-desc">6 respuestas copy-paste para FAQ rápidas →</div>
+					</div>
+					<div class="resource-card" onclick="window.open('dashboards/index.html')">
+						<div class="resource-icon">🎛️</div>
+						<div class="resource-title">Hub Central</div>
+						<div class="resource-desc">Acceso centralizado a todas las herramientas →</div>
+					</div>
+				</div>
+
+				<h2>📝 Templates Descargables</h2>
+				<div class="resources-grid">
+					<div class="resource-card" onclick="downloadFile('templates/weekly-report.md')">
+						<div class="resource-icon">📄</div>
+						<div class="resource-title">Weekly Report</div>
+						<div class="resource-desc">Template para reporte semanal a Ale</div>
+					</div>
+					<div class="resource-card" onclick="downloadFile('templates/engagement-tracker.csv')">
+						<div class="resource-icon">📊</div>
+						<div class="resource-title">Engagement Tracker</div>
+						<div class="resource-desc">CSV para importar en Analytics</div>
+					</div>
+					<div class="resource-card" onclick="downloadFile('templates/faq-log.md')">
+						<div class="resource-icon">❓</div>
+						<div class="resource-title">FAQ Log</div>
+						<div class="resource-desc">Tracking de preguntas nuevas</div>
+					</div>
+					<div class="resource-card" onclick="downloadFile('calendar.json')">
+						<div class="resource-icon">📅</div>
+						<div class="resource-title">Calendar JSON</div>
+						<div class="resource-desc">Datos completos Q1 2025</div>
+					</div>
+				</div>
+
+				<h2>📚 Documentación</h2>
+				<div class="resources-grid">
+					<div class="resource-card" onclick="window.open('docs/WORKFLOW_PROCESS.md')">
+						<div class="resource-icon">⏱️</div>
+						<div class="resource-title">Workflow Real</div>
+						<div class="resource-desc">Lunes-Viernes con tiempos y checklist</div>
+					</div>
+					<div class="resource-card" onclick="window.open('docs/MODERATION_GUIDE.md')">
+						<div class="resource-icon">💬</div>
+						<div class="resource-title">Guía Moderación</div>
+						<div class="resource-desc">Frameworks para responder preguntas</div>
+					</div>
+					<div class="resource-card" onclick="window.open('docs/BRAND_KIT.md')">
+						<div class="resource-icon">🎨</div>
+						<div class="resource-title">Brand Kit Completo</div>
+						<div class="resource-desc">Colores, tono, rules detallados</div>
+					</div>
+					<div class="resource-card" onclick="window.open('docs/DEPLOYMENT.md')">
+						<div class="resource-icon">🚀</div>
+						<div class="resource-title">Deployment Guide</div>
+						<div class="resource-desc">GitHub Pages, VPS, configuración</div>
+					</div>
+				</div>
+
+				<h2>🔗 Enlaces Rápidos</h2>
+				<div class="resources-grid">
+					<div class="resource-card" onclick="window.open('bitaxus-cm-guide.html')">
+						<div class="resource-icon">📖</div>
+						<div class="resource-title">Guía Completa</div>
+						<div class="resource-desc">Todo en una página (brand, Q1, moderación)</div>
+					</div>
+					<div class="resource-card" onclick="window.open('https://github.com/alejagoguti-cpu/Redes_sociales')">
+						<div class="resource-icon">🔗</div>
+						<div class="resource-title">GitHub Repo</div>
+						<div class="resource-desc">Fuente de todo el proyecto</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	</div>
+
+	<!-- MODAL -->
+	<div id="modal" class="modal">
+		<div class="modal-content">
+			<span class="modal-close" onclick="closeModal()">&times;</span>
+			<div id="modalBody"></div>
+		</div>
+	</div>
+
+	<script>
+		const planningData = {
+			january: [
+				{ date: "Jue 2 ene", platform: "LinkedIn", time: "09:00", pillar: "Money", title: "Transferencias sin comisión" },
+				{ date: "Vie 3 ene", platform: "Instagram", time: "10:00", pillar: "Money", title: "Gráfico: ahorro mensual" },
+				{ date: "Lun 6 ene", platform: "LinkedIn", time: "09:00", pillar: "Security", title: "¿Qué es SAGRILAFT?" },
+				{ date: "Mié 8 ene", platform: "Twitter", time: "14:00", pillar: "Security", title: "2FA habilitado" },
+				{ date: "Vie 10 ene", platform: "Instagram", time: "10:00", pillar: "Business", title: "Nuevas features" },
+				{ date: "Lun 13 ene", platform: "LinkedIn", time: "09:00", pillar: "Money", title: "Casos de uso reales" },
+				{ date: "Mié 15 ene", platform: "Instagram", time: "10:00", pillar: "Stories", title: "Historia usuario #1" },
+				{ date: "Vie 17 ene", platform: "Twitter", time: "14:00", pillar: "Business", title: "API disponible" },
+				{ date: "Lun 20 ene", platform: "Twitter", time: "09:00", pillar: "Security", title: "Tips seguridad" },
+				{ date: "Mié 22 ene", platform: "LinkedIn", time: "14:00", pillar: "Business", title: "Métricas Q1" },
+				{ date: "Vie 24 ene", platform: "Instagram", time: "10:00", pillar: "Money", title: "Comparativa" },
+				{ date: "Lun 27 ene", platform: "LinkedIn", time: "09:00", pillar: "Stories", title: "Detrás de cámaras" },
+				{ date: "Mié 29 ene", platform: "Instagram", time: "10:00", pillar: "Money", title: "Ahorro automático" }
+			],
+			february: [
+				{ date: "Lun 3 feb", platform: "LinkedIn", time: "09:00", pillar: "Security", title: "Biometría" },
+				{ date: "Mié 5 feb", platform: "Twitter", time: "14:00", pillar: "Money", title: "Limites aumentados" },
+				{ date: "Vie 7 feb", platform: "Instagram", time: "10:00", pillar: "Business", title: "Integraciones" },
+				{ date: "Lun 10 feb", platform: "Instagram", time: "10:00", pillar: "Stories", title: "Cliente destacado" },
+				{ date: "Mié 12 feb", platform: "LinkedIn", time: "14:00", pillar: "Money", title: "Tax reporting" },
+				{ date: "Vie 14 feb", platform: "Twitter", time: "09:00", pillar: "Security", title: "Sin datos vendidos" },
+				{ date: "Lun 17 feb", platform: "LinkedIn", time: "09:00", pillar: "Business", title: "Reportes mensual" },
+				{ date: "Mié 19 feb", platform: "Instagram", time: "10:00", pillar: "Money", title: "Movimientos día" },
+				{ date: "Vie 21 feb", platform: "Twitter", time: "14:00", pillar: "Stories", title: "¿Cómo empezar?" },
+				{ date: "Lun 24 feb", platform: "Twitter", time: "09:00", pillar: "Security", title: "Recupera cuenta" },
+				{ date: "Mié 26 feb", platform: "LinkedIn", time: "14:00", pillar: "Business", title: "Para empresas" }
+			],
+			march: [
+				{ date: "Lun 3 mar", platform: "LinkedIn", time: "09:00", pillar: "Money", title: "Inversiones seguras" },
+				{ date: "Mié 5 mar", platform: "Instagram", time: "10:00", pillar: "Business", title: "Roadmap Q2" },
+				{ date: "Vie 7 mar", platform: "Twitter", time: "14:00", pillar: "Stories", title: "Hito 1M usuarios" },
+				{ date: "Lun 10 mar", platform: "Instagram", time: "10:00", pillar: "Security", title: "Backup automático" },
+				{ date: "Mié 12 mar", platform: "LinkedIn", time: "14:00", pillar: "Money", title: "Presupuestos" },
+				{ date: "Vie 14 mar", platform: "Twitter", time: "09:00", pillar: "Business", title: "Premium tier" },
+				{ date: "Lun 17 mar", platform: "LinkedIn", time: "09:00", pillar: "Stories", title: "Emprendedor año" },
+				{ date: "Mié 19 mar", platform: "Instagram", time: "10:00", pillar: "Money", title: "Criptomonedas" },
+				{ date: "Vie 21 mar", platform: "Twitter", time: "14:00", pillar: "Business", title: "Earnings call" },
+				{ date: "Lun 24 mar", platform: "Instagram", time: "10:00", pillar: "Security", title: "Fraude: cómo detectar" },
+				{ date: "Mié 26 mar", platform: "LinkedIn", time: "14:00", pillar: "Money", title: "Ahorro: regla 50/30/20" },
+				{ date: "Vie 28 mar", platform: "Twitter", time: "09:00", pillar: "Business", title: "Gracias Q1" }
+			]
+		};
+
+		function showSection(sectionId) {
+			document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
+			document.getElementById(sectionId).classList.add('active');
+			document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+			event.target.classList.add('active');
+		}
+
+		function loadMonth() {
+			const month = document.getElementById('monthSelect').value;
+			const data = planningData[month];
+			const tbody = document.getElementById('planningBody');
+			tbody.innerHTML = data.map(post => `
+				<tr>
+					<td>${post.date}</td>
+					<td>${post.platform}</td>
+					<td><strong>${post.time}</strong></td>
+					<td><span class="badge">${post.pillar}</span></td>
+					<td>${post.title}</td>
+				</tr>
+			`).join('');
+		}
+
+		function downloadFile(path) {
+			const link = document.createElement('a');
+			link.href = path;
+			link.download = path.split('/').pop();
+			link.click();
+		}
+
+		function closeModal() {
+			document.getElementById('modal').classList.remove('active');
+		}
+
+		// Init
+		loadMonth();
+	</script>
+</body>
+</html>
