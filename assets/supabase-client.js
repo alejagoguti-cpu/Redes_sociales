@@ -21,6 +21,22 @@
     client,
     setConnectionStatus,
 
+    async getSession() {
+      return client.auth.getSession();
+    },
+
+    async signIn(email, password) {
+      return client.auth.signInWithPassword({ email, password });
+    },
+
+    async signUp(email, password) {
+      return client.auth.signUp({ email, password });
+    },
+
+    async signOut() {
+      return client.auth.signOut();
+    },
+
     async loadMetrics() {
       const { data, error } = await client
         .from('engagement_metrics')
@@ -80,6 +96,17 @@
       const { data, error } = await client.from('posts').insert(rows).select();
       if (error) throw error;
       return data || [];
+    },
+
+    async updatePost(id, values) {
+      const { data, error } = await client.from('posts').update({ ...values, updated_at: new Date().toISOString() }).eq('id', id).select().single();
+      if (error) throw error;
+      return data;
+    },
+
+    async deletePost(id) {
+      const { error } = await client.from('posts').delete().eq('id', id);
+      if (error) throw error;
     }
   };
 })();
