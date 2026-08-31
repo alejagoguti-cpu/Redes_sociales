@@ -1,16 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-	<title>Bitaxus Community Manager</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Bitaxus Community Manager</title>
+	<style>
+		body {
+			font-family: system-ui;
+			background: #0A0A1A;
+			color: #E5E5E5;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			min-height: 100vh;
+			margin: 0;
+		}
+		.container {
+			text-align: center;
+		}
+		h1 {
+			font-size: 2rem;
+			margin-bottom: 1rem;
+			color: #D1232E;
+		}
+		.links {
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+			margin-top: 2rem;
+		}
+		a {
+			padding: 1rem 2rem;
+			background: #D1232E;
+			color: white;
+			text-decoration: none;
+			border-radius: 6px;
+			font-weight: 600;
+			transition: all 0.2s;
+		}
+		a:hover {
+			background: #B81C28;
+			transform: translateY(-2px);
+		}
+	</style>
 </head>
 <body>
-	<script>
-		// Redirect to the main guide
-		window.location.href = 'bitaxus-cm-guide.html';
-	</script>
-	<p>Redirigiendo a Bitaxus Community Manager...</p>
-	<p>Si no se redirige automáticamente, <a href="bitaxus-cm-guide.html">haz clic aquí</a>.</p>
+	<div class="container">
+		<h1>🎯 Bitaxus Community Manager</h1>
+		<p>Selecciona una opción:</p>
+		<div class="links">
+			<a href="dashboard.html">📊 Dashboard Principal (RECOMENDADO)</a>
+			<a href="bitaxus-cm-guide.html">📖 Guía Completa</a>
+			<a href="planeacion.html">📅 Planeación Simple</a>
+			<a href="dashboards/index.html">🎛️ Hub de Herramientas</a>
+		</div>
+	</div>
 </body>
 </html>
