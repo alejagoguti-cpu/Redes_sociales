@@ -1,0 +1,213 @@
+{
+  "quarter": "Q1 2025",
+  "version": "1.0.0",
+  "totalPosts": 36,
+  "totalBlogs": 3,
+  "pillars": [
+    {
+      "id": "money-movement",
+      "name": "Cómo mover dinero",
+      "description": "Guías sobre recibir del exterior, tasas, comisiones, tiempos",
+      "color": "#D1232E"
+    },
+    {
+      "id": "security-trust",
+      "name": "Seguridad y confianza",
+      "description": "Cómo identificar estafas, verificar canales, proteger fondos",
+      "color": "#D1232E"
+    },
+    {
+      "id": "business-decisions",
+      "name": "Decisiones comerciales",
+      "description": "Cuándo dar plazo, cómo negociar, financiar vs vender",
+      "color": "#D1232E"
+    },
+    {
+      "id": "real-stories",
+      "name": "Historias reales",
+      "description": "Casos de éxito, lecciones aprendidas, transparencia",
+      "color": "#D1232E"
+    }
+  ],
+  "weeks": [
+    {
+      "week": 1,
+      "dates": "3-9 enero",
+      "theme": "Establece la base: Problema + Solución = Bitaxus",
+      "posts": [
+        {
+          "day": "Lunes 3",
+          "platform": "LinkedIn",
+          "type": "Narrative",
+          "pillar": "money-movement",
+          "title": "Te pagaron en dólares. Ahora viene la parte que nadie te explicó",
+          "hook": "Narrativo. Ale cuenta su experiencia real como consultora",
+          "length": "~500 palabras",
+          "cta": "Conoce Bitaxus"
+        },
+        {
+          "day": "Miércoles 5",
+          "platform": "Instagram",
+          "type": "Carousel",
+          "pillar": "security-trust",
+          "title": "Las 6 preguntas que debes hacerte",
+          "description": "6 slides, una pregunta por slide",
+          "slides": 6,
+          "cta": "Si un servicio no responde estas 6 preguntas, no es tu servicio"
+        },
+        {
+          "day": "Viernes 7",
+          "platform": "Twitter/X",
+          "type": "Thread",
+          "pillar": "money-movement",
+          "title": "¿Qué tasa te aplican realmente?",
+          "description": "5-6 tweets desmenuzando dónde se va el dinero",
+          "tweets": 6,
+          "cta": "Bitaxus: transparencia desde el inicio"
+        }
+      ],
+      "blog": null
+    },
+    {
+      "week": 2,
+      "dates": "10-16 enero",
+      "theme": "Seguridad en canales digitales",
+      "posts": [
+        {
+          "day": "Lunes 10",
+          "platform": "LinkedIn",
+          "type": "Educational",
+          "pillar": "security-trust",
+          "title": "No es WhatsApp lo inseguro. Es lo que no sabes verificar",
+          "hook": "Abordar mito común, generar confianza",
+          "cta": "La seguridad depende de con quién hablas"
+        },
+        {
+          "day": "Miércoles 12",
+          "platform": "Instagram",
+          "type": "Checklist",
+          "pillar": "security-trust",
+          "title": "¿Cómo verificar que hablas con el Bitaxus real?",
+          "description": "Checklist visual con 5-6 señales de verificación",
+          "cta": "Desconfía de quien te prometa mover dinero sin preguntas"
+        },
+        {
+          "day": "Viernes 14",
+          "platform": "Twitter/X",
+          "type": "Thread",
+          "pillar": "security-trust",
+          "title": "SAGRILAFT no es una traba. Es lo que hace que funcione",
+          "description": "5 tweets educativos sobre validaciones",
+          "cta": "Validar no significa complicar. Significa proteger."
+        }
+      ],
+      "blog": null
+    },
+    {
+      "week": 3,
+      "dates": "17-23 enero",
+      "theme": "Profundización en seguridad",
+      "posts": [
+        {
+          "day": "Lunes 17",
+          "platform": "LinkedIn",
+          "type": "Educational",
+          "pillar": "money-movement",
+          "title": "Los 3 momentos donde pierdes dinero sin darte cuenta",
+          "description": "Desglose técnico de tasa, comisiones, giro",
+          "cta": "Bitaxus: te mostramos todo antes de confirmar"
+        },
+        {
+          "day": "Miércoles 19",
+          "platform": "Instagram",
+          "type": "Infographic",
+          "pillar": "money-movement",
+          "title": "USD $800 → Cuánto llega realmente",
+          "description": "Comparativa visual de servicios",
+          "cta": "La tasa es solo el principio. El costo total es el final."
+        },
+        {
+          "day": "Viernes 21",
+          "platform": "Twitter/X",
+          "type": "Thread",
+          "pillar": "money-movement",
+          "title": "¿Por cuántos días espera tu plata en tránsito?",
+          "description": "Comparación de tiempos por servicio",
+          "cta": "El tiempo es dinero. Literal."
+        }
+      ],
+      "blog": {
+        "week": 3,
+        "date": "17-23 enero",
+        "title": "La checklist de verificación: 6 cosas antes de elegir dónde mover tu dinero",
+        "wordCount": "1200-1500",
+        "pillar": "security-trust",
+        "sections": 6,
+        "faq": true
+      }
+    },
+    {
+      "week": 4,
+      "dates": "24-30 enero",
+      "theme": "Cierre enero - Momentum",
+      "posts": [
+        {
+          "day": "Lunes 24",
+          "platform": "LinkedIn",
+          "type": "Analysis",
+          "pillar": "money-movement",
+          "title": "Los 3 momentos donde pierdes dinero sin darte cuenta",
+          "description": "Desglose de tasa, comisión, giro",
+          "cta": "Bitaxus te muestra todo"
+        },
+        {
+          "day": "Miércoles 26",
+          "platform": "Instagram",
+          "type": "Carousel",
+          "pillar": "money-movement",
+          "title": "USD $800 → Cuánto llega realmente",
+          "description": "Comparativa visual",
+          "cta": "Compara el costo total, no solo comisión"
+        },
+        {
+          "day": "Viernes 28",
+          "platform": "Twitter/X",
+          "type": "Thread",
+          "pillar": "money-movement",
+          "title": "¿Por cuántos días espera tu plata en tránsito?",
+          "description": "Comparación de tiempos",
+          "cta": "Velocidad + claridad"
+        }
+      ],
+      "blog": null
+    }
+  ],
+  "february": {
+    "theme": "Decisiones Comerciales",
+    "posts": 12,
+    "blogs": 1,
+    "topics": [
+      "Cuándo darle plazo a un cliente",
+      "Financiar vs vender: la diferencia es el tiempo",
+      "Cómo negociar condiciones que funcionan para ti",
+      "Historias de usuarios Bitaxus - gestión de cartera"
+    ]
+  },
+  "march": {
+    "theme": "Historias Reales + Momentum",
+    "posts": 12,
+    "blogs": 1,
+    "topics": [
+      "Caso de éxito: Freelancer que cobró en 5 plataformas",
+      "Caso de éxito: Emprendedor que negocia mejor plazos",
+      "Cómo Bitaxus IA te ayuda sin decidir por ti",
+      "Refuerzo de valores centrales"
+    ]
+  },
+  "metadata": {
+    "created": "2024-12-15",
+    "updated": "2024-08-31",
+    "author": "Alejandra Torres",
+    "version": "1.0.0"
+  }
+}
