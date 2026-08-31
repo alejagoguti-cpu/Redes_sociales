@@ -46,6 +46,14 @@ Herramienta completa e interactiva para gestionar la comunidad de Bitaxus. Inclu
 - Exportar datos — JSON, CSV, Markdown
 - Atajos de teclado — Búsqueda rápida, navigation
 
+### ✦ Centro Editorial conectado
+- Fuente única de verdad para ideas, copy, objetivo, estado y responsable.
+- Sincronización automática con la parrilla/calendario mediante una capa de datos compartida.
+- Analytics puede cargar el pipeline editorial y completar las métricas de rendimiento.
+- Exportación de un paquete JSON versionado para ingresar información en SUA.
+
+> **Nota de integración:** el repositorio no tenía endpoint ni credenciales de SUA configurados. La exportación deja listo el contrato `source`, `version`, `exportedAt` y `posts`; cuando se habilite el endpoint/autenticación de SUA, la función `buildSUAPayload()` puede reemplazarse por una llamada API sin cambiar los módulos.
+
 ### 📊 Flujo Real Operativo
 - **Lunes (45 min)** — Planificación: revisa fin de semana, programa 3 posts
 - **Martes-Jueves (15-30 min)** — Moderación: responde FAQ, participa en conversaciones

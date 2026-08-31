@@ -383,7 +383,7 @@
 		<header>
 			<div>
 				<h1>Analytics Dashboard</h1>
-				<p style="color: var(--color-text-secondary); font-size: 0.95rem; margin-top: 0.5rem;">Bitaxus Community Manager</p>
+				<p style="color: var(--color-text-secondary); font-size: 0.95rem; margin-top: 0.5rem;">Bitaxus Community Manager · conectado al Centro Editorial</p>
 			</div>
 			<div class="header-controls">
 				<button class="button-secondary" onclick="toggleTheme()">🌙 Theme</button>
@@ -408,12 +408,13 @@
 			<button onclick="applyFilters()">Apply Filters</button>
 		</div>
 
-		<div class="upload-section">
-			<p><strong>Upload Engagement Data</strong></p>
-			<p style="font-size: 0.9rem;">Import CSV from your engagement tracker</p>
-			<input type="file" id="csvFile" accept=".csv">
-			<button onclick="document.getElementById('csvFile').click()">📁 Choose File</button>
-		</div>
+			<div class="upload-section">
+				<p><strong>Upload Engagement Data</strong></p>
+				<p style="font-size: 0.9rem;">Import CSV from your engagement tracker</p>
+				<input type="file" id="csvFile" accept=".csv">
+				<button onclick="document.getElementById('csvFile').click()">📁 Choose File</button>
+				<button class="button-secondary" onclick="loadEditorialPosts()">↻ Load Editorial Pipeline</button>
+			</div>
 
 		<div class="export-buttons">
 			<button onclick="exportJSON()">📊 Export as JSON</button>
@@ -497,8 +498,20 @@
 		</div>
 	</div>
 
-	<script>
-		let data = [];
+		<script src="../assets/content-store.js"></script>
+		<script>
+			let data = [];
+
+			function loadEditorialPosts() {
+				const editorial = (window.BitaxusEditorial ? BitaxusEditorial.getPosts() : []);
+				const existing = new Set(data.map(row => `${row.Date}|${row.Platform}|${row['Post Title']}`));
+				const imported = editorial.filter(post => !existing.has(`${post.date}|${post.platform}|${post.title}`)).map(post => ({
+					Date: post.date, Platform: post.platform, 'Post Title': post.title, 'Post Type': post.format || 'Post', Pillar: post.pillar,
+					'Engagement Rate': 0, Likes: 0, Comments: 0, Shares: 0, Impressions: 0, Status: post.status
+				}));
+				data = [...data, ...imported]; saveData(); updateDashboard();
+				alert(`${imported.length} piezas del Centro Editorial cargadas. Agrega métricas cuando estén disponibles.`);
+			}
 
 		// Load data from localStorage
 		function loadData() {

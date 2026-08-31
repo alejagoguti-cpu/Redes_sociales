@@ -404,7 +404,7 @@
 	<div class="container">
 		<header>
 			<h1>Calendario Q1 2025</h1>
-			<p class="subtitle">Visualiza todos los posts programados para el trimestre</p>
+			<p class="subtitle">Vista viva del Centro Editorial · cambios sincronizados con el pipeline y SUA</p>
 		</header>
 
 		<div class="stats">
@@ -457,7 +457,8 @@
 		</div>
 	</div>
 
-	<script>
+		<script src="../assets/content-store.js"></script>
+		<script>
 		let calendarData = {};
 		let customPosts = []; // Posts del Content Manager
 		let currentMonth = 0; // 0 = Enero, 1 = Febrero, 2 = Marzo
@@ -478,7 +479,7 @@
 		}
 
 		function loadCustomPosts() {
-			customPosts = JSON.parse(localStorage.getItem('bitaxusPosts')) || [];
+			customPosts = BitaxusEditorial.getPosts();
 		}
 
 		// Listen for changes in localStorage (from Content Manager in another tab/window)

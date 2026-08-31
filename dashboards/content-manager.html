@@ -429,7 +429,7 @@
 		<header style="display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; flex-wrap: wrap;">
 			<div>
 				<h1>Gestor de Contenido</h1>
-				<p class="subtitle">Agrega y gestiona posts de Q1 2025</p>
+				<p class="subtitle">Centro Editorial · planifica, redacta, aprueba y entrega contenido a SUA</p>
 			</div>
 			<a href="interactive-calendar.html" style="align-self: center; background: var(--border); color: var(--text); padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600; transition: all 0.2s ease;"
 				onmouseover="this.style.background='var(--red)'"
@@ -441,7 +441,7 @@
 		<div class="layout">
 			<!-- Form -->
 			<div class="form-section">
-				<div class="form-title">➕ Nuevo Post</div>
+				<div class="form-title">✦ Nueva pieza editorial</div>
 
 				<div class="success-message" id="successMsg">✓ Post agregado exitosamente</div>
 
@@ -484,12 +484,36 @@
 						<input type="text" id="title" placeholder="Ej: Tips de seguridad en crypto" required>
 					</div>
 
-					<div class="form-group">
-						<label>Descripción (opcional)</label>
-						<textarea id="description" placeholder="Detalles adicionales del post..."></textarea>
-					</div>
+						<div class="form-group">
+							<label>Descripción (opcional)</label>
+							<textarea id="description" placeholder="Detalles adicionales del post..."></textarea>
+						</div>
 
-					<button type="submit">Agregar Post</button>
+						<div class="form-group">
+							<label>Copy listo para publicar</label>
+							<textarea id="copy" placeholder="Escribe aquí el texto final para la comunidad..."></textarea>
+						</div>
+
+						<div class="form-row">
+							<div class="form-group">
+								<label>Estado</label>
+								<select id="status">
+									<option>Idea</option><option>En redacción</option><option>En revisión</option>
+									<option>Aprobado</option><option>Programado</option><option>Publicado</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label>Responsable</label>
+								<input type="text" id="owner" value="Community Manager" placeholder="Nombre o rol">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label>Objetivo / CTA (opcional)</label>
+							<input type="text" id="objective" placeholder="Educación · Conoce más en bitaxus.com">
+						</div>
+
+						<button type="submit">Guardar en Centro Editorial</button><button type="button" class="btn-small" style="width:100%;margin-top:.75rem;" onclick="exportSUA()">⇩ Exportar paquete para SUA</button>
 				</form>
 
 				<div class="stats-grid">
@@ -519,128 +543,17 @@
 				</div>
 			</div>
 		</div>
-	</div>
-
-	<script>
-		// Load from localStorage on page load
-		let posts = JSON.parse(localStorage.getItem('bitaxusPosts')) || [];
-
-		// Set today's date as default
-		document.getElementById('date').valueAsDate = new Date();
-
-		function handleSubmit(event) {
-			event.preventDefault();
-
-			const newPost = {
-				id: Date.now(),
-				date: document.getElementById('date').value,
-				platform: document.getElementById('platform').value,
-				time: document.getElementById('time').value,
-				pillar: document.getElementById('pillar').value,
-				title: document.getElementById('title').value,
-				description: document.getElementById('description').value,
-			};
-
-			posts.unshift(newPost); // Add to beginning
-			localStorage.setItem('bitaxusPosts', JSON.stringify(posts));
-
-			// Show success message
-			const successMsg = document.getElementById('successMsg');
-			successMsg.classList.add('show');
-			setTimeout(() => successMsg.classList.remove('show'), 3000);
-
-			// Reset form
-			document.getElementById('postForm').reset();
-			document.getElementById('date').valueAsDate = new Date();
-
-			// Update display
-			renderPosts();
-			updateStats();
-		}
-
-		function deletePost(id) {
-			posts = posts.filter(p => p.id !== id);
-			localStorage.setItem('bitaxusPosts', JSON.stringify(posts));
-			renderPosts();
-			updateStats();
-		}
-
-		function editPost(id) {
-			const post = posts.find(p => p.id === id);
-			if (post) {
-				document.getElementById('date').value = post.date;
-				document.getElementById('platform').value = post.platform;
-				document.getElementById('time').value = post.time;
-				document.getElementById('pillar').value = post.pillar;
-				document.getElementById('title').value = post.title;
-				document.getElementById('description').value = post.description || '';
-
-				deletePost(id);
-				window.scrollTo({ top: 0, behavior: 'smooth' });
-			}
-		}
-
-		function renderPosts() {
-			const postsList = document.getElementById('postsList');
-
-			if (posts.length === 0) {
-				postsList.innerHTML = `
-					<div class="empty-state">
-						<div class="empty-state-icon">📝</div>
-						<p>No hay posts todavía. ¡Agrega el primero!</p>
-					</div>
-				`;
-				return;
-			}
-
-			postsList.innerHTML = posts.map(post => `
-				<div class="post-card">
-					<div class="post-header">
-						<div class="post-date">${formatDate(post.date)}</div>
-						<div class="post-platform">${post.platform}</div>
-					</div>
-					<div class="post-title">${post.title}</div>
-					<div class="post-meta">
-						<div class="meta-item">🕐 ${post.time}</div>
-						<div class="post-pillar">${post.pillar}</div>
-					</div>
-					${post.description ? `<div style="color: var(--gray); font-size: 0.9rem; margin-bottom: 0.75rem;">${post.description}</div>` : ''}
-					<div class="post-actions">
-						<button class="btn-small" onclick="editPost(${post.id})">Editar</button>
-						<button class="btn-small" onclick="deletePost(${post.id})">Eliminar</button>
-					</div>
-				</div>
-			`).join('');
-		}
-
-		function updateStats() {
-			document.getElementById('totalCount').textContent = posts.length;
-			document.getElementById('postsCountText').textContent =
-				posts.length === 0 ? '0 posts agregados' :
-				posts.length === 1 ? '1 post agregado' :
-				`${posts.length} posts agregados`;
-
-			const platforms = new Set(posts.map(p => p.platform));
-			document.getElementById('platformCount').textContent = platforms.size;
-		}
-
-		function formatDate(dateStr) {
-			const date = new Date(dateStr + 'T00:00:00');
-			return new Intl.DateTimeFormat('es-ES', {
-				weekday: 'short',
-				month: 'short',
-				day: 'numeric'
-			}).format(date);
-		}
-
-		// Initial render
-		renderPosts();
-		updateStats();
-
-		// Auto-save every 5 seconds (backup)
-		setInterval(() => {
-			localStorage.setItem('bitaxusPosts', JSON.stringify(posts));
-		}, 5000);
-	</script>
+	</div><script src="../assets/content-store.js"></script><script>
+let posts=BitaxusEditorial.getPosts(), editingId=null; document.getElementById('date').valueAsDate=new Date();
+function value(id){return document.getElementById(id).value.trim()}
+function handleSubmit(e){e.preventDefault();let item={id:editingId||undefined,date:value('date'),platform:value('platform'),time:value('time'),pillar:value('pillar'),title:value('title'),description:value('description'),copy:value('copy'),status:value('status'),owner:value('owner'),objective:value('objective'),updatedAt:new Date().toISOString()};BitaxusEditorial.upsert(item);posts=BitaxusEditorial.getPosts();editingId=null;let m=document.getElementById('successMsg');m.textContent='✓ Pieza guardada y sincronizada con todos los módulos';m.classList.add('show');setTimeout(()=>m.classList.remove('show'),3000);document.getElementById('postForm').reset();document.getElementById('date').valueAsDate=new Date();document.getElementById('owner').value='Community Manager';renderPosts();updateStats()}
+function deletePost(id){if(confirm('¿Eliminar esta pieza del Centro Editorial?')){BitaxusEditorial.remove(id);posts=BitaxusEditorial.getPosts();renderPosts();updateStats()}}
+function editPost(id){let p=posts.find(x=>x.id===id);if(!p)return;editingId=id;['date','platform','time','pillar','title','description','copy','status','owner','objective'].forEach(k=>{let e=document.getElementById(k);if(e)e.value=p[k]||''});scrollTo({top:0,behavior:'smooth'})}
+function esc(t){return String(t||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function renderPosts(){let l=document.getElementById('postsList');if(!posts.length){l.innerHTML='<div class="empty-state"><div class="empty-state-icon">✦</div><p>No hay piezas todavía. Crea la primera desde el Centro Editorial.</p></div>';return}l.innerHTML=posts.map(p=>`<div class="post-card"><div class="post-header"><div class="post-date">${formatDate(p.date)} · ${p.time}</div><div class="post-platform">${esc(p.platform)}</div></div><div class="post-title">${esc(p.title)}</div><div class="post-meta"><div class="meta-item">${esc(p.format||'Post')}</div><div class="post-pillar">${esc(p.pillar)}</div><div class="post-pillar">${esc(p.status)}</div></div>${p.copy?`<div style="color:var(--gray);font-size:.9rem;margin-bottom:.75rem;white-space:pre-wrap;">${esc(p.copy)}</div>`:''}<div style="font-size:.78rem;color:var(--text-secondary);">Responsable: ${esc(p.owner)} · ${esc(p.objective||'Sin objetivo')}</div><div class="post-actions"><button class="btn-small" onclick="editPost('${p.id}')">Editar</button><button class="btn-small" onclick="deletePost('${p.id}')">Eliminar</button></div></div>`).join('')}
+function updateStats(){document.getElementById('totalCount').textContent=posts.length;document.getElementById('postsCountText').textContent=`${posts.length} ${posts.length===1?'pieza':'piezas'} en el pipeline`;document.getElementById('platformCount').textContent=new Set(posts.map(p=>p.platform)).size}
+function formatDate(d){return new Intl.DateTimeFormat('es-ES',{weekday:'short',month:'short',day:'numeric'}).format(new Date(d+'T00:00:00'))}
+function exportSUA(){let b=new Blob([JSON.stringify(BitaxusEditorial.buildSUAPayload(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`bitaxus-sua-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href)}
+window.addEventListener('storage',e=>{if(e.key==='bitaxusEditorialPosts'||e.key==='bitaxusPosts'){posts=BitaxusEditorial.getPosts();renderPosts();updateStats()}});renderPosts();updateStats();</script>
 </body>
 </html>
