@@ -403,8 +403,7 @@
 
 			<div class="nav-section">
 				<div class="nav-title">📊 Principal</div>
-				<a class="nav-link active" onclick="showSection('planning')">📅 Planeación</a>
-				<a class="nav-link" onclick="showSection('brand')">🎨 Brand Kit</a>
+					<a class="nav-link active" onclick="showSection('brand')">🎨 Brand Kit</a>
 				<a class="nav-link" onclick="showSection('resources')">📁 Recursos</a>
 			</div>
 
@@ -434,55 +433,6 @@
 
 		<!-- MAIN CONTENT -->
 		<div class="main">
-			<!-- PLANNING SECTION -->
-			<section id="planning" class="content active">
-				<div class="header">
-					<h1>📅 Planeación Q1 2025</h1>
-					<p class="header-text">Qué publicar cada día, mes a mes, con horarios</p>
-				</div>
-
-				<div class="stats">
-					<div class="stat">
-						<div class="stat-value">36</div>
-						<div class="stat-label">Posts Q1</div>
-					</div>
-					<div class="stat">
-						<div class="stat-value">3</div>
-						<div class="stat-label">Posts/Semana</div>
-					</div>
-					<div class="stat">
-						<div class="stat-value">3</div>
-						<div class="stat-label">Blogs</div>
-					</div>
-					<div class="stat">
-						<div class="stat-value">4</div>
-						<div class="stat-label">Pilares</div>
-					</div>
-				</div>
-
-				<div class="controls">
-					<select id="monthSelect" onchange="loadMonth()">
-						<option value="january">Enero</option>
-						<option value="february">Febrero</option>
-						<option value="march">Marzo</option>
-					</select>
-					<button onclick="window.print()">🖨️ Imprimir Mes</button>
-				</div>
-
-				<table id="planningTable">
-					<thead>
-						<tr>
-							<th>Fecha</th>
-							<th>Plataforma</th>
-							<th>Hora</th>
-							<th>Pilar</th>
-							<th>Tema</th>
-						</tr>
-					</thead>
-					<tbody id="planningBody"></tbody>
-				</table>
-			</section>
-
 			<!-- BRAND KIT SECTION -->
 			<section id="brand" class="content">
 				<div class="header">
