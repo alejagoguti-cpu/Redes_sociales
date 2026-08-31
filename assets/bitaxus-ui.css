@@ -659,3 +659,28 @@ body.analytics-page::after {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+/* Supabase connection panel */
+.supabase-auth {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1.25rem 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(209,35,46,.12), rgba(255,255,255,.03));
+}
+.supabase-auth > div:first-child { display: grid; gap: .3rem; }
+.supabase-auth span { color: var(--color-text-secondary, #9ca3af); font-size: .78rem; }
+.supabase-auth span[data-state="success"] { color: #7ee2ad; }
+.supabase-auth span[data-state="warning"] { color: #f5c26b; }
+.supabase-auth span[data-state="error"] { color: #ff8790; }
+.auth-fields { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .55rem; }
+.auth-fields input { min-width: 170px; }
+@media (max-width: 760px) {
+  .supabase-auth { align-items: stretch; flex-direction: column; }
+  .auth-fields { justify-content: stretch; }
+  .auth-fields input, .auth-fields button { flex: 1 1 100%; min-width: 0; }
+}

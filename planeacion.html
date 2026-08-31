@@ -320,6 +320,8 @@
 		}
 	</style>
 	<link rel="stylesheet" href="assets/bitaxus-ui.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="assets/supabase-client.js"></script>
 </head>
 <body class="planning-page">
 	<nav class="site-nav" aria-label="Navegación principal">
@@ -337,7 +339,8 @@
 	<div class="container">
 		<header>
 			<h1>📅 Planeación Bitaxus 2025</h1>
-			<p class="subtitle">Qué se publica cada día, mes a mes</p>
+				<p class="subtitle">Qué se publica cada día, mes a mes</p>
+				<p class="supabase-sync-note" data-supabase-status data-state="info">Conectando calendario…</p>
 		</header>
 
 		<div class="controls">
@@ -691,8 +694,41 @@
 			document.getElementById('modal').classList.remove('active');
 		}
 
-		// Load on start
-		loadMonth();
+			async function syncPlanningFromSupabase() {
+				try {
+					const remotePosts = await bitaxusData.loadPosts();
+					if (remotePosts.length) {
+						const weeks = new Map();
+						remotePosts.forEach((post) => {
+							const date = new Date(`${post.scheduled_date}T12:00:00Z`);
+							const dayNumber = date.getUTCDate();
+							const weekNumber = Math.ceil(dayNumber / 7);
+							if (!weeks.has(weekNumber)) weeks.set(weekNumber, { week: weekNumber, start: '', end: '', posts: [], blog: null });
+							const day = new Intl.DateTimeFormat('es-CO', { weekday: 'long', timeZone: 'UTC' }).format(date);
+							const platform = post.platform === 'LinkedIn' ? 'LN' : post.platform === 'Instagram' ? 'IG' : 'TW';
+							weeks.get(weekNumber).posts.push({
+								date: dayNumber,
+								day: day.charAt(0).toUpperCase() + day.slice(1),
+								platform,
+								time: (post.scheduled_time || '09:00').slice(0, 5),
+								pillar: post.pillar || 'General',
+								title: post.title,
+								content: post.description || ''
+							});
+						});
+						calendar.january.weeks = Array.from(weeks.values()).sort((a, b) => a.week - b.week);
+						calendar.january.totalPosts = remotePosts.length;
+					}
+					bitaxusData.setConnectionStatus('Calendario sincronizado con Supabase', 'success');
+				} catch (error) {
+					bitaxusData.setConnectionStatus('Calendario local · Supabase pendiente', 'warning');
+					console.warn('No se pudo leer el calendario remoto:', error.message);
+				}
+				loadMonth();
+			}
+
+			// Load on start
+			syncPlanningFromSupabase();
 	</script>
 </body>
 </html>

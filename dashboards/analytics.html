@@ -378,6 +378,8 @@
 		}
 	</style>
 	<link rel="stylesheet" href="../assets/bitaxus-ui.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="../assets/supabase-client.js"></script>
 </head>
 <body class="analytics-page">
 	<nav class="site-nav" aria-label="Navegación principal">
@@ -403,6 +405,20 @@
 				<button onclick="printReport()">🖨️ Print</button>
 			</div>
 		</header>
+
+		<div class="supabase-auth" aria-label="Conexión a Supabase">
+			<div>
+				<strong>Datos sincronizados</strong>
+				<span data-supabase-status data-state="info">Conectando con Supabase…</span>
+			</div>
+			<div class="auth-fields">
+				<input type="email" id="authEmail" placeholder="Correo de administrador" autocomplete="email">
+				<input type="password" id="authPassword" placeholder="Contraseña" autocomplete="current-password">
+				<button class="button-secondary" onclick="signInToBitaxus()">Entrar</button>
+				<button class="button-secondary" onclick="signUpToBitaxus()">Crear acceso</button>
+				<button class="button-secondary" onclick="signOutFromBitaxus()" hidden id="signOutButton">Salir</button>
+			</div>
+		</div>
 
 		<div class="filters-bar">
 			<select id="platformFilter">
@@ -510,20 +526,64 @@
 		</div>
 	</div>
 
-	<script>
-		let data = [];
+		<script>
+			let data = [];
+			let isSupabaseUser = false;
 
-		// Load data from localStorage
-		function loadData() {
-			const saved = localStorage.getItem('analyticsData');
-			data = saved ? JSON.parse(saved) : [];
-			updateDashboard();
-		}
+			function getAuthCredentials() {
+				return {
+					email: document.getElementById('authEmail').value.trim(),
+					password: document.getElementById('authPassword').value
+				};
+			}
 
-		// Save data to localStorage
-		function saveData() {
-			localStorage.setItem('analyticsData', JSON.stringify(data));
-		}
+			async function signInToBitaxus() {
+				const { email, password } = getAuthCredentials();
+				if (!email || !password) return alert('Escribe tu correo y contraseña.');
+				const { error } = await bitaxusSupabase.auth.signInWithPassword({ email, password });
+				if (error) alert(error.message);
+			}
+
+			async function signUpToBitaxus() {
+				const { email, password } = getAuthCredentials();
+				if (!email || password.length < 6) return alert('Usa un correo válido y una contraseña de al menos 6 caracteres.');
+				const { error } = await bitaxusSupabase.auth.signUp({ email, password });
+				if (error) alert(error.message);
+				else alert('Acceso creado. Revisa tu correo si Supabase solicita confirmación.');
+			}
+
+			async function signOutFromBitaxus() {
+				const { error } = await bitaxusSupabase.auth.signOut();
+				if (error) alert(error.message);
+			}
+
+			// Load data from Supabase, with localStorage as an offline fallback
+			async function loadData() {
+				try {
+					data = await bitaxusData.loadMetrics();
+					localStorage.setItem('analyticsData', JSON.stringify(data));
+					bitaxusData.setConnectionStatus('Sincronizado con Supabase', 'success');
+				} catch (error) {
+					const saved = localStorage.getItem('analyticsData');
+					data = saved ? JSON.parse(saved) : [];
+					bitaxusData.setConnectionStatus('Modo local: inicia sesión para sincronizar', 'warning');
+					console.warn('No se pudo leer Supabase:', error.message);
+				}
+				updateDashboard();
+			}
+
+			// Save data locally and sync to Supabase when authenticated
+			async function saveData() {
+				localStorage.setItem('analyticsData', JSON.stringify(data));
+				if (!isSupabaseUser) return;
+				try {
+					await bitaxusData.insertMetrics(data);
+					bitaxusData.setConnectionStatus('Sincronizado con Supabase', 'success');
+				} catch (error) {
+					bitaxusData.setConnectionStatus('Error al sincronizar', 'error');
+					console.warn('No se pudo guardar en Supabase:', error.message);
+				}
+			}
 
 		// Parse CSV file
 		document.getElementById('csvFile').addEventListener('change', function(e) {
@@ -531,7 +591,7 @@
 			if (!file) return;
 
 			const reader = new FileReader();
-			reader.onload = function(event) {
+			reader.onload = async function(event) {
 				const csv = event.target.result;
 				const lines = csv.split('\n');
 				const headers = lines[0].split(',').map(h => h.trim());
@@ -549,9 +609,14 @@
 					data.push(row);
 				}
 
-				saveData();
-				updateDashboard();
-				alert(`Imported ${data.length} rows`);
+					if (isSupabaseUser) {
+						await saveData();
+					} else {
+						localStorage.setItem('analyticsData', JSON.stringify(data));
+						alert('Inicia sesión para sincronizar estas métricas con Supabase.');
+					}
+					updateDashboard();
+					alert(`Imported ${data.length} rows`);
 			};
 
 			reader.readAsText(file);
@@ -786,13 +851,14 @@
 		}
 
 		// Clear data
-		function clearData() {
-			if (confirm('Clear all data? This cannot be undone.')) {
-				data = [];
-				saveData();
-				updateDashboard();
+			async function clearData() {
+				if (confirm('Clear all data? This cannot be undone.')) {
+					data = [];
+					localStorage.removeItem('analyticsData');
+					if (isSupabaseUser) await bitaxusData.clearMetrics();
+					updateDashboard();
+				}
 			}
-		}
 
 		// Print report
 		function printReport() {
@@ -808,13 +874,23 @@
 		}
 
 		// Initialize
-		window.addEventListener('DOMContentLoaded', () => {
-			const theme = localStorage.getItem('theme');
-			if (theme) {
-				document.documentElement.setAttribute('data-theme', theme);
-			}
-			loadData();
-		});
+			window.addEventListener('DOMContentLoaded', async () => {
+				const theme = localStorage.getItem('theme');
+				if (theme) {
+					document.documentElement.setAttribute('data-theme', theme);
+				}
+				const { data: { session } } = await bitaxusSupabase.auth.getSession();
+				isSupabaseUser = Boolean(session);
+				document.getElementById('signOutButton').hidden = !isSupabaseUser;
+				if (isSupabaseUser) bitaxusData.setConnectionStatus('Sesión activa · sincronizando', 'success');
+				bitaxusSupabase.auth.onAuthStateChange((_event, currentSession) => {
+					isSupabaseUser = Boolean(currentSession);
+					document.getElementById('signOutButton').hidden = !isSupabaseUser;
+					bitaxusData.setConnectionStatus(isSupabaseUser ? 'Sesión activa · Supabase conectado' : 'Modo lectura · inicia sesión para editar', isSupabaseUser ? 'success' : 'warning');
+					if (isSupabaseUser) loadData();
+				});
+				loadData();
+			});
 	</script>
 </body>
 </html>
