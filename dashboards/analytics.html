@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Bitaxus Community Manager - Analytics Dashboard</title>
+	<style>
+		:root {
+			--color-red-primary: #D1232E;
+			--color-dark-bg: #0A0A1A;
+			--color-dark-card: #1A1A2E;
+			--color-dark-border: #2D2D44;
+			--color-text-primary: #E5E5E5;
+			--color-text-secondary: #999999;
+			--color-gray-light: #CCCCCC;
+			--color-success: #10B981;
+			--color-warning: #F59E0B;
+			--color-neutral: #6B7280;
+		}
+
+		@media (prefers-color-scheme: dark) {
+			:root:not([data-theme="light"]) {
+				--color-red-primary: #D1232E;
+				--color-dark-bg: #0A0A1A;
+				--color-dark-card: #1A1A2E;
+				--color-dark-border: #2D2D44;
+				--color-text-primary: #E5E5E5;
+				--color-text-secondary: #999999;
+			}
+		}
+
+		:root[data-theme="dark"] {
+			--color-red-primary: #D1232E;
+			--color-dark-bg: #0A0A1A;
+			--color-dark-card: #1A1A2E;
+			--color-dark-border: #2D2D44;
+			--color-text-primary: #E5E5E5;
+			--color-text-secondary: #999999;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+			background-color: var(--color-dark-bg);
+			color: var(--color-text-primary);
+			line-height: 1.6;
+		}
+
+		.container {
+			max-width: 1400px;
+			margin: 0 auto;
+			padding: 2rem;
+		}
+
+		header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 3rem;
+			gap: 1rem;
+			flex-wrap: wrap;
+		}
+
+		h1 {
+			font-size: 2rem;
+			font-weight: 600;
+		}
+
+		.header-controls {
+			display: flex;
+			gap: 1rem;
+			align-items: center;
+			flex-wrap: wrap;
+		}
+
+		select, input[type="date"], input[type="file"] {
+			background-color: var(--color-dark-card);
+			border: 1px solid var(--color-dark-border);
+			color: var(--color-text-primary);
+			padding: 0.75rem;
+			border-radius: 6px;
+			font-size: 0.95rem;
+			cursor: pointer;
+		}
+
+		select:focus, input[type="date"]:focus, input[type="file"]:focus {
+			outline: none;
+			border-color: var(--color-red-primary);
+			box-shadow: 0 0 0 2px rgba(209, 35, 46, 0.1);
+		}
+
+		button {
+			background-color: var(--color-red-primary);
+			color: white;
+			border: none;
+			padding: 0.75rem 1.5rem;
+			border-radius: 6px;
+			font-size: 0.95rem;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		button:hover {
+			background-color: #B81C28;
+			transform: translateY(-2px);
+		}
+
+		button:active {
+			transform: translateY(0);
+		}
+
+		.button-secondary {
+			background-color: var(--color-dark-card);
+			color: var(--color-text-primary);
+			border: 1px solid var(--color-dark-border);
+		}
+
+		.button-secondary:hover {
+			background-color: var(--color-dark-border);
+			border-color: var(--color-red-primary);
+		}
+
+		.section-title {
+			font-size: 1.3rem;
+			font-weight: 600;
+			margin-top: 3rem;
+			margin-bottom: 1.5rem;
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+		}
+
+		.section-title::before {
+			content: '';
+			width: 4px;
+			height: 24px;
+			background-color: var(--color-red-primary);
+			border-radius: 2px;
+		}
+
+		.metrics-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+			gap: 1.5rem;
+			margin-bottom: 2rem;
+		}
+
+		.metric-card {
+			background-color: var(--color-dark-card);
+			border: 1px solid var(--color-dark-border);
+			padding: 1.5rem;
+			border-radius: 8px;
+			transition: all 0.3s ease;
+		}
+
+		.metric-card:hover {
+			border-color: var(--color-red-primary);
+			box-shadow: 0 4px 12px rgba(209, 35, 46, 0.15);
+		}
+
+		.metric-label {
+			color: var(--color-text-secondary);
+			font-size: 0.9rem;
+			margin-bottom: 0.75rem;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+		}
+
+		.metric-value {
+			font-size: 2rem;
+			font-weight: 600;
+			color: var(--color-text-primary);
+			margin-bottom: 0.5rem;
+		}
+
+		.metric-change {
+			font-size: 0.85rem;
+			color: var(--color-text-secondary);
+		}
+
+		.metric-change.positive {
+			color: var(--color-success);
+		}
+
+		.metric-change.negative {
+			color: #EF4444;
+		}
+
+		.chart-container {
+			background-color: var(--color-dark-card);
+			border: 1px solid var(--color-dark-border);
+			padding: 2rem;
+			border-radius: 8px;
+			margin-bottom: 2rem;
+			min-height: 300px;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.chart-title {
+			font-size: 1.1rem;
+			font-weight: 500;
+			margin-bottom: 1rem;
+		}
+
+		canvas {
+			flex: 1;
+		}
+
+		.table-container {
+			background-color: var(--color-dark-card);
+			border: 1px solid var(--color-dark-border);
+			border-radius: 8px;
+			overflow-x: auto;
+			margin-bottom: 2rem;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 0.9rem;
+		}
+
+		thead {
+			background-color: rgba(209, 35, 46, 0.1);
+			border-bottom: 1px solid var(--color-dark-border);
+		}
+
+		th {
+			padding: 1rem;
+			text-align: left;
+			font-weight: 600;
+			color: var(--color-red-primary);
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			font-size: 0.85rem;
+		}
+
+		td {
+			padding: 1rem;
+			border-bottom: 1px solid var(--color-dark-border);
+		}
+
+		tbody tr:hover {
+			background-color: rgba(209, 35, 46, 0.05);
+		}
+
+		.platform-badge {
+			display: inline-block;
+			padding: 0.35rem 0.75rem;
+			border-radius: 4px;
+			font-size: 0.8rem;
+			font-weight: 500;
+		}
+
+		.platform-linkedin {
+			background-color: rgba(0, 119, 181, 0.2);
+			color: #0077B5;
+		}
+
+		.platform-instagram {
+			background-color: rgba(229, 45, 168, 0.2);
+			color: #E52D8E;
+		}
+
+		.platform-twitter {
+			background-color: rgba(31, 160, 224, 0.2);
+			color: #1FA0E0;
+		}
+
+		.upload-section {
+			background-color: var(--color-dark-card);
+			border: 2px dashed var(--color-dark-border);
+			padding: 2rem;
+			border-radius: 8px;
+			text-align: center;
+			margin-bottom: 2rem;
+			transition: all 0.3s ease;
+		}
+
+		.upload-section:hover {
+			border-color: var(--color-red-primary);
+		}
+
+		.upload-section p {
+			color: var(--color-text-secondary);
+			margin-bottom: 1rem;
+		}
+
+		.upload-section input[type="file"] {
+			display: none;
+		}
+
+		.export-buttons {
+			display: flex;
+			gap: 1rem;
+			flex-wrap: wrap;
+			margin-bottom: 2rem;
+		}
+
+		.bar {
+			background-color: var(--color-red-primary);
+			border-radius: 4px;
+			transition: all 0.3s ease;
+		}
+
+		.bar:hover {
+			opacity: 0.8;
+		}
+
+		.no-data {
+			text-align: center;
+			padding: 3rem 1rem;
+			color: var(--color-text-secondary);
+		}
+
+		.no-data svg {
+			width: 48px;
+			height: 48px;
+			margin-bottom: 1rem;
+			opacity: 0.5;
+		}
+
+		.filters-bar {
+			display: flex;
+			gap: 1rem;
+			margin-bottom: 2rem;
+			flex-wrap: wrap;
+			align-items: center;
+		}
+
+		.date-range {
+			display: flex;
+			gap: 0.5rem;
+			align-items: center;
+		}
+
+		@media (max-width: 768px) {
+			header {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.header-controls {
+				width: 100%;
+				flex-direction: column;
+			}
+
+			.metrics-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.section-title {
+				font-size: 1.1rem;
+			}
+
+			table {
+				font-size: 0.8rem;
+			}
+
+			th, td {
+				padding: 0.75rem 0.5rem;
+			}
+
+			.export-buttons {
+				flex-direction: column;
+			}
+
+			button {
+				width: 100%;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<div>
+				<h1>Analytics Dashboard</h1>
+				<p style="color: var(--color-text-secondary); font-size: 0.95rem; margin-top: 0.5rem;">Bitaxus Community Manager</p>
+			</div>
+			<div class="header-controls">
+				<button class="button-secondary" onclick="toggleTheme()">🌙 Theme</button>
+				<button onclick="printReport()">🖨️ Print</button>
+			</div>
+		</header>
+
+		<div class="filters-bar">
+			<select id="platformFilter">
+				<option value="">All Platforms</option>
+				<option value="LinkedIn">LinkedIn</option>
+				<option value="Instagram">Instagram</option>
+				<option value="Twitter">Twitter</option>
+			</select>
+
+			<div class="date-range">
+				<input type="date" id="startDate">
+				<span>to</span>
+				<input type="date" id="endDate">
+			</div>
+
+			<button onclick="applyFilters()">Apply Filters</button>
+		</div>
+
+		<div class="upload-section">
+			<p><strong>Upload Engagement Data</strong></p>
+			<p style="font-size: 0.9rem;">Import CSV from your engagement tracker</p>
+			<input type="file" id="csvFile" accept=".csv">
+			<button onclick="document.getElementById('csvFile').click()">📁 Choose File</button>
+		</div>
+
+		<div class="export-buttons">
+			<button onclick="exportJSON()">📊 Export as JSON</button>
+			<button onclick="exportCSV()">📋 Export as CSV</button>
+			<button class="button-secondary" onclick="clearData()">🗑️ Clear Data</button>
+		</div>
+
+		<div class="section-title">Weekly Overview</div>
+		<div class="metrics-grid" id="weeklyMetrics">
+			<div class="metric-card">
+				<div class="metric-label">Total Posts</div>
+				<div class="metric-value" id="totalPosts">0</div>
+				<div class="metric-change">Target: 3 posts/week</div>
+			</div>
+			<div class="metric-card">
+				<div class="metric-label">Avg Engagement Rate</div>
+				<div class="metric-value" id="avgEngagement">0%</div>
+				<div class="metric-change">Target: 4%+</div>
+			</div>
+			<div class="metric-card">
+				<div class="metric-label">Total Impressions</div>
+				<div class="metric-value" id="totalImpressions">0</div>
+				<div class="metric-change" id="impressionChange">-</div>
+			</div>
+			<div class="metric-card">
+				<div class="metric-label">Total Engagement</div>
+				<div class="metric-value" id="totalEngagement">0</div>
+				<div class="metric-change" id="engagementChange">-</div>
+			</div>
+		</div>
+
+		<div class="section-title">Performance by Platform</div>
+		<div class="metrics-grid" id="platformMetrics"></div>
+
+		<div class="section-title">Engagement Trend</div>
+		<div class="chart-container">
+			<div class="chart-title">Daily Engagement Rate</div>
+			<canvas id="engagementChart"></canvas>
+		</div>
+
+		<div class="section-title">Posts Performance</div>
+		<div class="table-container">
+			<table id="postsTable">
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Platform</th>
+						<th>Post Title</th>
+						<th>Post Type</th>
+						<th>Pillar</th>
+						<th>Engagement %</th>
+						<th>Likes</th>
+						<th>Comments</th>
+						<th>Shares</th>
+						<th>Impressions</th>
+					</tr>
+				</thead>
+				<tbody id="postsBody">
+					<tr class="no-data">
+						<td colspan="10">Upload CSV to view posts data</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="section-title">Insights</div>
+		<div class="metrics-grid" id="insightsGrid">
+			<div class="metric-card">
+				<div class="metric-label">Best Performing Pillar</div>
+				<div class="metric-value" id="bestPillar">-</div>
+			</div>
+			<div class="metric-card">
+				<div class="metric-label">Best Post Type</div>
+				<div class="metric-value" id="bestType" style="font-size: 1.3rem;">-</div>
+			</div>
+			<div class="metric-card">
+				<div class="metric-label">Posts Above Target</div>
+				<div class="metric-value" id="postsAboveTarget">0</div>
+				<div class="metric-change">Target: 4%+ engagement</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		let data = [];
+
+		// Load data from localStorage
+		function loadData() {
+			const saved = localStorage.getItem('analyticsData');
+			data = saved ? JSON.parse(saved) : [];
+			updateDashboard();
+		}
+
+		// Save data to localStorage
+		function saveData() {
+			localStorage.setItem('analyticsData', JSON.stringify(data));
+		}
+
+		// Parse CSV file
+		document.getElementById('csvFile').addEventListener('change', function(e) {
+			const file = e.target.files[0];
+			if (!file) return;
+
+			const reader = new FileReader();
+			reader.onload = function(event) {
+				const csv = event.target.result;
+				const lines = csv.split('\n');
+				const headers = lines[0].split(',').map(h => h.trim());
+
+				for (let i = 1; i < lines.length; i++) {
+					if (!lines[i].trim()) continue;
+					const values = lines[i].split(',').map(v => v.trim());
+					if (values.length < headers.length) continue;
+
+					const row = {};
+					headers.forEach((header, idx) => {
+						row[header] = isNaN(values[idx]) ? values[idx] : parseFloat(values[idx]);
+					});
+
+					data.push(row);
+				}
+
+				saveData();
+				updateDashboard();
+				alert(`Imported ${data.length} rows`);
+			};
+
+			reader.readAsText(file);
+		});
+
+		// Apply filters
+		function applyFilters() {
+			updateDashboard();
+		}
+
+		// Update dashboard
+		function updateDashboard() {
+			let filtered = [...data];
+
+			const platform = document.getElementById('platformFilter').value;
+			if (platform) {
+				filtered = filtered.filter(row => row.Platform === platform);
+			}
+
+			const startDate = document.getElementById('startDate').value;
+			const endDate = document.getElementById('endDate').value;
+
+			if (startDate || endDate) {
+				filtered = filtered.filter(row => {
+					const rowDate = new Date(row.Date);
+					if (startDate && rowDate < new Date(startDate)) return false;
+					if (endDate && rowDate > new Date(endDate)) return false;
+					return true;
+				});
+			}
+
+			updateMetrics(filtered);
+			updateTable(filtered);
+			updateChart(filtered);
+		}
+
+		// Update metrics
+		function updateMetrics(filtered) {
+			document.getElementById('totalPosts').textContent = filtered.length;
+
+			const avgEngagement = filtered.length > 0
+				? (filtered.reduce((sum, row) => sum + (row['Engagement (%)'] || 0), 0) / filtered.length).toFixed(2)
+				: '0.00';
+			document.getElementById('avgEngagement').textContent = avgEngagement + '%';
+
+			const totalImpressions = filtered.reduce((sum, row) => sum + (row.Impressions || 0), 0);
+			document.getElementById('totalImpressions').textContent = totalImpressions.toLocaleString();
+
+			const totalEngagement = filtered.reduce((sum, row) => sum + (row.Likes || 0) + (row.Comments || 0) + (row.Shares || 0), 0);
+			document.getElementById('totalEngagement').textContent = totalEngagement.toLocaleString();
+
+			// Platform breakdown
+			const platforms = ['LinkedIn', 'Instagram', 'Twitter'];
+			const platformMetrics = document.getElementById('platformMetrics');
+			platformMetrics.innerHTML = '';
+
+			platforms.forEach(platform => {
+				const platformData = filtered.filter(row => row.Platform === platform);
+				if (platformData.length === 0) return;
+
+				const avgEngagementPlatform = (platformData.reduce((sum, row) => sum + (row['Engagement (%)'] || 0), 0) / platformData.length).toFixed(2);
+				const totalPostsPlatform = platformData.length;
+
+				const card = document.createElement('div');
+				card.className = 'metric-card';
+				card.innerHTML = `
+					<div class="metric-label">${platform}</div>
+					<div style="display: flex; justify-content: space-between; align-items: baseline;">
+						<div>
+							<div style="font-size: 1.3rem; font-weight: 600; color: var(--color-text-primary);">${totalPostsPlatform}</div>
+							<div style="font-size: 0.8rem; color: var(--color-text-secondary);">posts</div>
+						</div>
+						<div style="text-align: right;">
+							<div style="font-size: 1.5rem; font-weight: 600; color: var(--color-red-primary);">${avgEngagementPlatform}%</div>
+							<div style="font-size: 0.8rem; color: var(--color-text-secondary);">avg engagement</div>
+						</div>
+					</div>
+				`;
+				platformMetrics.appendChild(card);
+			});
+
+			// Insights
+			if (filtered.length > 0) {
+				const byPillar = {};
+				filtered.forEach(row => {
+					const pillar = row.Pillar || 'Unknown';
+					if (!byPillar[pillar]) byPillar[pillar] = [];
+					byPillar[pillar].push(row);
+				});
+
+				const bestPillar = Object.entries(byPillar).reduce((best, [pillar, posts]) => {
+					const avgEngage = posts.reduce((sum, p) => sum + (p['Engagement (%)'] || 0), 0) / posts.length;
+					return avgEngage > (best.avg || 0) ? { pillar, avg: avgEngage } : best;
+				}, {});
+
+				document.getElementById('bestPillar').textContent = bestPillar.pillar || '-';
+
+				const byType = {};
+				filtered.forEach(row => {
+					const type = row['Post Type'] || 'Unknown';
+					if (!byType[type]) byType[type] = [];
+					byType[type].push(row);
+				});
+
+				const bestType = Object.entries(byType).reduce((best, [type, posts]) => {
+					const avgEngage = posts.reduce((sum, p) => sum + (p['Engagement (%)'] || 0), 0) / posts.length;
+					return avgEngage > (best.avg || 0) ? { type, avg: avgEngage } : best;
+				}, {});
+
+				document.getElementById('bestType').textContent = bestType.type || '-';
+
+				const postsAboveTarget = filtered.filter(row => (row['Engagement (%)'] || 0) >= 4).length;
+				document.getElementById('postsAboveTarget').textContent = postsAboveTarget;
+			}
+		}
+
+		// Update table
+		function updateTable(filtered) {
+			const tbody = document.getElementById('postsBody');
+			if (filtered.length === 0) {
+				tbody.innerHTML = '<tr class="no-data"><td colspan="10">No data to display</td></tr>';
+				return;
+			}
+
+			tbody.innerHTML = filtered.map(row => `
+				<tr>
+					<td>${row.Date || '-'}</td>
+					<td><span class="platform-badge platform-${row.Platform?.toLowerCase() || 'twitter'}">${row.Platform || '-'}</span></td>
+					<td>${row['Post Title'] || '-'}</td>
+					<td>${row['Post Type'] || '-'}</td>
+					<td>${row.Pillar || '-'}</td>
+					<td>${(row['Engagement (%)'] || 0).toFixed(2)}%</td>
+					<td>${row.Likes || 0}</td>
+					<td>${row.Comments || 0}</td>
+					<td>${row.Shares || 0}</td>
+					<td>${(row.Impressions || 0).toLocaleString()}</td>
+				</tr>
+			`).join('');
+		}
+
+		// Update chart
+		function updateChart(filtered) {
+			const canvas = document.getElementById('engagementChart');
+			const ctx = canvas.getContext('2d');
+
+			// Simple bar chart
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+			if (filtered.length === 0) {
+				ctx.fillStyle = 'var(--color-text-secondary)';
+				ctx.font = '14px sans-serif';
+				ctx.textAlign = 'center';
+				ctx.fillText('No data to display', canvas.width / 2, canvas.height / 2);
+				return;
+			}
+
+			const maxEngagement = Math.max(...filtered.map(row => row['Engagement (%)'] || 0));
+			const barWidth = canvas.width / (filtered.length || 1);
+			const padding = 40;
+
+			// Draw axes
+			ctx.strokeStyle = '#2D2D44';
+			ctx.beginPath();
+			ctx.moveTo(padding, canvas.height - padding);
+			ctx.lineTo(canvas.width - padding, canvas.height - padding);
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.moveTo(padding, padding);
+			ctx.lineTo(padding, canvas.height - padding);
+			ctx.stroke();
+
+			// Draw bars
+			filtered.forEach((row, idx) => {
+				const engagement = row['Engagement (%)'] || 0;
+				const barHeight = (engagement / maxEngagement) * (canvas.height - padding * 2);
+
+				ctx.fillStyle = '#D1232E';
+				ctx.fillRect(
+					padding + idx * barWidth + 5,
+					canvas.height - padding - barHeight,
+					barWidth - 10,
+					barHeight
+				);
+
+				// Label
+				ctx.fillStyle = '#999999';
+				ctx.font = '11px sans-serif';
+				ctx.textAlign = 'center';
+				ctx.fillText(
+					engagement.toFixed(1) + '%',
+					padding + idx * barWidth + barWidth / 2,
+					canvas.height - padding + 20
+				);
+			});
+		}
+
+		// Export functions
+		function exportJSON() {
+			const json = JSON.stringify(data, null, 2);
+			const blob = new Blob([json], { type: 'application/json' });
+			downloadFile(blob, 'analytics-data.json');
+		}
+
+		function exportCSV() {
+			if (data.length === 0) {
+				alert('No data to export');
+				return;
+			}
+
+			const headers = Object.keys(data[0]);
+			let csv = headers.join(',') + '\n';
+
+			data.forEach(row => {
+				csv += headers.map(h => {
+					const val = row[h];
+					return typeof val === 'string' && val.includes(',') ? `"${val}"` : val;
+				}).join(',') + '\n';
+			});
+
+			const blob = new Blob([csv], { type: 'text/csv' });
+			downloadFile(blob, 'analytics-data.csv');
+		}
+
+		function downloadFile(blob, filename) {
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = filename;
+			a.click();
+			URL.revokeObjectURL(url);
+		}
+
+		// Clear data
+		function clearData() {
+			if (confirm('Clear all data? This cannot be undone.')) {
+				data = [];
+				saveData();
+				updateDashboard();
+			}
+		}
+
+		// Print report
+		function printReport() {
+			window.print();
+		}
+
+		// Theme toggle
+		function toggleTheme() {
+			const html = document.documentElement;
+			const current = html.getAttribute('data-theme');
+			html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+			localStorage.setItem('theme', html.getAttribute('data-theme'));
+		}
+
+		// Initialize
+		window.addEventListener('DOMContentLoaded', () => {
+			const theme = localStorage.getItem('theme');
+			if (theme) {
+				document.documentElement.setAttribute('data-theme', theme);
+			}
+			loadData();
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Bitaxus - Parrilla de Contenido</title>
+	<style>
+		:root {
+			--color-red-primary: #D1232E;
+			--color-dark-bg: #0A0A1A;
+			--color-dark-card: #1A1A2E;
+			--color-dark-border: #2D2D44;
+			--color-text-primary: #E5E5E5;
+			--color-text-secondary: #999999;
+			--color-gray-light: #CCCCCC;
+		}
+
+		@media (prefers-color-scheme: dark) {
+			:root:not([data-theme="light"]) {
+				--color-red-primary: #D1232E;
+				--color-dark-bg: #0A0A1A;
+			}
+		}
+
+		:root[data-theme="dark"] {
+			--color-red-primary: #D1232E;
+			--color-dark-bg: #0A0A1A;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+			background-color: var(--color-dark-bg);
+			color: var(--color-text-primary);
+			line-height: 1.6;
+		}
+
+		.container {
+			max-width: 1400px;
+			margin: 0 auto;
+			padding: 2rem;
+		}
+
+		header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 2rem;
+			gap: 1rem;
+			flex-wrap: wrap;
+		}
+
+		h1 {
+			font-size: 2rem;
+			font-weight: 600;
+		}
+
+		.header-subtitle {
+			color: var(--color-text-secondary);
+			font-size: 0.95rem;
+			margin-top: 0.5rem;
+		}
+
+		.controls {
+			display: flex;
+			gap: 1rem;
+			align-items: center;
+			flex-wrap: wrap;
+		}
+
+		select, button {
+			background-color: var(--color-dark-card);
+			border: 1px solid var(--color-dark-border);
+			color: var(--color-text-primary);
+			padding: 0.75rem 1.25rem;
+			border-radius: 6px;
+			font-size: 0.95rem;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		button {
+			background-color: var(--color-red-primary);
+			color: white;
+			border: none;
+		}
+
+		button:hover {
+			background-color: #B81C28;
+			transform: translateY(-2px);
+		}
+
+		select:focus, button:focus {
+			outline: none;
+			border-color: var(--color-red-primary);
+		}
+
+		.calendar-grid {
+			display: grid;
+			grid-template-columns: repeat(7, 1fr);
+			gap: 1rem;
+			margin-bottom: 2rem;
+		}
+
+		.day-header {
+			background-color: var(--color-dark-card);
+			border: 1px solid var(--color-dark-border);
+			padding: 1rem;
+			text-align: center;
+			font-weight: 600;
+			border-radius: 6px;
+			text-transform: uppercase;
+			font-size: 0.9rem;
+			color: var(--color-red-primary);
+		}
+
+		.day-cell {
+			background-color: var(--color-dark-card);
+			border: 1px solid var(--color-dark-border);
+			padding: 1rem;
+			border-radius: 6px;
+			min-height: 200px;
+			display: flex;
+			flex-direction: column;
+			gap: 0.75rem;
+			transition: all 0.3s ease;
+		}
+
+		.day-cell:hover {
+			border-color: var(--color-red-primary);
+			box-shadow: 0 4px 12px rgba(209, 35, 46, 0.15);
+		}
+
+		.day-cell.empty {
+			opacity: 0.5;
+		}
+
+		.day-number {
+			font-size: 1.2rem;
+			font-weight: 600;
+			color: var(--color-text-secondary);
+			margin-bottom: 0.5rem;
+		}
+
+		.post-item {
+			background-color: rgba(209, 35, 46, 0.1);
+			border-left: 3px solid var(--color-red-primary);
+			padding: 0.75rem;
+			border-radius: 4px;
+			font-size: 0.85rem;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		.post-item:hover {
+			background-color: rgba(209, 35, 46, 0.2);
+			transform: translateX(2px);
+		}
+
+		.post-platform {
+			display: inline-block;
+			padding: 0.25rem 0.5rem;
+			font-size: 0.7rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			border-radius: 3px;
+			margin-bottom: 0.35rem;
+			width: fit-content;
+		}
+
+		.post-platform.linkedin {
+			background-color: rgba(0, 119, 181, 0.3);
+			color: #0077B5;
+		}
+
+		.post-platform.instagram {
+			background-color: rgba(229, 45, 168, 0.3);
+			color: #E52D8E;
+		}
+
+		.post-platform.twitter {
+			background-color: rgba(31, 160, 224, 0.3);
+			color: #1FA0E0;
+		}
+
+		.post-title {
+			font-weight: 500;
+			color: var(--color-text-primary);
+			word-wrap: break-word;
+			line-height: 1.3;
+		}
+
+		.post-pillar {
+			font-size: 0.75rem;
+			color: var(--color-text-secondary);
+			text-transform: capitalize;
+		}
+
+		.week-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 1.5rem;
+			padding-bottom: 1rem;
+			border-bottom: 2px solid var(--color-dark-border);
+		}
+
+		.week-title {
+			font-size: 1.3rem;
+			font-weight: 600;
+		}
+
+		.week-date-range {
+			color: var(--color-text-secondary);
+			font-size: 0.9rem;
+		}
+
+		.view-toggle {
+			display: flex;
+			gap: 0.5rem;
+			background-color: var(--color-dark-card);
+			border: 1px solid var(--color-dark-border);
+			border-radius: 6px;
+			padding: 0.35rem;
+		}
+
+		.view-button {
+			padding: 0.5rem 1rem;
+			background: transparent;
+			border: none;
+			cursor: pointer;
+			color: var(--color-text-secondary);
+			font-size: 0.9rem;
+			font-weight: 500;
+			border-radius: 4px;
+			transition: all 0.2s ease;
+		}
+
+		.view-button.active {
+			background-color: var(--color-red-primary);
+			color: white;
+		}
+
+		.month-view {
+			display: none;
+		}
+
+		.month-view.active {
+			display: block;
+		}
+
+		.stats-bar {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 1.5rem;
+			margin-bottom: 2rem;
+		}
+
+		.stat-card {
+			background-color: var(--color-dark-card);
+			border: 1px solid var(--color-dark-border);
+			padding: 1.5rem;
+			border-radius: 8px;
+		}
+
+		.stat-label {
+			color: var(--color-text-secondary);
+			font-size: 0.85rem;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin-bottom: 0.5rem;
+		}
+
+		.stat-value {
+			font-size: 2rem;
+			font-weight: 600;
+			color: var(--color-red-primary);
+		}
+
+		.modal {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-color: rgba(0, 0, 0, 0.8);
+			z-index: 1000;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.modal.active {
+			display: flex;
+		}
+
+		.modal-content {
+			background-color: var(--color-dark-card);
+			border: 1px solid var(--color-dark-border);
+			padding: 2rem;
+			border-radius: 8px;
+			max-width: 500px;
+			width: 90%;
+			max-height: 80vh;
+			overflow-y: auto;
+		}
+
+		.modal-close {
+			float: right;
+			font-size: 1.5rem;
+			cursor: pointer;
+			color: var(--color-text-secondary);
+		}
+
+		.modal-close:hover {
+			color: var(--color-red-primary);
+		}
+
+		.legend {
+			display: flex;
+			gap: 1.5rem;
+			margin-bottom: 2rem;
+			flex-wrap: wrap;
+		}
+
+		.legend-item {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			font-size: 0.9rem;
+			color: var(--color-text-secondary);
+		}
+
+		.legend-color {
+			width: 24px;
+			height: 24px;
+			border-radius: 4px;
+		}
+
+		@media (max-width: 768px) {
+			.calendar-grid {
+				grid-template-columns: repeat(7, 1fr);
+				gap: 0.5rem;
+			}
+
+			.day-cell {
+				min-height: 120px;
+				padding: 0.5rem;
+			}
+
+			.day-number {
+				font-size: 1rem;
+			}
+
+			.post-item {
+				font-size: 0.75rem;
+				padding: 0.5rem;
+			}
+
+			.week-header {
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 0.5rem;
+			}
+
+			header {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.controls {
+				width: 100%;
+				flex-direction: column;
+			}
+
+			select, button {
+				width: 100%;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<div>
+				<h1>📅 Parrilla de Contenido</h1>
+				<p class="header-subtitle">Q1 2025 - Bitaxus Community Manager</p>
+			</div>
+			<div class="controls">
+				<div class="view-toggle">
+					<button class="view-button active" onclick="switchView('week')">Semana</button>
+					<button class="view-button" onclick="switchView('month')">Mes</button>
+				</div>
+				<select id="monthSelect" onchange="loadMonth()">
+					<option value="january">Enero</option>
+					<option value="february">Febrero</option>
+					<option value="march">Marzo</option>
+				</select>
+			</div>
+		</header>
+
+		<div class="stats-bar" id="statsBar">
+			<div class="stat-card">
+				<div class="stat-label">Posts Totales Q1</div>
+				<div class="stat-value" id="totalPosts">36</div>
+			</div>
+			<div class="stat-card">
+				<div class="stat-label">Posts Esta Semana</div>
+				<div class="stat-value" id="weekPosts">3</div>
+			</div>
+			<div class="stat-card">
+				<div class="stat-label">Blogs Programados</div>
+				<div class="stat-value" id="totalBlogs">3</div>
+			</div>
+		</div>
+
+		<div class="legend">
+			<div class="legend-item">
+				<div class="legend-color" style="background-color: rgba(0, 119, 181, 0.3);"></div>
+				LinkedIn
+			</div>
+			<div class="legend-item">
+				<div class="legend-color" style="background-color: rgba(229, 45, 168, 0.3);"></div>
+				Instagram
+			</div>
+			<div class="legend-item">
+				<div class="legend-color" style="background-color: rgba(31, 160, 224, 0.3);"></div>
+				Twitter
+			</div>
+			<div class="legend-item">
+				<div class="legend-color" style="background-color: rgba(209, 35, 46, 0.2);"></div>
+				Blog
+			</div>
+		</div>
+
+		<!-- Week View -->
+		<div id="weekView" class="week-view active">
+			<div id="weekContainer"></div>
+		</div>
+
+		<!-- Month View -->
+		<div id="monthView" class="month-view">
+			<div id="monthContainer"></div>
+		</div>
+	</div>
+
+	<!-- Post Detail Modal -->
+	<div id="postModal" class="modal">
+		<div class="modal-content">
+			<span class="modal-close" onclick="closeModal()">&times;</span>
+			<div id="modalContent"></div>
+		</div>
+	</div>
+
+	<script>
+		let calendarData = null;
+		let currentView = 'week';
+		let currentMonth = 'january';
+
+		// Load calendar data
+		fetch('calendar.json')
+			.then(response => response.json())
+			.then(data => {
+				calendarData = data;
+				loadWeek();
+			})
+			.catch(error => {
+				console.error('Error loading calendar:', error);
+				document.getElementById('weekContainer').innerHTML = '<p>Error loading calendar data</p>';
+			});
+
+		function switchView(view) {
+			currentView = view;
+			document.querySelectorAll('.view-button').forEach(btn => btn.classList.remove('active'));
+			event.target.classList.add('active');
+
+			document.getElementById('weekView').classList.toggle('active', view === 'week');
+			document.getElementById('monthView').classList.toggle('active', view === 'month');
+
+			if (view === 'month') {
+				loadMonth();
+			} else {
+				loadWeek();
+			}
+		}
+
+		function loadWeek() {
+			if (!calendarData) return;
+
+			const container = document.getElementById('weekContainer');
+			container.innerHTML = '';
+
+			const weeks = calendarData.weeks;
+			weeks.forEach((week, index) => {
+				const weekHtml = createWeekView(week, index + 1);
+				container.innerHTML += weekHtml;
+			});
+		}
+
+		function createWeekView(week, weekNumber) {
+			const dayNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+			const month = currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1);
+
+			let weekHtml = `
+				<div class="week-header">
+					<div>
+						<div class="week-title">Semana ${weekNumber}</div>
+						<div class="week-date-range">${week.start_date} - ${week.end_date}</div>
+					</div>
+				</div>
+				<div class="calendar-grid">
+					<div class="day-header">Lunes</div>
+					<div class="day-header">Martes</div>
+					<div class="day-header">Miércoles</div>
+					<div class="day-header">Jueves</div>
+					<div class="day-header">Viernes</div>
+					<div class="day-header">Sábado</div>
+					<div class="day-header">Domingo</div>
+			`;
+
+			// Parse week dates
+			const [startDate, endDate] = week.start_date.split(' - ');
+			const startNum = parseInt(startDate.split(' ')[0]);
+
+			for (let i = 0; i < 7; i++) {
+				const dayNum = startNum + i;
+				const dayName = dayNames[i];
+				const posts = week.posts.filter(p => p.day === dayName);
+
+				weekHtml += `<div class="day-cell ${posts.length === 0 ? 'empty' : ''}">
+					<div class="day-number">${dayNum}</div>
+				`;
+
+				if (posts.length === 0) {
+					weekHtml += `<div style="color: var(--color-text-secondary); font-size: 0.85rem;">Sin contenido</div>`;
+				} else {
+					posts.forEach(post => {
+						const platformClass = post.platform.toLowerCase();
+						weekHtml += `
+							<div class="post-item" onclick="showPostDetail('${post.title}', '${post.platform}', '${post.type}', '${post.pillar}', '${post.content}')">
+								<div class="post-platform ${platformClass}">${post.platform}</div>
+								<div class="post-title">${post.title}</div>
+								<div class="post-pillar">${post.pillar}</div>
+							</div>
+						`;
+					});
+				}
+
+				weekHtml += `</div>`;
+			}
+
+			// Check for blog this week
+			if (week.blog_scheduled) {
+				weekHtml = weekHtml.replace('</div></div>', `
+					<div style="grid-column: 1 / -1; margin-top: 1rem;">
+						<div style="background-color: rgba(209, 35, 46, 0.15); border: 1px solid rgba(209, 35, 46, 0.3); padding: 1rem; border-radius: 6px;">
+							<div style="font-weight: 600; color: var(--color-red-primary); margin-bottom: 0.5rem;">📝 Blog: ${week.blog_topic}</div>
+							<div style="color: var(--color-text-secondary); font-size: 0.9rem;">${week.blog_description}</div>
+						</div>
+					</div>
+				</div></div>`);
+			} else {
+				weekHtml += `</div></div>`;
+			}
+
+			return weekHtml;
+		}
+
+		function loadMonth() {
+			if (!calendarData) return;
+
+			const container = document.getElementById('monthContainer');
+			container.innerHTML = '';
+
+			const monthSelect = document.getElementById('monthSelect').value;
+			currentMonth = monthSelect;
+
+			const months = {
+				'january': calendarData.january,
+				'february': calendarData.february,
+				'march': calendarData.march
+			};
+
+			const monthData = months[monthSelect];
+			const monthName = {
+				'january': 'Enero',
+				'february': 'Febrero',
+				'march': 'Marzo'
+			}[monthSelect];
+
+			let monthHtml = `<h2 style="margin-bottom: 2rem; font-size: 1.5rem;">${monthName} 2025</h2>`;
+
+			monthData.weeks.forEach((week, index) => {
+				monthHtml += createWeekView(week, index + 1);
+			});
+
+			container.innerHTML = monthHtml;
+		}
+
+		function showPostDetail(title, platform, type, pillar, content) {
+			const modalContent = document.getElementById('modalContent');
+			modalContent.innerHTML = `
+				<h2>${title}</h2>
+				<div style="margin-top: 1rem;">
+					<div style="margin-bottom: 1rem;">
+						<span class="post-platform ${platform.toLowerCase()}">${platform}</span>
+						<span class="post-platform" style="background-color: rgba(209, 35, 46, 0.2); color: var(--color-red-primary);">${type}</span>
+						<span class="post-platform" style="background-color: rgba(100, 116, 139, 0.2); color: #A0AEC0;">${pillar}</span>
+					</div>
+					<div style="color: var(--color-text-secondary); line-height: 1.6; padding: 1rem; background-color: rgba(0, 0, 0, 0.3); border-radius: 6px;">
+						${content}
+					</div>
+					<button onclick="closeModal()" style="margin-top: 1.5rem; width: 100%;">Cerrar</button>
+				</div>
+			`;
+			document.getElementById('postModal').classList.add('active');
+		}
+
+		function closeModal() {
+			document.getElementById('postModal').classList.remove('active');
+		}
+
+		// Update stats when data loads
+		window.addEventListener('load', () => {
+			if (calendarData) {
+				const allWeeks = [
+					...calendarData.january.weeks,
+					...calendarData.february.weeks,
+					...calendarData.march.weeks
+				];
+				let totalPosts = 0;
+				allWeeks.forEach(week => {
+					totalPosts += week.posts.length;
+				});
+				document.getElementById('totalPosts').textContent = totalPosts;
+				document.getElementById('totalBlogs').textContent = allWeeks.filter(w => w.blog_scheduled).length;
+			}
+		});
+	</script>
+</body>
+</html>

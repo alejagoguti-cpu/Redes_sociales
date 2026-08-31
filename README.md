@@ -40,8 +40,18 @@ Herramienta completa e interactiva para gestionar la comunidad de Bitaxus. Inclu
 ### 🎯 Herramientas para el Trabajo
 - Interfaz web moderna — Dark mode, responsive, sin dependencias
 - Navegación rápida — Sidebar sticky, enlaces directos
+- **Parrilla de Contenido** — Vista de semana/mes con posts programados
+- **Dashboard de Analytics** — Métricas, gráficos, importar CSV
+- **Cheat Sheet** — Respuestas copiables para FAQ rápidas
 - Exportar datos — JSON, CSV, Markdown
 - Atajos de teclado — Búsqueda rápida, navigation
+
+### 📊 Flujo Real Operativo
+- **Lunes (45 min)** — Planificación: revisa fin de semana, programa 3 posts
+- **Martes-Jueves (15-30 min)** — Moderación: responde FAQ, participa en conversaciones
+- **Viernes (60 min)** — Análisis: reporta métricas, identifica patrones
+- **Mensual** — Blog post de FAQ más frecuentes
+- Ver `docs/WORKFLOW_PROCESS.md` para detalles completos
 
 ---
 
@@ -53,17 +63,19 @@ Redes_sociales/
 ├── README.md                     # Este archivo
 ├── calendar.json                 # Calendario Q1 en formato JSON
 ├── templates/
-│   ├── weekly-report.csv         # Template reporte semanal
-│   ├── engagement-tracker.xlsx   # Tracker de engagement
-│   ├── content-calendar.csv      # Calendario de contenido
-│   └── insights-sheet.xlsx       # Hoja de insights
+│   ├── weekly-report.md          # Template reporte semanal
+│   ├── engagement-tracker.csv    # Tracker de engagement
+│   ├── faq-log.md                # Log de FAQ
+│   └── faq-responses.md          # Respuestas guardadas
 ├── docs/
 │   ├── BRAND_KIT.md              # Detalles de marca
-│   ├── CONTENT_STRATEGY.md       # Estrategia de contenido
-│   └── MODERATION_GUIDE.md       # Guía de moderación
+│   ├── MODERATION_GUIDE.md       # Guía de moderación
+│   ├── WORKFLOW_PROCESS.md       # Flujo real semanal/diario
+│   └── DEPLOYMENT.md             # Guía de deployment
 └── dashboards/
-    ├── analytics.html            # Métricas y analytics
-    └── cheat-sheet.html          # Referencia rápida
+    ├── cheat-sheet.html          # Referencia rápida (copy-paste)
+    ├── calendar-view.html        # Parrilla de contenido Q1
+    └── analytics.html            # Dashboard de métricas
 ```
 
 ---
@@ -96,40 +108,105 @@ python -m http.server 8000
 
 ---
 
-## 📖 Flujo de Trabajo Semanal
+## 📖 Cómo Usar — Guía Rápida
 
-### Lunes: Programa Posts
-1. Abre `bitaxus-cm-guide.html`
-2. Ve a sección de posts (sidebar)
-3. Copia contenido propuesto
-4. Adapta al tono de tu voz
-5. Programa en Buffer/Later
+### 🌟 Inicio Rápido
+1. **Abre `bitaxus-cm-guide.html`** — Toda la información en un lugar
+2. **Referencia: `dashboards/cheat-sheet.html`** — Respuestas copy-paste para FAQ
+3. **Planificación: `dashboards/calendar-view.html`** — Parrilla de posts Q1
+4. **Métricas: `dashboards/analytics.html`** — Trackea engagement y tendencias
 
-### Martes-Jueves: Moderación
-1. Usa `cheat-sheet.html` para respuestas rápidas
-2. Busca con `Ctrl+F` o `/`
-3. Adapta a contexto específico
-4. Log en tracking sheet si es pregunta nueva
+### 📅 Lunes: Planificación (45 min)
+1. Abre `dashboards/calendar-view.html`
+2. Identifica 3 posts de la semana
+3. Adapta al tono Bitaxus (ver `docs/BRAND_KIT.md`)
+4. Programa en Buffer/Later
+5. Log en calendario local
 
-### Viernes: Reporta y Analiza
-1. Completa `weekly-report.csv`
-2. Extrae data de `analytics.html`
-3. Identifica patrones
-4. Prepara ideas de blogs
+### 💬 Martes-Jueves: Moderación (15-30 min/día)
+1. Abre `dashboards/cheat-sheet.html`
+2. Responde FAQ con respuestas del cheat sheet
+3. Participa en conversaciones (educator stance)
+4. Log en `templates/engagement-tracker.csv`
+5. Guarda nuevas preguntas en `templates/faq-log.md`
+
+### 📊 Viernes: Análisis (60 min)
+1. Abre `dashboards/analytics.html`
+2. Importa CSV del `engagement-tracker.csv`
+3. Analiza métricas y tendencias
+4. Completa `templates/weekly-report.md`
+5. Identifica 1-2 temas para blog
+6. Reporta a Ale con insights
+
+**Ver `docs/WORKFLOW_PROCESS.md` para workflow completo con checklists y KPIs**
+
+---
+
+## 🎛️ Los 3 Dashboards
+
+### 1️⃣ Cheat Sheet (`dashboards/cheat-sheet.html`)
+**Para: Respuestas rápidas a preguntas frecuentes**
+- 6 respuestas copiables: SAGRILAFT, WhatsApp, Comisiones, Comparaciones, Tiempos, Sin App
+- Checkbox diario para tracking
+- Atajos de teclado rápido
+- FAQ categorizado por tipo
+- Diseño optimizado para responder en vivo
+
+### 2️⃣ Parrilla de Contenido (`dashboards/calendar-view.html`)
+**Para: Planificar y visualizar posts Q1**
+- Vista por semana o mes
+- Todos los 36 posts con detalles (pillar, tipo, contenido)
+- Blogs programados por mes
+- Estadísticas: posts totales, blogs, cobertura por semana
+- Click en cada post para ver detalles completos
+
+### 3️⃣ Analytics Dashboard (`dashboards/analytics.html`)
+**Para: Medir engagement y ver tendencias**
+- Importar datos CSV del tracker
+- Métricas: posts, engagement rate, impresiones
+- Breakdown por plataforma (LinkedIn, Instagram, Twitter)
+- Gráficos de tendencias
+- Exportar datos como JSON/CSV
+- Filtrar por fecha y plataforma
+- Identify mejor pillar y tipo de post
 
 ---
 
 ## 📊 Exportar Datos
 
-### Desde la Interfaz Web
-- Click en card → "Copy" → Pega en editor
-- Selecciona categoría → "Export as CSV"
-- Presiona `Ctrl+P` para imprimir (layout optimizado)
+### Desde Analytics Dashboard
+- **Botones de exportación:** JSON, CSV
+- **Upload CSV:** Importa tu tracker local
+- **Print:** Presiona `Ctrl+P` para reporte imprimible
 
 ### Archivos de Datos
-- `calendar.json` — Todo el calendario Q1
-- `colors.json` — Paleta de colores (código)
-- `templates/` — Excel/CSV descargables
+- `calendar.json` — Calendario Q1 completo (36 posts + 3 blogs)
+- `templates/engagement-tracker.csv` — Template para importar en analytics
+- `templates/weekly-report.md` — Template de reporte semanal
+- `templates/faq-log.md` — Tracking de preguntas nuevas
+
+---
+
+## 🚀 Deployment
+
+### GitHub Pages (Automático)
+El repositorio está configurado para desplegarse automáticamente en:
+`https://alejagoguti-cpu.github.io/Redes_sociales/`
+
+### Servidor Local (Desarrollo)
+```bash
+# Python 3
+python3 -m http.server 8000
+# Luego: http://localhost:8000
+
+# Node.js
+npx http-server
+
+# VSCode + Live Server extension
+# Click derecho en archivo → "Open with Live Server"
+```
+
+Ver `docs/DEPLOYMENT.md` para más opciones (VPS, Nginx, Apache, custom domain)
 
 ---
 
