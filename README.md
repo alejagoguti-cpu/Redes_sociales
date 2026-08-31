@@ -42,7 +42,6 @@ Herramienta completa e interactiva para gestionar la comunidad de Bitaxus. Inclu
 - Navegación rápida — Sidebar sticky, enlaces directos
 - **Calendario del Centro Editorial** — Vista de semana/mes con posts programados
 - **Dashboard de Analytics** — Métricas, gráficos, importar CSV
-- **Cheat Sheet** — Respuestas copiables para FAQ rápidas
 - Exportar datos — JSON, CSV, Markdown
 - Atajos de teclado — Búsqueda rápida, navigation
 
@@ -73,7 +72,6 @@ Redes_sociales/
 │   ├── WORKFLOW_PROCESS.md       # Flujo real semanal/diario
 │   └── DEPLOYMENT.md             # Guía de deployment
 └── dashboards/
-    ├── cheat-sheet.html          # Referencia rápida (copy-paste)
     ├── calendar-view.html        # Calendario de contenido Q1
     └── analytics.html            # Dashboard de métricas
 ```
@@ -112,7 +110,6 @@ python -m http.server 8000
 
 ### 🌟 Inicio Rápido
 1. **Abre `bitaxus-cm-guide.html`** — Toda la información en un lugar
-2. **Referencia: `dashboards/cheat-sheet.html`** — Respuestas copy-paste para FAQ
 3. **Planificación: `editorial.html?view=calendar`** — Calendario de posts Q1
 4. **Métricas: `dashboards/analytics.html`** — Trackea engagement y tendencias
 
@@ -124,8 +121,6 @@ python -m http.server 8000
 5. Log en calendario local
 
 ### 💬 Martes-Jueves: Moderación (15-30 min/día)
-1. Abre `dashboards/cheat-sheet.html`
-2. Responde FAQ con respuestas del cheat sheet
 3. Participa en conversaciones (educator stance)
 4. Log en `templates/engagement-tracker.csv`
 5. Guarda nuevas preguntas en `templates/faq-log.md`
@@ -144,7 +139,6 @@ python -m http.server 8000
 
 ## 🎛️ Los 3 Dashboards
 
-### 1️⃣ Cheat Sheet (`dashboards/cheat-sheet.html`)
 **Para: Respuestas rápidas a preguntas frecuentes**
 - 6 respuestas copiables: SAGRILAFT, WhatsApp, Comisiones, Comparaciones, Tiempos, Sin App
 - Checkbox diario para tracking

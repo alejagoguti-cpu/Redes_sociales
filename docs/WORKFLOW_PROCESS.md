@@ -85,7 +85,6 @@ Date | Platform | Post Title | Status | Link | Notes
 
 **2. Responde Rápido (< 2 min)**
 Para preguntas en FAQ log existente:
-- Abre `dashboards/cheat-sheet.html`
 - Busca pregunta con `Ctrl+F`
 - Copia respuesta
 - Adapta ligeramente
@@ -282,7 +281,6 @@ Track estos números:
 
 ### Durante Semana
 - **Guía Principal:** `bitaxus-cm-guide.html` (respuestas)
-- **Cheat Sheet:** `dashboards/cheat-sheet.html` (rápido)
 - **Templates:** En `templates/` (trackear)
 - **Buffers:** Buffer/Later (programar)
 

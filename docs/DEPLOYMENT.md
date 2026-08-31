@@ -24,7 +24,6 @@ The repository is already configured for automatic GitHub Pages deployment.
 
 **What Gets Deployed:**
 - `bitaxus-cm-guide.html` (Main guide)
-- `dashboards/` (Cheat sheet and analytics)
 - `calendar.json` (Content calendar)
 - `README.md` (Documentation)
 
