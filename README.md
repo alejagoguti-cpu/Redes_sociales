@@ -40,7 +40,7 @@ Herramienta completa e interactiva para gestionar la comunidad de Bitaxus. Inclu
 ### 🎯 Herramientas para el Trabajo
 - Interfaz web moderna — Dark mode, responsive, sin dependencias
 - Navegación rápida — Sidebar sticky, enlaces directos
-- **Parrilla de Contenido** — Vista de semana/mes con posts programados
+- **Calendario del Centro Editorial** — Vista de semana/mes con posts programados
 - **Dashboard de Analytics** — Métricas, gráficos, importar CSV
 - **Cheat Sheet** — Respuestas copiables para FAQ rápidas
 - Exportar datos — JSON, CSV, Markdown
@@ -74,7 +74,7 @@ Redes_sociales/
 │   └── DEPLOYMENT.md             # Guía de deployment
 └── dashboards/
     ├── cheat-sheet.html          # Referencia rápida (copy-paste)
-    ├── calendar-view.html        # Parrilla de contenido Q1
+    ├── calendar-view.html        # Calendario de contenido Q1
     └── analytics.html            # Dashboard de métricas
 ```
 
@@ -113,11 +113,11 @@ python -m http.server 8000
 ### 🌟 Inicio Rápido
 1. **Abre `bitaxus-cm-guide.html`** — Toda la información en un lugar
 2. **Referencia: `dashboards/cheat-sheet.html`** — Respuestas copy-paste para FAQ
-3. **Planificación: `dashboards/calendar-view.html`** — Parrilla de posts Q1
+3. **Planificación: `editorial.html?view=calendar`** — Calendario de posts Q1
 4. **Métricas: `dashboards/analytics.html`** — Trackea engagement y tendencias
 
 ### 📅 Lunes: Planificación (45 min)
-1. Abre `dashboards/calendar-view.html`
+1. Abre `editorial.html?view=calendar`
 2. Identifica 3 posts de la semana
 3. Adapta al tono Bitaxus (ver `docs/BRAND_KIT.md`)
 4. Programa en Buffer/Later
@@ -152,7 +152,7 @@ python -m http.server 8000
 - FAQ categorizado por tipo
 - Diseño optimizado para responder en vivo
 
-### 2️⃣ Parrilla de Contenido (`dashboards/calendar-view.html`)
+### 2️⃣ Calendario del Centro Editorial (`editorial.html?view=calendar`)
 **Para: Planificar y visualizar posts Q1**
 - Vista por semana o mes
 - Todos los 36 posts con detalles (pillar, tipo, contenido)
