@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Community Manager Bitaxus</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+    <style>
+        :root {
+            --color-red-primary: #D1232E;
+            --color-red-dark: #A01B23;
+            --color-red-light: #F5E6E8;
+            --color-black-dark: #0A0A0A;
+            --color-black-medium: #1A1A1A;
+            --color-gray-dark: #E5E5E5;
+            --color-gray-medium: #999999;
+            --color-gray-light: #2A2A2A;
+            --color-white: #FFFFFF;
+            --color-accent: #D1232E;
+
+            --type-h1: 28px;
+            --type-h2: 22px;
+            --type-h3: 18px;
+            --type-body: 16px;
+            --type-caption: 13px;
+
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root:not([data-theme="dark"]) {
+                --color-gray-dark: #1A1A1A;
+                --color-gray-medium: #666666;
+                --color-gray-light: #F5F5F5;
+                --color-white: #FFFFFF;
+                --color-black-medium: #FFFFFF;
+                --color-black-dark: #F8F8F8;
+            }
+        }
+
+        :root[data-theme="light"] {
+            --color-gray-dark: #1A1A1A;
+            --color-gray-medium: #666666;
+            --color-gray-light: #F5F5F5;
+            --color-white: #FFFFFF;
+            --color-black-medium: #FFFFFF;
+            --color-black-dark: #F8F8F8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--color-black-dark);
+            background-image: radial-gradient(circle, rgba(209, 35, 46, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            color: var(--color-gray-dark);
+            line-height: 1.7;
+        }
+
+        /* Layout */
+        .container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+            gap: 0;
+        }
+
+        .sidebar {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            border-right: 1px solid var(--color-red-primary);
+            color: var(--color-white);
+            padding: var(--spacing-lg);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            font-size: var(--type-caption);
+        }
+
+        .sidebar h2 {
+            font-size: var(--type-h2);
+            font-weight: 500;
+            margin-bottom: var(--spacing-md);
+            text-wrap: balance;
+        }
+
+        .sidebar-section {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .sidebar-section-title {
+            font-size: var(--type-caption);
+            font-weight: 600;
+            opacity: 0.9;
+            margin-bottom: var(--spacing-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sidebar-section ul {
+            list-style: none;
+        }
+
+        .sidebar-section li {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .sidebar-section a {
+            color: var(--color-white);
+            text-decoration: none;
+            display: block;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar-section a:hover {
+            background-color: rgba(209, 35, 46, 0.2);
+            color: var(--color-red-primary);
+        }
+
+        .main {
+            padding: var(--spacing-xl);
+            max-width: 900px;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: var(--type-h1);
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            color: var(--color-white);
+            text-wrap: balance;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-size: var(--type-h2);
+            font-weight: 600;
+            margin-top: var(--spacing-xl);
+            margin-bottom: var(--spacing-md);
+            color: var(--color-white);
+            text-wrap: balance;
+        }
+
+        h3 {
+            font-size: var(--type-h3);
+            font-weight: 600;
+            margin-top: var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-white);
+        }
+
+        p {
+            margin-bottom: var(--spacing-md);
+            font-size: var(--type-body);
+            color: var(--color-gray-dark);
+        }
+
+        strong {
+            font-weight: 600;
+            color: var(--color-red-primary);
+        }
+
+        /* Content blocks */
+        .section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .intro-text {
+            font-size: 18px;
+            color: var(--color-gray-medium);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--color-gray-light);
+            border-left: 3px solid var(--color-red-primary);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .card:hover {
+            background-color: #333333;
+            border-left-color: var(--color-red-primary);
+            box-shadow: 0 0 20px rgba(209, 35, 46, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: var(--type-body);
+            color: var(--color-white);
+            flex: 1;
+        }
+
+        .card-toggle {
+            color: var(--color-red-primary);
+            font-weight: 600;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .card-content {
+            display: none;
+            margin-top: var(--spacing-md);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid rgba(209, 35, 46, 0.3);
+            font-size: var(--type-body);
+            color: var(--color-gray-dark);
+        }
+
+        .card-content.open {
+            display: block;
+        }
+
+        .card-content strong {
+            display: block;
+            margin-top: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        /* Brand values grid */
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .value-card {
+            background-color: var(--color-gray-light);
+            padding: var(--spacing-md);
+            border-radius: 4px;
+            border-top: 3px solid var(--color-red-primary);
+        }
+
+        .value-card h4 {
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-red-primary);
+        }
+
+        .value-card p {
+            color: var(--color-gray-dark);
+        }
+
+        /* Color palette */
+        .palette {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .color-swatch {
+            text-align: center;
+        }
+
+        .swatch-box {
+            width: 100%;
+            height: 100px;
+            border-radius: 4px;
+            margin-bottom: var(--spacing-sm);
+            border: 1px solid var(--color-gray-light);
+        }
+
+        .swatch-name {
+            font-size: var(--type-caption);
+            font-weight: 500;
+            color: var(--color-gray-dark);
+        }
+
+        .swatch-hex {
+            font-size: var(--type-caption);
+            color: var(--color-gray-medium);
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Content grid (posts) */
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .post-card {
+            background-color: var(--color-gray-light);
+            padding: var(--spacing-md);
+            border-radius: 4px;
+            border-top: 3px solid var(--color-red-primary);
+        }
+
+        .post-platform {
+            font-size: var(--type-caption);
+            font-weight: 700;
+            color: var(--color-red-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .post-card h4 {
+            font-size: var(--type-h3);
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-white);
+        }
+
+        .post-card p {
+            color: var(--color-gray-dark);
+        }
+
+        /* Search */
+        .search-container {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: var(--spacing-sm);
+            font-size: var(--type-body);
+            border: 2px solid var(--color-red-primary);
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-gray-light);
+            color: var(--color-white);
+            transition: border-color 0.2s;
+        }
+
+        .search-input::placeholder {
+            color: var(--color-gray-medium);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--color-red-primary);
+            box-shadow: 0 0 10px rgba(209, 35, 46, 0.2);
+        }
+
+        /* Highlights */
+        .highlight-box {
+            background-color: rgba(209, 35, 46, 0.08);
+            border-left: 4px solid var(--color-red-primary);
+            padding: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+            border-radius: 4px;
+        }
+
+        .highlight-box p {
+            color: var(--color-gray-dark);
+        }
+
+        .success-box {
+            background-color: rgba(209, 35, 46, 0.05);
+            border-left: 4px solid var(--color-red-primary);
+            padding: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+            border-radius: 4px;
+        }
+
+        .success-box p {
+            color: var(--color-gray-dark);
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--spacing-md) 0;
+            font-size: var(--type-body);
+        }
+
+        th {
+            background-color: var(--color-gray-light);
+            padding: var(--spacing-sm);
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-white);
+            border-bottom: 2px solid var(--color-red-primary);
+        }
+
+        td {
+            padding: var(--spacing-sm);
+            border-bottom: 1px solid var(--color-gray-light);
+            color: var(--color-gray-dark);
+        }
+
+        tr:hover {
+            background-color: #333333;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: relative;
+                height: auto;
+                max-height: 400px;
+                overflow-y: auto;
+                margin-bottom: var(--spacing-lg);
+            }
+
+            .main {
+                padding: var(--spacing-md);
+            }
+
+            .values-grid,
+            .palette,
+            .posts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Utility */
+        .cta {
+            display: inline-block;
+            background-color: var(--color-red-primary);
+            color: var(--color-white);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .cta:hover {
+            background-color: var(--color-red-dark);
+            box-shadow: 0 4px 12px rgba(209, 35, 46, 0.2);
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: rgba(209, 35, 46, 0.15);
+            color: var(--color-red-primary);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: 12px;
+            font-size: var(--type-caption);
+            font-weight: 600;
+            margin-right: var(--spacing-xs);
+            border: 1px solid var(--color-red-primary);
+        }
+
+        .check-mark {
+            color: var(--color-red-primary);
+            font-weight: 600;
+        }
+
+        .cross-mark {
+            color: var(--color-red-primary);
+            font-weight: 600;
+        }
+
+        ul, ol {
+            margin-left: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+        }
+
+        li {
+            margin-bottom: var(--spacing-xs);
+            color: var(--color-gray-dark);
+        }
+
+        code {
+            background-color: var(--color-gray-light);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: var(--color-red-primary);
+        }
+
+        pre {
+            background-color: var(--color-gray-light);
+            padding: var(--spacing-md);
+            border-radius: 4px;
+            overflow-x: auto;
+            margin-bottom: var(--spacing-md);
+            font-size: var(--type-caption);
+            line-height: 1.5;
+            color: var(--color-gray-dark);
+            border-left: 3px solid var(--color-red-primary);
+        }
+
+        .header-meta {
+            font-size: var(--type-caption);
+            color: var(--color-gray-medium);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .intro-text {
+            color: var(--color-gray-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h2>Bitaxus CM</h2>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Inicio</div>
+                <ul>
+                    <li><a href="#intro">Visión General</a></li>
+                    <li><a href="#search">Buscar</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Brand Kit</div>
+                <ul>
+                    <li><a href="#brand-purpose">Propósito</a></li>
+                    <li><a href="#brand-values">Valores</a></li>
+                    <li><a href="#brand-color">Colores</a></li>
+                    <li><a href="#brand-typography">Tipografía</a></li>
+                    <li><a href="#brand-voice">Tono de Voz</a></li>
+                    <li><a href="#audience">Audiencia</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Contenido</div>
+                <ul>
+                    <li><a href="#pillars">Pilares</a></li>
+                    <li><a href="#january-plan">Enero</a></li>
+                    <li><a href="#february-plan">Febrero</a></li>
+                    <li><a href="#march-plan">Marzo</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Guiones</div>
+                <ul>
+                    <li><a href="#moderation-scripts">10 Objeciones</a></li>
+                    <li><a href="#keywords">Palabras Clave</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Tu Rol</div>
+                <ul>
+                    <li><a href="#cm-role">Responsabilidades</a></li>
+                    <li><a href="#weekly-workflow">Flujo Semanal</a></li>
+                    <li><a href="#success-metrics">Métricas</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="main">
+            <!-- Header -->
+            <section id="intro">
+                <h1>Guía Community Manager Bitaxus</h1>
+                <p class="header-meta">Versión Q1 2025 • Última actualización: Diciembre 2024</p>
+                <p class="intro-text">Todo lo que necesitas para ejecutar tu rol como Community Manager. Una brújula que evoluciona cada semana con lo que aprendemos de la comunidad.</p>
+
+                <div class="highlight-box">
+                    <strong>Tu rol no es vender. Tu rol es educar.</strong><br>
+                    La gente que sigue a Bitaxus no quiere ser persuadida. Quiere entender.
+                </div>
+            </section>
+
+            <!-- Search -->
+            <section id="search" class="section">
+                <h2>Buscar Guiones & FAQ</h2>
+                <div class="search-container">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Busca una pregunta, palabra clave o tema...">
+                </div>
+                <div id="searchResults" style="display:none;">
+                    <p>Resultados de búsqueda aparecerán aquí...</p>
+                </div>
+            </section>
+
+            <!-- Brand Kit -->
+            <section id="brand-purpose" class="section">
+                <h2>Brand Kit Bitaxus</h2>
+
+                <h3>Propósito de Marca</h3>
+                <p><strong>Slogan:</strong> "Cobras. Pagas. Sabes."</p>
+                <p><strong>Visión:</strong> Escalar lo que Ale hacía con sus amigos. Hacer que la gente que gana en digital pueda recibir y mover sus fondos sin perderse en el camino.</p>
+
+                <div class="success-box">
+                    <strong>Sin:</strong>
+                    <ul>
+                        <li>Depender de conocer a alguien</li>
+                        <li>Trámites confusos</li>
+                        <li>Apps innecesarias</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="brand-values" class="section">
+                <h3>Valores de Marca</h3>
+                <div class="values-grid">
+                    <div class="value-card">
+                        <h4>🎯 Claridad</h4>
+                        <p>Saber exactamente tasa, costo, tiempo. Sin letra pequeña al final. Información visible antes de confirmar.</p>
+                    </div>
+                    <div class="value-card">
+                        <h4>🤝 Acompañamiento</h4>
+                        <p>Soporte real de principio a fin. Entender el contexto de cada operación. No quedas solo esperando.</p>
+                    </div>
+                    <div class="value-card">
+                        <h4>⚡ Accesibilidad</h4>
+                        <p>Por WhatsApp o web. Sin instalar apps. Sin formularios interminables. Lo que ya usas todos los días.</p>
+                    </div>
+                    <div class="value-card">
+                        <h4>🔒 Confianza</h4>
+                        <p>Procesos que protegen. SAGRILAFT. Validaciones que hacen que el sistema funcione. Transparencia sobre reglas.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="brand-color" class="section">
+                <h3>Paleta de Color</h3>
+                <div class="palette">
+                    <div class="color-swatch">
+                        <div class="swatch-box" style="background-color: #0F63BA;"></div>
+                        <div class="swatch-name">Azul Profundo</div>
+                        <div class="swatch-hex">#0F63BA</div>
+                    </div>
+                    <div class="color-swatch">
+                        <div class="swatch-box" style="background-color: #1E7FDE;"></div>
+                        <div class="swatch-name">Azul Primario</div>
+                        <div class="swatch-hex">#1E7FDE</div>
+                    </div>
+                    <div class="color-swatch">
+                        <div class="swatch-box" style="background-color: #E6F1FB;"></div>
+                        <div class="swatch-name">Azul Claro</div>
+                        <div class="swatch-hex">#E6F1FB</div>
+                    </div>
+                    <div class="color-swatch">
+                        <div class="swatch-box" style="background-color: #10B981;"></div>
+                        <div class="swatch-name">Verde Dinero</div>
+                        <div class="swatch-hex">#10B981</div>
+                    </div>
+                    <div class="color-swatch">
+                        <div class="swatch-box" style="background-color: #EBF8F0;"></div>
+                        <div class="swatch-name">Verde Claro</div>
+                        <div class="swatch-hex">#EBF8F0</div>
+                    </div>
+                    <div class="color-swatch">
+                        <div class="swatch-box" style="background-color: #374151;"></div>
+                        <div class="swatch-name">Gris Oscuro</div>
+                        <div class="swatch-hex">#374151</div>
+                    </div>
+                </div>
+
+                <p><strong>Transmite:</strong> Confianza, profesionalismo, claridad, éxito, dinero que entra.</p>
+            </section>
+
+            <section id="brand-typography" class="section">
+                <h3>Tipografía</h3>
+                <p><strong>Fuente principal:</strong> Inter</p>
+                <p><strong>Características:</strong> Clara y escaneable. Nunca serif display. Pesos: 400 (regular), 500 (bold). Nunca 600 o 700.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Elemento</th>
+                            <th>Tamaño</th>
+                            <th>Peso</th>
+                            <th>Line Height</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>H1 (Encabezado 1)</td>
+                            <td>28px</td>
+                            <td>500</td>
+                            <td>1.2</td>
+                        </tr>
+                        <tr>
+                            <td>H2 (Encabezado 2)</td>
+                            <td>22px</td>
+                            <td>500</td>
+                            <td>1.3</td>
+                        </tr>
+                        <tr>
+                            <td>Body (Cuerpo)</td>
+                            <td>16px</td>
+                            <td>400</td>
+                            <td>1.7</td>
+                        </tr>
+                        <tr>
+                            <td>Caption (Descripción)</td>
+                            <td>13px</td>
+                            <td>400</td>
+                            <td>1.5</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="brand-voice" class="section">
+                <h3>Tono de Voz</h3>
+                <p><strong>Definición:</strong> Inteligente, cálido, sin filtro, colaborativo</p>
+                <p><strong>Es como:</strong> Tu amigo más inteligente explicando algo en términos claros</p>
+
+                <h4 style="margin-top: var(--spacing-md);">Características</h4>
+                <ul>
+                    <li><strong>Directo:</strong> "Esto es lo que cuesta. Así funciona. Aquí está el por qué."</li>
+                    <li><strong>Conversacional:</strong> "No es una traba, es lo que hace que el sistema funcione."</li>
+                    <li><strong>Humano:</strong> "Yo pasé por ese enredo y decidí que valía la pena resolverlo."</li>
+                    <li><strong>No corporativo:</strong> Evitar "Nos complace ofrecer soluciones innovadoras..."</li>
+                </ul>
+
+                <h4 style="margin-top: var(--spacing-md);">Frases que Suenan como Bitaxus</h4>
+                <div class="success-box">
+                    <p><span class="check-mark">✓</span> "La tasa exacta antes de confirmar"</p>
+                    <p><span class="check-mark">✓</span> "Costo total, no sorpresas"</p>
+                    <p><span class="check-mark">✓</span> "Acompañamiento de principio a fin"</p>
+                    <p><span class="check-mark">✓</span> "Sin apps innecesarias"</p>
+                    <p><span class="check-mark">✓</span> "Transparencia, no excusas"</p>
+                </div>
+
+                <h4 style="margin-top: var(--spacing-md);">Frases a Evitar</h4>
+                <div class="highlight-box">
+                    <p><span class="cross-mark">✗</span> "Soluciones innovadoras"</p>
+                    <p><span class="cross-mark">✗</span> "Empoderamiento financiero"</p>
+                    <p><span class="cross-mark">✗</span> "Disrupción fintech"</p>
+                    <p><span class="cross-mark">✗</span> "Compra ahora"</p>
+                    <p><span class="cross-mark">✗</span> "Servicios seamless"</p>
+                </div>
+            </section>
+
+            <section id="audience" class="section">
+                <h3>Segmentos de Audiencia</h3>
+                <div class="posts-grid">
+                    <div class="post-card">
+                        <div class="post-platform">Freelancers</div>
+                        <h4>💻 "Cobras de múltiples clientes"</h4>
+                        <p><strong>Dolor:</strong> Múltiples plataformas, múltiples tasas, confusión</p>
+                        <p><strong>Solución:</strong> Un lugar que unifica y aclara</p>
+                    </div>
+                    <div class="post-card">
+                        <div class="post-platform">Emprendedores</div>
+                        <h4>🚀 "Creaste algo, mueve el dinero"</h4>
+                        <p><strong>Dolor:</strong> Dinero internacional complicado de gestionar</p>
+                        <p><strong>Solución:</strong> Acceso simple, sin apps extras</p>
+                    </div>
+                    <div class="post-card">
+                        <div class="post-platform">Negocios</div>
+                        <h4>📊 "Cobras localmente, pagas en dólares"</h4>
+                        <p><strong>Dolor:</strong> Flujo de caja desorganizado</p>
+                        <p><strong>Solución:</strong> Contexto de cada operación</p>
+                    </div>
+                    <div class="post-card">
+                        <div class="post-platform">Creadores</div>
+                        <h4>🎬 "Monetizas en plataformas globales"</h4>
+                        <p><strong>Dolor:</strong> Múltiples fuentes sin sistema</p>
+                        <p><strong>Solución:</strong> Centralización clara</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Content Plan -->
+            <section id="pillars" class="section">
+                <h2>Pilares de Contenido</h2>
+                <ol>
+                    <li><strong>Cómo mover dinero</strong> — Guías sobre recibir del exterior, conversión, tasas, plazos, comisiones</li>
+                    <li><strong>Seguridad y confianza</strong> — Cómo identificar estafas, verificar canales, proteger fondos</li>
+                    <li><strong>Decisiones comerciales</strong> — Cuándo dar plazo, cómo negociar, financiar vs vender</li>
+                    <li><strong>Historias reales</strong> — Casos de uso, lecciones aprendidas, transparencia</li>
+                </ol>
+            </section>
+
+            <section id="january-plan" class="section">
+                <h2>ENERO: Educar en Claridad</h2>
+                <p class="intro-text">Objetivo: Establece la base. Problema + solución = Bitaxus.</p>
+
+                <h3>Semana 1 (3-9 enero)</h3>
+
+                <div class="posts-grid">
+                    <div class="post-card">
+                        <div class="post-platform">LinkedIn</div>
+                        <h4>Te pagaron en dólares</h4>
+                        <p>Hook narrativo. Ale cuenta su experiencia real como consultora. Problema: pérdida de dinero en comisiones. Solución: Bitaxus como escala.</p>
+                        <span class="badge">Narrativo</span>
+                        <span class="badge">Personal</span>
+                    </div>
+                    <div class="post-card">
+                        <div class="post-platform">Instagram</div>
+                        <h4>Las 6 preguntas que debes hacerte</h4>
+                        <p>Carrusel con 6 slides. Una pregunta por slide. Caption final: "Si un servicio no responde estas 6 preguntas, no es tu servicio"</p>
+                        <span class="badge">Carrusel</span>
+                        <span class="badge">Educativo</span>
+                    </div>
+                    <div class="post-card">
+                        <div class="post-platform">Twitter/X</div>
+                        <h4>¿Qué tasa te aplican realmente?</h4>
+                        <p>Thread (5-6 tweets). Desmenuzar dónde se va el dinero en comisiones. Ejemplo numérico real.</p>
+                        <span class="badge">Thread</span>
+                        <span class="badge">Técnico</span>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: var(--spacing-lg);">Semana 3 (17-23 enero)</h3>
+                <div class="highlight-box">
+                    <strong>BLOG PROFUNDO</strong><br>
+                    "La checklist de verificación: 6 cosas antes de elegir dónde mover tu dinero"<br>
+                    <em>1.200-1.500 palabras</em>
+                </div>
+            </section>
+
+            <section id="february-plan" class="section">
+                <h2>FEBRERO: Decisiones Comerciales</h2>
+                <p class="intro-text">Tema: Plazos, financiamiento, negociación. Historias de usuario.</p>
+
+                <div class="highlight-box">
+                    <strong>Blog Profundo</strong><br>
+                    "Una venta también se negocia en el tiempo"
+                </div>
+            </section>
+
+            <section id="march-plan" class="section">
+                <h2>MARZO: Historias Reales + Momentum</h2>
+                <p class="intro-text">Objetivo: Casos de éxito, IA + recaudos, transparencia, refuerzo de valores.</p>
+
+                <div class="highlight-box">
+                    <strong>Blog Profundo</strong><br>
+                    "Entender qué está pendiente es entender tu negocio"
+                </div>
+            </section>
+
+            <!-- Moderation Scripts -->
+            <section id="moderation-scripts" class="section">
+                <h2>Guiones de Moderación</h2>
+                <p class="intro-text">Las 10 preguntas que responderás más. Click para expandir cada una.</p>
+
+                <div class="card" onclick="toggleCard(event)">
+                    <div class="card-header">
+                        <span class="card-title">1. ¿Por qué piden tanta información?</span>
+                        <span class="card-toggle">+</span>
+                    </div>
+                    <div class="card-content">
+                        <strong>Versión corta:</strong>
+                        <p>Es lo que hace que el sistema funcione. SAGRILAFT no es una traba — es lo que protege tu plata, la plataforma y el ecosistema del que todos hacemos parte.</p>
+
+                        <strong>Versión extendida:</strong>
+                        <p>Cuando ayudaba a personas una por una, siempre les decía lo mismo: esto no es una excusa, es la realidad.</p>
+                        <p>Un proceso serio te protege a ti también. No pedimos información porque queramos molestarte. La pedimos porque es lo que hace que el sistema no sea vulnerable.</p>
+                        <p>Desconfía de quien te prometa mover dinero sin preguntas. La confianza no se construye evitando controles. Se construye con claridad sobre cuáles son y para qué sirven.</p>
+                    </div>
+                </div>
+
+                <div class="card" onclick="toggleCard(event)">
+                    <div class="card-header">
+                        <span class="card-title">2. ¿Es seguro por WhatsApp?</span>
+                        <span class="card-toggle">+</span>
+                    </div>
+                    <div class="card-content">
+                        <strong>Versión corta:</strong>
+                        <p>WhatsApp es la puerta, no la bóveda. La operación corre por canales oficiales, con sus procesos y validaciones. Lo importante es que estés hablando con el canal oficial.</p>
+
+                        <strong>Versión extendida:</strong>
+                        <p>Entiendo la preocupación. A mí también me llegan mensajes sospechosos de WhatsApp.</p>
+                        <p>Lo que aprendí a revisar es CON QUIÉN hablo. Aquí están las 6 señales para verificar que hablas con Bitaxus:</p>
+                        <ol>
+                            <li>Número de nuestro sitio web oficial</li>
+                            <li>Logo en perfil</li>
+                            <li>Respuestas coherentes sin urgencia falsa</li>
+                            <li>Enlaces van a nuestro dominio</li>
+                            <li>No pedimos datos de tarjeta por chat</li>
+                            <li>Respuestas consistentes con lo que comunicamos</li>
+                        </ol>
+                        <p>Cuando verifiques eso, es seguro.</p>
+                    </div>
+                </div>
+
+                <div class="card" onclick="toggleCard(event)">
+                    <div class="card-header">
+                        <span class="card-title">3. ¿Qué comisión cobra Bitaxus?</span>
+                        <span class="card-toggle">+</span>
+                    </div>
+                    <div class="card-content">
+                        <strong>Versión corta:</strong>
+                        <p>Depende de la operación (tipo de pago, monto, destino). Lo importante: conoces la tasa exacta antes de confirmar. No hay sorpresas después.</p>
+                        <p>Escribe por WhatsApp y te mostramos el costo neto en minutos.</p>
+
+                        <strong>Versión extendida:</strong>
+                        <p>La comisión de Bitaxus varía según:
+                            <ul>
+                                <li>El monto</li>
+                                <li>El tipo de operación</li>
+                                <li>El destino</li>
+                                <li>La velocidad que necesites</li>
+                            </ul>
+                        </p>
+                        <p>Pero aquí está lo diferente: ANTES de confirmar, ves la tasa exacta, la comisión, el costo total, y el tiempo que tarda.</p>
+                    </div>
+                </div>
+
+                <div class="card" onclick="toggleCard(event)">
+                    <div class="card-header">
+                        <span class="card-title">4. ¿Es más barato que X servicio?</span>
+                        <span class="card-toggle">+</span>
+                    </div>
+                    <div class="card-content">
+                        <strong>Versión corta:</strong>
+                        <p>Posiblemente no somos los más baratos en comisión pura. Pero eres el que más sabe.</p>
+                        <p>Con Bitaxus conoces tasa, costo total, tiempo estimado y soporte. Eso es información que otros no te dan. Compara con eso en lugar de solo comisión.</p>
+                    </div>
+                </div>
+
+                <div class="card" onclick="toggleCard(event)">
+                    <div class="card-header">
+                        <span class="card-title">5. ¿Cuánto tiempo tarda?</span>
+                        <span class="card-toggle">+</span>
+                    </div>
+                    <div class="card-content">
+                        <strong>Versión corta:</strong>
+                        <p>Varía según el tipo de operación. Pero sí: conoces el tiempo estimado antes de confirmar.</p>
+                        <p>No asumimos; confirmamos. Escribe y pregunta por tu caso específico.</p>
+                    </div>
+                </div>
+
+                <div class="card" onclick="toggleCard(event)">
+                    <div class="card-header">
+                        <span class="card-title">6. ¿Necesito descargar app?</span>
+                        <span class="card-toggle">+</span>
+                    </div>
+                    <div class="card-content">
+                        <p>No. Puedes empezar desde WhatsApp o desde nuestra web. La idea es que uses lo que ya tienes.</p>
+                        <p>Sin instalar, sin formularios interminables. Accesibilidad: eso es.</p>
+                    </div>
+                </div>
+
+                <div class="card" onclick="toggleCard(event)">
+                    <div class="card-header">
+                        <span class="card-title">7. Otros servicios ofrecen sin validaciones</span>
+                        <span class="card-toggle">+</span>
+                    </div>
+                    <div class="card-content">
+                        <strong>Versión corta:</strong>
+                        <p>Desconfía de eso. Las validaciones existen porque el sistema funciona así, y ese sistema te protege a ti.</p>
+                    </div>
+                </div>
+
+                <div class="card" onclick="toggleCard(event)">
+                    <div class="card-header">
+                        <span class="card-title">8. ¿Qué pasa si algo se demora?</span>
+                        <span class="card-toggle">+</span>
+                    </div>
+                    <div class="card-content">
+                        <strong>Versión corta:</strong>
+                        <p>Hay un equipo que responde. Ese es el punto: no quedas solo esperando. Acompañamiento de principio a fin.</p>
+                    </div>
+                </div>
+
+                <div class="card" onclick="toggleCard(event)">
+                    <div class="card-header">
+                        <span class="card-title">9. Veo que cobran diferente a cada persona</span>
+                        <span class="card-toggle">+</span>
+                    </div>
+                    <div class="card-content">
+                        <strong>Versión corta:</strong>
+                        <p>Correcto. Las condiciones varían según el tipo de operación, el monto, el destino.</p>
+                        <p>Pero eso no es un secreto: te lo mostramos. Por eso pedimos que consultes tu caso.</p>
+                    </div>
+                </div>
+
+                <div class="card" onclick="toggleCard(event)">
+                    <div class="card-header">
+                        <span class="card-title">10. ¿Cómo sé que no van a quebrar?</span>
+                        <span class="card-toggle">+</span>
+                    </div>
+                    <div class="card-content">
+                        <strong>Versión corta:</strong>
+                        <p>Pregunta válida. Estamos bajo regulación colombiana, bajo SAGRILAFT, con procesos de cumplimiento. Ese es nuestro compromiso.</p>
+
+                        <strong>Versión extendida:</strong>
+                        <p>Bitaxus:</p>
+                        <ul>
+                            <li>Está bajo regulación colombiana</li>
+                            <li>Opera bajo SAGRILAFT</li>
+                            <li>Tiene procesos de cumplimiento establecidos</li>
+                            <li>Fue fundada por Ale, quien lleva 10+ años en este ecosistema</li>
+                        </ul>
+                        <p>No es improvisado. Es la decisión deliberada de una consultora que vivió el problema y decidió resolverlo a escala.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Keywords -->
+            <section id="keywords" class="section">
+                <h2>Guía Rápida: Palabras Clave</h2>
+
+                <h3>Palabras que Definen Bitaxus</h3>
+                <div class="success-box">
+                    <p>Claridad • Contexto • Acompañamiento • Sin fricción • Real • Transparencia • Confianza • Educación</p>
+                </div>
+
+                <h3 style="margin-top: var(--spacing-lg);">Palabras a Evitar</h3>
+                <div class="highlight-box">
+                    <p>Innovación • Soluciones escalables • Empoderamiento • Maximizar • Leverage • Seamless • Disruption</p>
+                </div>
+
+                <h3 style="margin-top: var(--spacing-lg);">Tono en 3 frases</h3>
+                <div class="posts-grid">
+                    <div class="post-card">
+                        <h4>1.</h4>
+                        <p>"Yo viví esto. No es teoría."</p>
+                    </div>
+                    <div class="post-card">
+                        <h4>2.</h4>
+                        <p>"Te muestro el problema y cómo entenderlo."</p>
+                    </div>
+                    <div class="post-card">
+                        <h4>3.</h4>
+                        <p>"Bitaxus es la escala de eso."</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CM Role -->
+            <section id="cm-role" class="section">
+                <h2>Tu Rol: Community Manager</h2>
+
+                <h3>No eres:</h3>
+                <p><strong>Vendedor</strong> — Tu superpoder es la credibilidad a través de honestidad</p>
+
+                <h3>Sí eres:</h3>
+                <p><strong>Educador</strong> — Explicas decisiones, no las defiendes</p>
+
+                <div class="values-grid" style="margin-top: var(--spacing-lg);">
+                    <div class="value-card">
+                        <h4>Escuchador</h4>
+                        <p>Las objeciones de comunidad = oportunidades de contenido. Blockchain eso en temas para blogs.</p>
+                    </div>
+                    <div class="value-card">
+                        <h4>Guardián del Tono</h4>
+                        <p>Asegura que todo suene como Bitaxus. Directo, humano, transparente. Coherencia en todas las plataformas.</p>
+                    </div>
+                    <div class="value-card">
+                        <h4>Puente con Ale</h4>
+                        <p>Lleva insights del community a decisiones de producto. "Hoy 8 personas preguntaron sobre X".</p>
+                    </div>
+                    <div class="value-card">
+                        <h4>Moderador Inteligente</h4>
+                        <p>Remueve spam y FUD, refuerza la verdad con datos. Mantiene comunidad sana. Educa sobre realidad.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="weekly-workflow" class="section">
+                <h2>Flujo Semanal</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Día</th>
+                            <th>Tarea</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Lunes</strong></td>
+                            <td>Programa 3 posts + revisa comments</td>
+                            <td>3 posts</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Martes-Jueves</strong></td>
+                            <td>Participa en conversaciones + recopila preguntas</td>
+                            <td>Ongoing</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Viernes</strong></td>
+                            <td>Analiza engagement + reporta insights</td>
+                            <td>Reporte</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 style="margin-top: var(--spacing-lg);">Plan Trimestral</h3>
+                <ul>
+                    <li><strong>Posts redes:</strong> 36 (3 por semana: LinkedIn, Instagram, Twitter/X)</li>
+                    <li><strong>Blogs profundos:</strong> 3 (1 por mes)</li>
+                    <li><strong>Guiones FAQ:</strong> 48</li>
+                    <li><strong>Semanas:</strong> 12</li>
+                </ul>
+            </section>
+
+            <section id="success-metrics" class="section">
+                <h2>Métricas de Éxito</h2>
+
+                <h3>No es:</h3>
+                <p>"Cuántos me compraron"</p>
+
+                <h3>Sí es:</h3>
+                <div class="success-box">
+                    <p>"Cuántos entienden por qué Bitaxus existe"</p>
+                </div>
+
+                <h3 style="margin-top: var(--spacing-lg);">Indicadores Clave</h3>
+                <ul>
+                    <li>36 posts en redes (3 por semana)</li>
+                    <li>3 blogs profundos (1 por mes)</li>
+                    <li>48 respuestas FAQ integradas en moderación</li>
+                    <li>Aumento de menciones de la marca en comunidad</li>
+                    <li>Tráfico desde redes hacia blog/web</li>
+                </ul>
+
+                <div class="highlight-box" style="margin-top: var(--spacing-lg);">
+                    <strong>Formato de reporte semanal:</strong>
+                    <p style="margin-top: var(--spacing-sm);">📊 ENGAGEMENT • 💬 PREGUNTAS RECURRENTES • ✨ LO QUE FUNCIONÓ • ❌ LO QUE QUEDÓ • 🎯 PRÓXIMA SEMANA</p>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <section style="margin-top: var(--spacing-xl); padding-top: var(--spacing-xl); border-top: 1px solid var(--color-gray-light); text-align: center; color: var(--color-gray-medium);">
+                <p style="font-size: var(--type-caption);">
+                    Documento creado: Diciembre 2024 • Versión: Q1 2025<br>
+                    Próxima revisión: 31 de marzo, 2025<br>
+                    <em>Este documento es tu brújula. Ajústa según lo que aprendas cada semana.</em>
+                </p>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Toggle cards
+        function toggleCard(event) {
+            const card = event.currentTarget;
+            const content = card.querySelector('.card-content');
+            const toggle = card.querySelector('.card-toggle');
+
+            content.classList.toggle('open');
+            toggle.textContent = content.classList.contains('open') ? '−' : '+';
+        }
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const cards = document.querySelectorAll('.card');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+
+            if (query.length === 0) {
+                searchResults.style.display = 'none';
+                cards.forEach(card => card.style.display = 'block');
+                return;
+            }
+
+            let resultCount = 0;
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const content = card.querySelector('.card-content').textContent.toLowerCase();
+
+                if (title.includes(query) || content.includes(query)) {
+                    card.style.display = 'block';
+                    resultCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            searchResults.style.display = 'block';
+            searchResults.innerHTML = `<p><strong>${resultCount} resultado${resultCount !== 1 ? 's' : ''}</strong> encontrado${resultCount !== 1 ? 's' : ''}</p>`;
+        });
+
+        // Smooth scroll for sidebar links
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const href = link.getAttribute('href');
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
