@@ -19,7 +19,8 @@
       "audience": "Empresarios, PyME, Founders, SAS",
       "objective": "AWARENESS: Estadística + problema de operación + solución",
       "kpi_target": "500+ comments, 2K+ shares",
-      "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
+      "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx",
+      "comments": null
     },
     {
       "scheduled_date": "2026-09-04",
@@ -38,7 +39,8 @@
       "audience": "Empresas, agencias, estudios, SAS",
       "objective": "AWARENESS: Proceso de cobro + humanización del problema",
       "kpi_target": "100K+ reach, 5K+ saves",
-      "source": "BITAXUS_INSTAGRAM_PARRILLA_FINAL.md"
+      "source": "BITAXUS_INSTAGRAM_PARRILLA_FINAL.md",
+      "comments": null
     },
     {
       "scheduled_date": "2026-09-05",
@@ -57,7 +59,8 @@
       "audience": "Empresarios, PyME, Startups",
       "objective": "AWARENESS: Proceso de cobro + humanización",
       "kpi_target": "2K+ retweets",
-      "source": "BITAXUS_TWITTER_PARRILLA_FINAL.md"
+      "source": "BITAXUS_TWITTER_PARRILLA_FINAL.md",
+      "comments": null
     },
     {
       "scheduled_date": "2026-09-09",
@@ -76,7 +79,8 @@
       "audience": "Empresarios, PyME, emprendedores",
       "objective": "TRUST: Abordar objeción WhatsApp + generar seguridad",
       "kpi_target": "400+ comments, 1.5K+ shares",
-      "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
+      "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx",
+      "comments": null
     },
     {
       "scheduled_date": "2026-09-11",
@@ -95,7 +99,8 @@
       "audience": "Empresas, agencias, estudios, SAS",
       "objective": "AWARENESS: Gestión de cash flow y cuentas claras",
       "kpi_target": "80K+ reach, 4K+ saves",
-      "source": "BITAXUS_INSTAGRAM_PARRILLA_FINAL.md"
+      "source": "BITAXUS_INSTAGRAM_PARRILLA_FINAL.md",
+      "comments": null
     },
     {
       "scheduled_date": "2026-09-12",
@@ -114,7 +119,8 @@
       "audience": "Tech, creators, builders",
       "objective": "AWARENESS: Comparativa + humor",
       "kpi_target": "2.5K+ retweets",
-      "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
+      "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx",
+      "comments": null
     },
     {
       "scheduled_date": "2026-09-16",
@@ -133,7 +139,8 @@
       "audience": "Empresarios, PyME, Founders, Agencias",
       "objective": "AWARENESS: Comparativa + claridad como diferenciador",
       "kpi_target": "600+ comments, 2.5K+ shares",
-      "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
+      "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx",
+      "comments": null
     },
     {
       "scheduled_date": "2026-09-18",
@@ -152,7 +159,8 @@
       "audience": "Empresas, agencias, estudios, SAS",
       "objective": "AWARENESS: Gestión de cartera y cobranza",
       "kpi_target": "80K+ reach, 4K+ saves",
-      "source": "BITAXUS_INSTAGRAM_PARRILLA_FINAL.md"
+      "source": "BITAXUS_INSTAGRAM_PARRILLA_FINAL.md",
+      "comments": null
     },
     {
       "scheduled_date": "2026-09-19",
@@ -171,7 +179,8 @@
       "audience": "Empresarios, PyME, Startups",
       "objective": "AWARENESS: Gestión de cartera y cobranza",
       "kpi_target": "2K+ retweets",
-      "source": "BITAXUS_TWITTER_PARRILLA_FINAL.md"
+      "source": "BITAXUS_TWITTER_PARRILLA_FINAL.md",
+      "comments": null
     },
     {
       "scheduled_date": "2026-09-23",
@@ -190,7 +199,8 @@
       "audience": "Empresarios, PyME, Founders, SAS",
       "objective": "CONVERSION: Lanzamiento + early access + co-creation",
       "kpi_target": "400+ signups, 2K+ reactions",
-      "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
+      "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx",
+      "comments": null
     },
     {
       "scheduled_date": "2026-09-25",
@@ -209,7 +219,8 @@
       "audience": "Empresas, agencias, estudios, SAS",
       "objective": "CONVERSION: Lanzamiento + acceso temprano + FOMO",
       "kpi_target": "50K+ story views, 2K+ signups",
-      "source": "BITAXUS_INSTAGRAM_PARRILLA_FINAL.md"
+      "source": "BITAXUS_INSTAGRAM_PARRILLA_FINAL.md",
+      "comments": null
     },
     {
       "scheduled_date": "2026-09-26",
@@ -228,7 +239,8 @@
       "audience": "Tech, early adopters",
       "objective": "ACTIVATION: Beta live + proof",
       "kpi_target": "2K+ retweets",
-      "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx"
+      "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx",
+      "comments": null
     }
   ],
   "calendar_month": "2026-09",
