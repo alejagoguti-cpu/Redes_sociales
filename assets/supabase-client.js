@@ -107,6 +107,15 @@
     async deletePost(id) {
       const { error } = await client.from('posts').delete().eq('id', id);
       if (error) throw error;
+    },
+
+    subscribeToPostChanges(callback) {
+      return client
+        .channel('public:posts')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, (payload) => {
+          callback(payload);
+        })
+        .subscribe();
     }
   };
 })();
