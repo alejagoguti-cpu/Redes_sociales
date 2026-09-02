@@ -22,27 +22,7 @@
       "source": "BITAXUS_PARRILLA_3_POSTS_SEMANALES.xlsx",
       "comments": null
     },
-    {
-      "scheduled_date": "2026-09-04",
-      "scheduled_time": "18:00:00",
-      "weekday": "Miércoles",
-      "platform": "Instagram",
-      "pillar": "El cobro",
-      "post_type": "Carousel (3 slides)",
-      "title": "Le mandaste el mensajito",
-      "description": "Le mandaste el mensajito. No respondió. Ahora te sientes tú el que está molestando.",
-      "copy_text": "Slide 1: \"Le mandaste el mensajito. No respondió. Le mandaste otro. Ahora te sientes tú el que está molestando.\"\n\nSlide 2: \"El problema del cobro no es de plata. Es de vergüenza. La mora que está en tu contrato nunca la aplicas porque aplicarla exige decidir, mirando al cliente a la cara.\"\n\nSlide 3: \"Cuando el sistema cobra, tú dejas de ser el malo. Cobra a tiempo. Link en bio 💾\"\n\nCTA: \"Guarda\"\n#Bitaxus",
-      "cta": "Guarda",
-      "owner": "Alejandra Gomez",
-      "priority": "normal",
-      "status": "scheduled",
-      "audience": "Empresas, agencias, estudios, SAS",
-      "objective": "AWARENESS: Proceso de cobro + humanización del problema",
-      "kpi_target": "100K+ reach, 5K+ saves",
-      "source": "BITAXUS_INSTAGRAM_PARRILLA_FINAL.md",
-      "comments": null
-    },
-    {
+{
       "scheduled_date": "2026-09-05",
       "scheduled_time": "07:00:00",
       "weekday": "Viernes",
