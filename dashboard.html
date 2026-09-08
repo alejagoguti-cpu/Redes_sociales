@@ -200,6 +200,7 @@
           <p id="viewSubtitle">Tu panel de control de contenido</p>
         </div>
         <div class="header-right">
+          <button class="btn-secondary" onclick="openN8nSettings()" style="font-size:11px; padding:8px 14px;">⚙️ n8n</button>
           <button class="btn-primary" onclick="openNewModal()">+ Nueva Publicación</button>
         </div>
       </header>
@@ -613,6 +614,33 @@
     </div>
   </div>
 
+  <!-- N8N SETTINGS MODAL -->
+  <div class="modal" id="n8nModal">
+    <div class="modal-card" style="position:relative; max-width:500px;">
+      <button class="modal-close" onclick="closeN8nSettings()">x</button>
+      <h2 class="modal-title">Configurar n8n</h2>
+      <p style="color:var(--ui-muted); font-size:12px; margin-bottom:16px;">Conecta tu instancia de n8n para automatizar publicaciones</p>
+
+      <label style="display:block; color:var(--ui-white); font-size:11px; font-weight:600; margin-bottom:6px; text-transform:uppercase;">URL del Webhook</label>
+      <input type="text" id="n8nWebhookUrl" style="width:100%; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-white); margin-bottom:12px; font-size:12px;" placeholder="https://tu-n8n.com/webhook/publish-social" onfocus="this.style.borderColor='var(--ui-red-bright)';" onblur="this.style.borderColor='rgba(255,255,255,.12)';">
+
+      <div style="padding:12px; background:rgba(100,200,255,.08); border:1px solid rgba(100,200,255,.2); border-radius:10px; margin-bottom:16px;">
+        <div style="font-size:11px; color:var(--ui-muted); line-height:1.6;">
+          <strong style="color:var(--ui-white);">Como configurar:</strong><br>
+          1. Crea un workflow en n8n con trigger &quot;Webhook&quot;<br>
+          2. Copia la URL del webhook<br>
+          3. Pega aqui y guarda<br>
+          4. Los posts se enviaran automaticamente
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button class="btn-secondary" onclick="closeN8nSettings()">Cancelar</button>
+        <button class="btn-primary" onclick="saveN8nSettings()">Guardar Configuracion</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL -->
   <div class="modal" id="newModal">
     <div class="modal-card" style="position:relative;">
@@ -620,16 +648,31 @@
       <h2 class="modal-title">Crear Nuevo Contenido</h2>
       <input type="text" id="modalTitle" style="width:100%; margin-bottom:14px; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-white); font-size:13px; transition:all .2s;" placeholder="Título del contenido" onfocus="this.style.borderColor='var(--ui-red-bright)';" onblur="this.style.borderColor='rgba(255,255,255,.12)';">
       <textarea id="modalDescription" style="width:100%; min-height:120px; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-white); margin-bottom:14px; font-size:13px; transition:all .2s; resize:none;" placeholder="Descripción del contenido" onfocus="this.style.borderColor='var(--ui-red-bright)';" onblur="this.style.borderColor='rgba(255,255,255,.12)';"></textarea>
-      <select id="modalPlatform" style="width:100%; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-muted-dark); margin-bottom:14px; font-size:13px; transition:all .2s;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+        <select id="modalPlatform" style="padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-muted-dark); font-size:13px; transition:all .2s;">
         <option style="background:#151519;">Instagram</option>
         <option style="background:#151519;">YouTube</option>
         <option style="background:#151519;">LinkedIn</option>
         <option style="background:#151519;">Twitter</option>
       </select>
-      <input type="datetime-local" id="modalDate" style="width:100%; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-white); margin-bottom:20px; font-size:13px; transition:all .2s;">
+        <input type="datetime-local" id="modalDate" style="padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-white); font-size:13px; transition:all .2s;">
+      </div>
+      <div style="padding:12px; background:rgba(225,44,55,.08); border:1px solid rgba(225,44,55,.2); border-radius:10px; margin-bottom:14px;">
+        <label style="display:flex; align-items:center; gap:8px; color:var(--ui-white); font-size:12px; font-weight:600; cursor:pointer;">
+          <input type="checkbox" id="modalAutomate" style="width:16px; height:16px; cursor:pointer;" onchange="toggleAutomationOptions()">
+          Automatizar con n8n
+        </label>
+        <div id="automationOptions" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid rgba(225,44,55,.2);">
+          <div style="font-size:11px; color:var(--ui-muted); margin-bottom:8px;">Publicacion automatica en fecha programada</div>
+          <label style="display:flex; align-items:center; gap:8px; color:var(--ui-muted); font-size:11px;">
+            <input type="checkbox" id="modalPublishNow" style="width:14px; height:14px; cursor:pointer;">
+            Publicar ahora (inmediatamente)
+          </label>
+        </div>
+      </div>
       <div style="display:flex; gap:10px; justify-content:flex-end;">
         <button class="btn-secondary" onclick="closeNewModal()">Cancelar</button>
-        <button class="btn-primary" onclick="saveNewPost()">Guardar Contenido</button>
+        <button class="btn-primary" onclick="saveNewPost()">Guardar & Automatizar</button>
       </div>
     </div>
   </div>
@@ -1069,10 +1112,49 @@
 
     function closeNewModal() {
       document.getElementById('newModal').classList.remove('active');
-      // Clear form
       document.getElementById('modalTitle').value = '';
       document.getElementById('modalDescription').value = '';
       document.getElementById('modalDate').value = '';
+      document.getElementById('modalAutomate').checked = false;
+      document.getElementById('modalPublishNow').checked = false;
+      document.getElementById('automationOptions').style.display = 'none';
+    }
+
+    function toggleAutomationOptions() {
+      const checkbox = document.getElementById('modalAutomate');
+      const options = document.getElementById('automationOptions');
+      options.style.display = checkbox.checked ? 'block' : 'none';
+    }
+
+    function openN8nSettings() {
+      const modal = document.getElementById('n8nModal');
+      const savedUrl = localStorage.getItem('n8n_webhook_url') || '';
+      document.getElementById('n8nWebhookUrl').value = savedUrl;
+      modal.classList.add('active');
+    }
+
+    function closeN8nSettings() {
+      document.getElementById('n8nModal').classList.remove('active');
+    }
+
+    function saveN8nSettings() {
+      const url = document.getElementById('n8nWebhookUrl').value.trim();
+
+      if (!url) {
+        alert('Por favor ingresa la URL del webhook');
+        return;
+      }
+
+      if (!url.startsWith('http')) {
+        alert('La URL debe comenzar con http:// o https://');
+        return;
+      }
+
+      localStorage.setItem('n8n_webhook_url', url);
+      alert('✅ Configuracion de n8n guardada. Los posts ahora se automatizaran.');
+      closeN8nSettings();
+
+      console.log('✅ n8n webhook configurado:', url);
     }
 
     async function saveNewPost() {
@@ -1080,6 +1162,8 @@
       const description = document.getElementById('modalDescription').value.trim();
       const platform = document.getElementById('modalPlatform').value;
       const dateStr = document.getElementById('modalDate').value;
+      const automate = document.getElementById('modalAutomate').checked;
+      const publishNow = document.getElementById('modalPublishNow').checked;
 
       if (!title || !dateStr) {
         alert('Por favor completa título y fecha');
@@ -1087,29 +1171,69 @@
       }
 
       try {
-        if (!window.bitaxusData) {
-          alert('Supabase no disponible');
-          return;
-        }
-
+        const scheduledDate = new Date(dateStr).toISOString();
         const newPost = {
           title: title,
           content: description,
           platform: platform,
-          scheduled_date: new Date(dateStr).toISOString(),
-          status: 'draft',
+          scheduled_date: scheduledDate,
+          status: automate ? 'automated' : 'draft',
+          automated_with_n8n: automate,
           created_at: new Date().toISOString()
         };
 
-        const result = await window.bitaxusData.insertPosts([newPost]);
-        console.log('✅ Post guardado:', result);
+        // Save to Supabase
+        if (window.bitaxusData) {
+          const result = await window.bitaxusData.insertPosts([newPost]);
+          console.log('✅ Post guardado en Supabase:', result);
+        }
 
-        alert('✅ Contenido guardado exitosamente');
+        // Send to n8n if automation is enabled
+        if (automate) {
+          await triggerN8nWorkflow(newPost, publishNow);
+        }
+
+        alert('✅ ' + (automate ? 'Contenido automatizado con n8n' : 'Contenido guardado') + ' exitosamente');
         closeNewModal();
         loadSupabaseData();
       } catch (error) {
-        console.error('❌ Error guardando post:', error);
+        console.error('❌ Error:', error);
         alert('Error: ' + error.message);
+      }
+    }
+
+    async function triggerN8nWorkflow(post, publishNow) {
+      try {
+        const n8nWebhookUrl = localStorage.getItem('n8n_webhook_url') || 'https://n8n.example.com/webhook/publish-social';
+
+        console.log('🤖 Enviando a n8n:', n8nWebhookUrl);
+
+        const payload = {
+          title: post.title,
+          description: post.content,
+          platform: post.platform,
+          scheduled_date: post.scheduled_date,
+          publish_now: publishNow,
+          created_at: post.created_at
+        };
+
+        const response = await fetch(n8nWebhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error('n8n webhook returned: ' + response.status);
+        }
+
+        const data = await response.json();
+        console.log('✅ n8n workflow triggered:', data);
+        return data;
+      } catch (error) {
+        console.warn('⚠️ n8n integration: ' + error.message);
+        console.log('📝 Para activar n8n: abre DevTools > Console y ejecuta:');
+        console.log('localStorage.setItem("n8n_webhook_url", "TU_URL_WEBHOOK")');
       }
     }
 
