@@ -656,54 +656,81 @@
       ]
     };
 
+    let supabaseRetryCount = 0;
+    const MAX_SUPABASE_RETRIES = 5;
+
     async function loadSupabaseData() {
       try {
         if (!window.bitaxusData) {
-          console.warn('⚠️ Supabase not initialized yet, retrying...');
-          setTimeout(loadSupabaseData, 500);
-          return;
+          supabaseRetryCount++;
+          if (supabaseRetryCount <= MAX_SUPABASE_RETRIES) {
+            console.warn('⚠️ Supabase not initialized yet, retrying... (' + supabaseRetryCount + '/' + MAX_SUPABASE_RETRIES + ')');
+            setTimeout(loadSupabaseData, 800);
+            return;
+          } else {
+            console.warn('⚠️ Supabase timeout. Loading demo data...');
+            allPosts = DEMO_DATA.posts;
+            allMetrics = DEMO_DATA.metrics;
+            buildEventDates();
+            updateDashboard();
+            renderCalendar();
+            return;
+          }
         }
 
         console.log('📊 Loading posts from Supabase...');
         try {
           allPosts = await window.bitaxusData.loadPosts();
-          console.log('✅ Posts loaded:', allPosts.length);
+          if (!allPosts || allPosts.length === 0) {
+            console.warn('⚠️ No posts in Supabase, using demo data');
+            allPosts = DEMO_DATA.posts;
+          } else {
+            console.log('✅ Posts loaded from Supabase:', allPosts.length);
+          }
         } catch (postError) {
-          console.warn('⚠️ Could not load posts, using demo data:', postError.message);
+          console.warn('⚠️ Error loading posts:', postError.message);
           allPosts = DEMO_DATA.posts;
         }
 
         console.log('📈 Loading metrics from Supabase...');
         try {
           allMetrics = await window.bitaxusData.loadMetrics();
-          console.log('✅ Metrics loaded:', allMetrics.length);
+          if (!allMetrics || allMetrics.length === 0) {
+            console.warn('⚠️ No metrics in Supabase, using demo data');
+            allMetrics = DEMO_DATA.metrics;
+          } else {
+            console.log('✅ Metrics loaded from Supabase:', allMetrics.length);
+          }
         } catch (metricError) {
-          console.warn('⚠️ Could not load metrics, using demo data:', metricError.message);
+          console.warn('⚠️ Error loading metrics:', metricError.message);
           allMetrics = DEMO_DATA.metrics;
         }
 
-        // Build event dates from posts
-        allPosts.forEach(post => {
-          if (post.scheduled_date) {
-            const dateKey = post.scheduled_date.split('T')[0];
-            if (!eventDates[dateKey]) eventDates[dateKey] = [];
-            const platform = post.platform || 'Otro';
-            if (!eventDates[dateKey].includes(platform)) {
-              eventDates[dateKey].push(platform);
-            }
-          }
-        });
-
+        buildEventDates();
         updateDashboard();
         renderCalendar();
       } catch (error) {
         console.error('❌ Error loading Supabase data:', error);
-        console.log('📦 Using fallback demo data...');
+        console.log('📦 Using demo data...');
         allPosts = DEMO_DATA.posts;
         allMetrics = DEMO_DATA.metrics;
+        buildEventDates();
         updateDashboard();
         renderCalendar();
       }
+    }
+
+    function buildEventDates() {
+      allPosts.forEach(post => {
+        if (post.scheduled_date) {
+          const dateKey = post.scheduled_date.split('T')[0];
+          if (!eventDates[dateKey]) eventDates[dateKey] = [];
+          const platform = post.platform || 'Otro';
+          if (!eventDates[dateKey].includes(platform)) {
+            eventDates[dateKey].push(platform);
+          }
+        }
+      });
     }
 
     function updateDashboard() {
