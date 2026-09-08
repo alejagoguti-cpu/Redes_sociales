@@ -1,0 +1,419 @@
+<!-- Bitaxus Dashboard - Redes Sociales -->
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bitaxus · Dashboard</title>
+  <link rel="stylesheet" href="assets/bitaxus-ui.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/supabase-client.js"></script>
+  <style>
+    * { scrollbar-width:thin; scrollbar-color:var(--ui-red-bright) #17171b; }
+    *::-webkit-scrollbar { width:10px; height:10px; }
+    *::-webkit-scrollbar-track { background:#17171b; border-radius:10px; }
+    *::-webkit-scrollbar-thumb { border:2px solid #17171b; border-radius:10px; background:linear-gradient(180deg,var(--ui-red-bright),var(--ui-red)); }
+    *::-webkit-scrollbar-thumb:hover { background:var(--ui-coral); }
+
+    .dashboard-tabs { display:flex; gap:8px; margin:0 0 24px; border-bottom:1px solid var(--ui-line-soft); padding-bottom:16px; }
+    .dashboard-tabs button { padding:8px 16px; border:none; background:transparent; color:var(--ui-muted); font-size:13px; font-weight:600; letter-spacing:.05em; cursor:pointer; border-bottom:2px solid transparent; transition:all .2s ease; }
+    .dashboard-tabs button:hover { color:var(--ui-white); }
+    .dashboard-tabs button.active { color:var(--ui-red-bright); border-bottom-color:var(--ui-red-bright); }
+
+    .dashboard-section { display:none; }
+    .dashboard-section.active { display:block; }
+
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:24px; }
+    .stat-card { padding:20px; border:1px solid var(--ui-line-soft); border-radius:14px; background:rgba(255,255,255,.035); }
+    .stat-label { color:var(--ui-muted-dark); font-size:11px; letter-spacing:.08em; text-transform:uppercase; margin-bottom:8px; }
+    .stat-value { color:var(--ui-white); font-size:28px; font-weight:800; letter-spacing:-.02em; }
+    .stat-meta { color:var(--ui-muted); font-size:12px; margin-top:8px; }
+
+    .content-table { width:100%; border-collapse:collapse; }
+    .content-table thead { border-bottom:1px solid var(--ui-line-soft); }
+    .content-table th { text-align:left; padding:14px; color:var(--ui-muted-dark); font:10px 'DM Mono',monospace; letter-spacing:.1em; text-transform:uppercase; }
+    .content-table td { padding:14px; border-bottom:1px solid var(--ui-line-soft); color:var(--ui-muted); font-size:13px; }
+    .content-table tr:hover { background:rgba(255,255,255,.02); }
+    .content-table .platform-badge { display:inline-flex; align-items:center; gap:5px; padding:4px 8px; border-radius:6px; background:rgba(255,77,85,.15); color:var(--ui-red-bright); font:10px 'DM Mono',monospace; font-weight:600; }
+
+    .dashboard-panel { margin-top:24px; padding:20px; border:1px solid var(--ui-line-soft); border-radius:14px; background:rgba(255,255,255,.025); }
+    .panel-title { color:var(--ui-white); font-size:16px; font-weight:700; margin-bottom:16px; }
+
+    @media (max-width:900px) {
+      .stats-grid { grid-template-columns:repeat(2, 1fr); }
+      .dashboard-tabs { flex-wrap:wrap; }
+    }
+    @media (max-width:600px) {
+      .stats-grid { grid-template-columns:1fr; }
+      .content-table { font-size:12px; }
+      .content-table th, .content-table td { padding:10px; }
+    }
+  </style>
+</head>
+<body class="planning-page">
+  <nav class="site-nav" aria-label="Navegación principal">
+    <a class="site-brand" href="index.html" aria-label="Bitaxus, inicio"><img src="assets/bitaxus-logo-white.png" alt="Bitaxus"><span class="site-context">Community<br>Operations</span></a>
+    <div class="site-nav-links"><a class="site-nav-cta" href="editorial.html">Piezas</a><a href="dashboard.html" style="font-weight:600;color:var(--ui-red-bright);">Dashboard</a><a href="bitaxus-cm-guide.html">Guías</a><a href="index.html">Inicio</a></div>
+  </nav>
+
+  <main class="container">
+    <header>
+      <div>
+        <h1>Dashboard</h1>
+        <p class="subtitle">Gestiona todo tu contenido desde un solo lugar.</p>
+      </div>
+      <div class="sync-note" data-supabase-status data-state="info">Conectando con Supabase…</div>
+    </header>
+
+    <div class="dashboard-tabs" role="tablist" aria-label="Secciones del dashboard">
+      <button type="button" onclick="showSection('instagram')" class="active" role="tab">📷 Instagram</button>
+      <button type="button" onclick="showSection('analytics')" role="tab">📊 Análisis</button>
+      <button type="button" onclick="showSection('calendar')" role="tab">📅 Calendario</button>
+      <button type="button" onclick="showSection('competitors')" role="tab">⚡ Competencia</button>
+      <button type="button" onclick="showSection('news')" role="tab">📰 Noticias</button>
+    </div>
+
+    <!-- INSTAGRAM SECTION -->
+    <section class="dashboard-section active" id="instagram">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total de Posts</div>
+          <div class="stat-value" id="instagramTotal">0</div>
+          <div class="stat-meta">En la base de datos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Programados</div>
+          <div class="stat-value" id="instagramScheduled">0</div>
+          <div class="stat-meta">Próximas publicaciones</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Publicados</div>
+          <div class="stat-value" id="instagramPublished">0</div>
+          <div class="stat-meta">Ya en vivo</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Borradores</div>
+          <div class="stat-value" id="instagramDrafts">0</div>
+          <div class="stat-meta">En proceso</div>
+        </div>
+      </div>
+
+      <div class="dashboard-panel">
+        <div class="panel-title">Posts Recientes</div>
+        <div style="overflow-x:auto;">
+          <table class="content-table">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Prioridad</th>
+              </tr>
+            </thead>
+            <tbody id="instagramTableBody">
+              <tr><td colspan="4" style="text-align:center;color:var(--ui-muted-dark);">Cargando posts...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANALYTICS SECTION -->
+    <section class="dashboard-section" id="analytics">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Engagement Total</div>
+          <div class="stat-value" id="analyticsEngagement">0%</div>
+          <div class="stat-meta">Promedio general</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Impresiones</div>
+          <div class="stat-value" id="analyticsImpressions">0</div>
+          <div class="stat-meta">Últimos 30 días</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Posts Analizados</div>
+          <div class="stat-value" id="analyticsCount">0</div>
+          <div class="stat-meta">En la base de datos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Top Plataforma</div>
+          <div class="stat-value" id="analyticsTopPlatform">—</div>
+          <div class="stat-meta">Mayor engagement</div>
+        </div>
+      </div>
+
+      <div class="dashboard-panel">
+        <div class="panel-title">Métricas por Plataforma</div>
+        <div style="overflow-x:auto;">
+          <table class="content-table">
+            <thead>
+              <tr>
+                <th>Plataforma</th>
+                <th>Post</th>
+                <th>Impresiones</th>
+                <th>Engagement Rate</th>
+              </tr>
+            </thead>
+            <tbody id="analyticsTableBody">
+              <tr><td colspan="4" style="text-align:center;color:var(--ui-muted-dark);">Cargando métricas...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- CALENDAR SECTION -->
+    <section class="dashboard-section" id="calendar">
+      <div class="dashboard-panel">
+        <div class="panel-title" style="display:flex;justify-content:space-between;align-items:center;">
+          <span id="calendarMonth">Septiembre 2026</span>
+          <div style="display:flex;gap:8px;">
+            <button type="button" class="button-secondary" onclick="prevMonth()" style="padding:6px 12px;font-size:12px;">← Anterior</button>
+            <button type="button" class="button-secondary" onclick="currentMonth()" style="padding:6px 12px;font-size:12px;">Hoy</button>
+            <button type="button" class="button-secondary" onclick="nextMonth()" style="padding:6px 12px;font-size:12px;">Siguiente →</button>
+          </div>
+        </div>
+        <div id="calendarContainer" style="margin-top:16px;overflow:auto;">
+          <p style="color:var(--ui-muted);text-align:center;">Cargando calendario...</p>
+        </div>
+      </div>
+
+      <div class="dashboard-panel">
+        <div class="panel-title">Próximas Publicaciones</div>
+        <div style="overflow-x:auto;">
+          <table class="content-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Post</th>
+                <th>Plataforma</th>
+              </tr>
+            </thead>
+            <tbody id="upcomingTableBody">
+              <tr><td colspan="3" style="text-align:center;color:var(--ui-muted-dark);">Cargando posts...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPETITORS SECTION -->
+    <section class="dashboard-section" id="competitors">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Competidores Monitoreados</div>
+          <div class="stat-value" id="competitorsCount">3</div>
+          <div class="stat-meta">En seguimiento</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Engagement Promedio</div>
+          <div class="stat-value" id="competitorsAvgEngagement">0%</div>
+          <div class="stat-meta">Entre competidores</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Mayor Engagement</div>
+          <div class="stat-value" id="competitorsMaxEngagement">0%</div>
+          <div class="stat-meta">Competidor top</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Plataforma Dominante</div>
+          <div class="stat-value" id="competitorsPlatform">—</div>
+          <div class="stat-meta">Más usada</div>
+        </div>
+      </div>
+
+      <div class="dashboard-panel">
+        <div class="panel-title">Análisis de Competencia</div>
+        <div style="overflow-x:auto;">
+          <table class="content-table">
+            <thead>
+              <tr>
+                <th>Competidor</th>
+                <th>Plataforma</th>
+                <th>Engagement Rate</th>
+                <th>Posts</th>
+              </tr>
+            </thead>
+            <tbody id="competitorsTableBody">
+              <tr><td colspan="4" style="text-align:center;color:var(--ui-muted-dark);">Cargando datos...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEWS SECTION -->
+    <section class="dashboard-section" id="news">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Noticias Consolidadas</div>
+          <div class="stat-value" id="newsCount">0</div>
+          <div class="stat-meta">En la base de datos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Fuentes Activas</div>
+          <div class="stat-value" id="newsSources">0</div>
+          <div class="stat-meta">Monitoreadas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Categoría Top</div>
+          <div class="stat-value" id="newsTopCategory">—</div>
+          <div class="stat-meta">Más noticias</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Hoy</div>
+          <div class="stat-value" id="newsToday">0</div>
+          <div class="stat-meta">Nuevas noticias</div>
+        </div>
+      </div>
+
+      <div class="dashboard-panel">
+        <div class="panel-title">Últimas Noticias</div>
+        <div style="overflow-x:auto;">
+          <table class="content-table">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Categoría</th>
+                <th>Fuente</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody id="newsTableBody">
+              <tr><td colspan="4" style="text-align:center;color:var(--ui-muted-dark);">Cargando noticias...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    function showSection(section) {
+      document.querySelectorAll('.dashboard-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.dashboard-tabs button').forEach(el => el.classList.remove('active'));
+      $(section).classList.add('active');
+      event.target.classList.add('active');
+      loadSectionData(section);
+    }
+
+    async function loadSectionData(section) {
+      try {
+        const posts = await bitaxusData.loadPosts() || [];
+        const metrics = await bitaxusData.loadMetrics ? await bitaxusData.loadMetrics() : [];
+
+        switch(section) {
+          case 'instagram':
+            renderInstagram(posts);
+            break;
+          case 'analytics':
+            renderAnalytics(posts, metrics);
+            break;
+          case 'calendar':
+            renderCalendar(posts);
+            break;
+          case 'competitors':
+            renderCompetitors();
+            break;
+          case 'news':
+            renderNews();
+            break;
+        }
+      } catch(e) {
+        console.log('Datos mock o error de carga:', e.message);
+        loadMockData(section);
+      }
+    }
+
+    function renderInstagram(posts) {
+      const instagramPosts = posts.filter(p => p.platform === 'Instagram');
+      $('instagramTotal').textContent = instagramPosts.length;
+      $('instagramScheduled').textContent = instagramPosts.filter(p => p.status === 'scheduled').length;
+      $('instagramPublished').textContent = instagramPosts.filter(p => p.status === 'published').length;
+      $('instagramDrafts').textContent = instagramPosts.filter(p => p.status === 'draft').length;
+
+      const tableBody = $('instagramTableBody');
+      tableBody.innerHTML = instagramPosts.slice(0, 10).map(post => `
+        <tr>
+          <td>${post.title || 'Sin título'}</td>
+          <td>${post.scheduled_date || '—'}</td>
+          <td><span class="platform-badge">${post.status || 'draft'}</span></td>
+          <td>${post.priority || 'normal'}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--ui-muted-dark);">No hay posts</td></tr>';
+    }
+
+    function renderAnalytics(posts, metrics) {
+      const total = posts.length || 0;
+      $('analyticsCount').textContent = total;
+      $('analyticsEngagement').textContent = '—';
+      $('analyticsImpressions').textContent = '—';
+      $('analyticsTopPlatform').textContent = posts.length > 0 ? 'Instagram' : '—';
+
+      const tableBody = $('analyticsTableBody');
+      const platforms = {};
+      posts.forEach(p => {
+        platforms[p.platform] = (platforms[p.platform] || 0) + 1;
+      });
+
+      tableBody.innerHTML = Object.entries(platforms).slice(0, 5).map(([platform, count]) => `
+        <tr>
+          <td>${platform}</td>
+          <td>${count} posts</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+      `).join('') || '<tr><td colspan="4" style="text-align:center;">Sin datos</td></tr>';
+    }
+
+    function renderCalendar(posts) {
+      $('calendarMonth').textContent = 'Septiembre 2026';
+      $('upcomingTableBody').innerHTML = posts.slice(0, 8).map(post => `
+        <tr>
+          <td>${post.scheduled_date || '—'}</td>
+          <td>${post.title || 'Sin título'}</td>
+          <td><span class="platform-badge">${post.platform}</span></td>
+        </tr>
+      `).join('') || '<tr><td colspan="3" style="text-align:center;color:var(--ui-muted-dark);">No hay posts próximos</td></tr>';
+    }
+
+    function renderCompetitors() {
+      $('competitorsCount').textContent = '3';
+      $('competitorsTableBody').innerHTML = `
+        <tr><td>Competidor A</td><td><span class="platform-badge">Instagram</span></td><td>8.5%</td><td>24</td></tr>
+        <tr><td>Competidor B</td><td><span class="platform-badge">Twitter</span></td><td>6.2%</td><td>18</td></tr>
+        <tr><td>Competidor C</td><td><span class="platform-badge">LinkedIn</span></td><td>5.1%</td><td>12</td></tr>
+      `;
+    }
+
+    function renderNews() {
+      $('newsCount').textContent = '0';
+      $('newsSources').textContent = '0';
+      $('newsTableBody').innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--ui-muted-dark);">Sin noticias consolidadas</td></tr>';
+    }
+
+    function loadMockData(section) {
+      console.log('Usando datos de ejemplo para:', section);
+      if(section === 'instagram') {
+        $('instagramTotal').textContent = '12';
+        $('instagramScheduled').textContent = '5';
+        $('instagramPublished').textContent = '6';
+        $('instagramDrafts').textContent = '1';
+        $('instagramTableBody').innerHTML = '<tr><td>Post de ejemplo</td><td>2026-09-15</td><td><span class="platform-badge">scheduled</span></td><td>normal</td></tr>';
+      }
+    }
+
+    function nextMonth() { /* Implementar */ }
+    function prevMonth() { /* Implementar */ }
+    function currentMonth() { /* Implementar */ }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      bitaxusData.setConnectionStatus('Dashboard cargado', 'success');
+      loadSectionData('instagram');
+    });
+  </script>
+</body>
+</html>
