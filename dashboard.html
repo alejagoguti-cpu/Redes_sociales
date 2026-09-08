@@ -15,9 +15,9 @@
     *::-webkit-scrollbar-thumb { border:2px solid #17171b; border-radius:10px; background:linear-gradient(180deg,var(--ui-red-bright),var(--ui-red)); }
     *::-webkit-scrollbar-thumb:hover { background:var(--ui-coral); }
 
-    body { display:flex; height:100vh; background:#0F0F13; }
+    body { display:flex; height:100vh; background:#0F0F13; flex-direction:column; }
 
-    .sidebar { width:280px; background:#151519; border-right:1px solid var(--ui-line-soft); padding:24px 20px; overflow-y:auto; display:flex; flex-direction:column; transition:all .3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .sidebar { width:280px; min-width:280px; background:#151519; border-right:1px solid var(--ui-line-soft); padding:24px 20px; overflow-y:auto; display:flex; flex-direction:column; transition:all .3s cubic-bezier(0.4, 0, 0.2, 1); }
     .sidebar-profile { display:flex; align-items:center; gap:14px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid rgba(255,255,255,.08); cursor:pointer; transition:all .2s ease; }
     .sidebar-profile:hover { opacity:.8; transform:translateX(2px); }
     .sidebar-profile-img { width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg, #E12C37, #FF6B5B); flex-shrink:0; box-shadow:0 4px 12px rgba(225,44,55,.3); }
@@ -136,9 +136,9 @@
   </nav>
 
   <!-- BODY LAYOUT -->
-  <div style="display:flex; flex:1; overflow:hidden; width:100%;">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
+  <div style="display:flex; flex:1; overflow:hidden; width:100%; flex-direction:row;">
+    <!-- SIDEBAR LEFT -->
+    <aside class="sidebar" style="order:1;">
       <div class="sidebar-profile" onclick="showView('dashboard')">
         <div class="sidebar-profile-img"></div>
         <div class="sidebar-profile-info">
@@ -192,8 +192,8 @@
       </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
+    <!-- MAIN CONTENT RIGHT -->
+    <div class="main-content" style="order:2;">
       <header class="dashboard-header">
         <div class="header-left">
           <h2 id="viewTitle">Dashboard</h2>
