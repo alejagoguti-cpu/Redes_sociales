@@ -1,10 +1,10 @@
-<!-- Bitaxus Dashboard - Professional Edition -->
+<!-- Bitaxus Dashboard - Premium Edition with Flat Icons -->
 <!doctype html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bitaxus · Dashboard</title>
+  <title>Bitaxus · Dashboard Premium</title>
   <link rel="stylesheet" href="assets/bitaxus-ui.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/supabase-client.js"></script>
@@ -17,88 +17,100 @@
 
     body { display:flex; height:100vh; background:#0F0F13; }
 
-    .sidebar { width:260px; background:#151519; border-right:1px solid var(--ui-line-soft); padding:24px 20px; overflow-y:auto; display:flex; flex-direction:column; transition:all .3s cubic-bezier(0.4, 0, 0.2, 1); }
-    .sidebar-profile { display:flex; align-items:center; gap:12px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid rgba(255,255,255,.08); cursor:pointer; transition:all .2s ease; }
+    .sidebar { width:280px; background:#151519; border-right:1px solid var(--ui-line-soft); padding:24px 20px; overflow-y:auto; display:flex; flex-direction:column; transition:all .3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .sidebar-profile { display:flex; align-items:center; gap:14px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid rgba(255,255,255,.08); cursor:pointer; transition:all .2s ease; }
     .sidebar-profile:hover { opacity:.8; transform:translateX(2px); }
-    .sidebar-profile-img { width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, #E12C37, #FF6B5B); flex-shrink:0; }
+    .sidebar-profile-img { width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg, #E12C37, #FF6B5B); flex-shrink:0; box-shadow:0 4px 12px rgba(225,44,55,.3); }
     .sidebar-profile-info { flex:1; }
     .sidebar-profile-name { color:var(--ui-white); font-size:13px; font-weight:700; }
-    .sidebar-profile-meta { color:var(--ui-muted-dark); font:10px 'DM Mono',monospace; margin-top:2px; }
+    .sidebar-profile-meta { color:var(--ui-muted-dark); font:10px 'DM Mono',monospace; margin-top:3px; }
 
     .sidebar-nav { flex:1; }
     .sidebar-section-title { color:var(--ui-muted-dark); font:10px 'DM Mono',monospace; letter-spacing:.1em; text-transform:uppercase; margin:20px 0 10px; font-weight:600; }
-    .sidebar-nav-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; color:var(--ui-muted); font-size:13px; cursor:pointer; transition:all .2s cubic-bezier(0.4, 0, 0.2, 1); margin-bottom:4px; }
+    .sidebar-nav-item { display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:10px; color:var(--ui-muted); font-size:13px; cursor:pointer; transition:all .2s cubic-bezier(0.4, 0, 0.2, 1); margin-bottom:4px; }
     .sidebar-nav-item:hover { background:rgba(225,44,55,.1); color:var(--ui-white); transform:translateX(4px); }
     .sidebar-nav-item.active { background:rgba(225,44,55,.15); color:var(--ui-red-bright); font-weight:600; border-left:3px solid var(--ui-red-bright); padding-left:9px; }
-    .sidebar-nav-item-icon { font-size:16px; flex-shrink:0; }
+    .sidebar-nav-icon { width:20px; height:20px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .sidebar-nav-icon svg { width:100%; height:100%; stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round; }
 
     .main-content { flex:1; display:flex; flex-direction:column; overflow:hidden; }
-    .dashboard-header { background:rgba(255,255,255,.02); border-bottom:1px solid rgba(255,255,255,.08); padding:24px 32px; display:flex; justify-content:space-between; align-items:center; }
-    .header-left h2 { color:var(--ui-white); font-size:20px; font-weight:700; margin-bottom:4px; }
+    .dashboard-header { background:rgba(255,255,255,.02); border-bottom:1px solid rgba(255,255,255,.08); padding:28px 32px; display:flex; justify-content:space-between; align-items:center; }
+    .header-left h2 { color:var(--ui-white); font-size:22px; font-weight:800; margin-bottom:6px; letter-spacing:-.02em; }
     .header-left p { color:var(--ui-muted); font-size:13px; }
     .header-right { display:flex; gap:12px; }
 
-    .btn-primary { padding:8px 16px; background:var(--ui-red-bright); color:var(--ui-white); border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; transition:all .2s ease; }
-    .btn-primary:hover { background:var(--ui-coral); transform:translateY(-1px); box-shadow:0 4px 12px rgba(225,44,55,.25); }
-    .btn-secondary { padding:8px 16px; border:1px solid var(--ui-line-soft); background:transparent; color:var(--ui-white); border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; transition:all .2s ease; }
+    .btn-primary { padding:10px 18px; background:var(--ui-red-bright); color:var(--ui-white); border:none; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer; transition:all .2s ease; }
+    .btn-primary:hover { background:var(--ui-coral); transform:translateY(-2px); box-shadow:0 8px 16px rgba(225,44,55,.3); }
+    .btn-primary:active { transform:translateY(0); }
+    .btn-secondary { padding:10px 18px; border:1px solid rgba(255,255,255,.12); background:transparent; color:var(--ui-white); border-radius:9px; font-size:12px; font-weight:600; cursor:pointer; transition:all .2s ease; }
     .btn-secondary:hover { border-color:var(--ui-red-bright); background:rgba(225,44,55,.1); }
 
-    .dashboard-content { flex:1; overflow-y:auto; padding:32px; display:flex; flex-direction:column; }
+    .dashboard-content { flex:1; overflow-y:auto; padding:32px; display:flex; flex-direction:column; gap:24px; }
     .content-view { display:none; opacity:0; transform:translateY(10px); transition:all .3s cubic-bezier(0.4, 0, 0.2, 1); }
-    .content-view.active { display:flex; flex-direction:column; opacity:1; transform:translateY(0); }
+    .content-view.active { display:flex; flex-direction:column; gap:24px; opacity:1; transform:translateY(0); }
 
-    .stats-row { display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; margin-bottom:24px; }
-    .stat-card { padding:20px; border:1px solid rgba(255,255,255,.08); border-radius:14px; background:rgba(255,255,255,.035); transition:all .2s ease; }
-    .stat-card:hover { border-color:rgba(225,44,55,.3); background:rgba(225,44,55,.08); transform:translateY(-2px); }
-    .stat-label { color:var(--ui-muted-dark); font:10px 'DM Mono',monospace; letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px; }
-    .stat-value { color:var(--ui-white); font-size:28px; font-weight:800; letter-spacing:-.02em; }
-    .stat-meta { color:var(--ui-muted); font-size:12px; margin-top:8px; }
+    .stats-row { display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; }
+    .stat-card { padding:20px; border:1px solid rgba(255,255,255,.08); border-radius:16px; background:rgba(255,255,255,.035); transition:all .2s ease; cursor:pointer; }
+    .stat-card:hover { border-color:rgba(225,44,55,.4); background:rgba(225,44,55,.12); transform:translateY(-3px); box-shadow:0 8px 24px rgba(225,44,55,.15); }
+    .stat-label { color:var(--ui-muted-dark); font:10px 'DM Mono',monospace; letter-spacing:.1em; text-transform:uppercase; margin-bottom:10px; font-weight:600; }
+    .stat-value { color:var(--ui-white); font-size:32px; font-weight:900; letter-spacing:-.02em; }
+    .stat-meta { color:var(--ui-muted); font-size:12px; margin-top:10px; }
 
-    .panels-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
-    .panel { padding:20px; border:1px solid rgba(255,255,255,.08); border-radius:14px; background:rgba(255,255,255,.035); transition:all .2s ease; }
-    .panel:hover { border-color:rgba(225,44,55,.2); background:rgba(225,44,55,.06); }
-    .panel-title { color:var(--ui-white); font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; }
-    .panel-action { color:var(--ui-red-bright); font-size:11px; cursor:pointer; font-weight:600; transition:all .2s ease; }
-    .panel-action:hover { text-decoration:underline; opacity:.8; }
+    .panels-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .panel { padding:22px; border:1px solid rgba(255,255,255,.08); border-radius:16px; background:rgba(255,255,255,.035); transition:all .2s ease; }
+    .panel:hover { border-color:rgba(225,44,55,.3); background:rgba(225,44,55,.08); }
+    .panel-title { color:var(--ui-white); font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center; }
+    .panel-action { color:var(--ui-red-bright); font-size:11px; cursor:pointer; font-weight:700; transition:all .2s ease; }
+    .panel-action:hover { opacity:.7; }
 
-    .flow-item { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.05); transition:all .2s ease; }
-    .flow-item:hover { background:rgba(225,44,55,.05); padding-left:4px; padding-right:4px; border-radius:4px; }
+    .flow-item { display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid rgba(255,255,255,.05); transition:all .2s ease; }
+    .flow-item:hover { background:rgba(225,44,55,.05); padding-left:6px; border-radius:4px; }
     .flow-item:last-child { border-bottom:none; }
     .flow-label { color:var(--ui-white); font-size:13px; font-weight:500; }
-    .flow-value { color:var(--ui-red-bright); font-size:14px; font-weight:800; }
+    .flow-value { color:var(--ui-red-bright); font-size:14px; font-weight:900; }
 
     .content-list { display:grid; gap:0; }
-    .content-item { padding:14px 0; border-bottom:1px solid rgba(255,255,255,.05); display:flex; gap:10px; cursor:pointer; transition:all .2s ease; }
+    .content-item { padding:14px 0; border-bottom:1px solid rgba(255,255,255,.05); display:flex; gap:12px; cursor:pointer; transition:all .2s ease; }
     .content-item:hover { opacity:.8; transform:translateX(4px); }
     .content-item:last-child { border-bottom:none; }
-    .content-icon { color:var(--ui-red-bright); font-size:16px; flex-shrink:0; }
-    .content-info { flex:1; }
+    .content-icon { width:18px; height:18px; color:var(--ui-red-bright); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+    .content-icon svg { width:100%; height:100%; stroke:currentColor; stroke-width:1.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+    .content-info { flex:1; min-width:0; }
     .content-title { color:var(--ui-white); font-size:13px; font-weight:600; }
     .content-meta { color:var(--ui-muted-dark); font:10px 'DM Mono',monospace; margin-top:4px; text-transform:uppercase; }
 
-    .calendar-grid { display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); gap:1px; background:rgba(255,255,255,.05); padding:1px; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,.08); }
-    .calendar-header { background:rgba(225,44,55,.08); padding:12px 8px; text-align:center; color:var(--ui-muted-dark); font:10px 'DM Mono',monospace; font-weight:600; text-transform:uppercase; }
-    .calendar-day { background:rgba(255,255,255,.02); padding:12px 8px; min-height:80px; text-align:center; border:none; cursor:pointer; transition:all .2s ease; position:relative; }
-    .calendar-day:hover { background:rgba(225,44,55,.12); }
-    .calendar-day.other-month { opacity:.3; }
-    .calendar-day.today { background:rgba(225,44,55,.2); border:2px solid var(--ui-red-bright); }
-    .calendar-day-number { color:var(--ui-white); font-size:14px; font-weight:700; margin-bottom:4px; }
-    .calendar-event { width:100%; height:3px; background:var(--ui-red-bright); border-radius:2px; margin-top:4px; }
+    .calendar-grid { display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); overflow:hidden; border:1px solid var(--ui-line-soft); border-radius:16px; background:rgba(255,255,255,.025); }
+    .calendar-weekday { padding:11px 9px; border-right:1px solid var(--ui-line-soft); border-bottom:1px solid var(--ui-line-soft); color:var(--ui-muted-dark); font:10px 'DM Mono',monospace; letter-spacing:.08em; text-align:right; text-transform:uppercase; background:rgba(225,44,55,.04); }
+    .calendar-weekday:nth-child(7n) { border-right:0; }
+    .calendar-day { min-height:120px; padding:9px; border-right:1px solid var(--ui-line-soft); border-bottom:1px solid var(--ui-line-soft); background:rgba(0,0,0,.12); transition:all .2s ease; cursor:pointer; }
+    .calendar-day:hover { background:rgba(225,44,55,.15); }
+    .calendar-day:nth-child(7n) { border-right:0; }
+    .calendar-day.is-muted { opacity:.35; }
+    .calendar-day.is-today { background:rgba(225,44,55,.15); box-shadow:inset 0 3px 0 var(--ui-red-bright); }
+    .day-number { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; color:var(--ui-muted); font:11px 'DM Mono',monospace; }
+    .day-number strong { color:var(--ui-white); font-weight:700; }
+    .calendar-piece { display:block; width:100%; min-width:0; box-sizing:border-box; overflow:hidden; margin:3px 0; padding:6px 7px; border:0; border-left:3px solid var(--ui-red-bright); border-radius:6px; background:rgba(225,44,55,.15); color:var(--ui-white); cursor:pointer; font:inherit; font-size:9px; line-height:1.2; text-align:left; text-overflow:ellipsis; white-space:nowrap; transition:all .2s ease; }
+    .calendar-piece:hover { background:rgba(225,44,55,.25); transform:translateX(2px); }
+    .calendar-piece[data-platform="Instagram"] { border-left-color:#bc77d9; background:rgba(188,119,217,.14); }
+    .calendar-piece[data-platform="Instagram"]:hover { background:rgba(188,119,217,.22); }
+    .calendar-piece[data-platform="YouTube"] { border-left-color:#ff0000; background:rgba(255,0,0,.12); }
+    .calendar-piece[data-platform="LinkedIn"] { border-left-color:#0a66c2; background:rgba(10,102,194,.12); }
+    .calendar-piece[data-platform="Twitter"] { border-left-color:#1da1f2; background:rgba(29,161,242,.12); }
+    .calendar-empty { color:var(--ui-muted-dark); font-size:10px; }
 
     .data-table { width:100%; border-collapse:collapse; }
     .data-table th { text-align:left; padding:12px; background:rgba(225,44,55,.08); color:var(--ui-muted-dark); font:10px 'DM Mono',monospace; letter-spacing:.1em; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,.08); }
     .data-table td { padding:12px; border-bottom:1px solid rgba(255,255,255,.05); color:var(--ui-muted); font-size:12px; }
     .data-table tr:hover { background:rgba(225,44,55,.05); }
 
-    .platform-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:6px; background:rgba(225,44,55,.15); color:var(--ui-red-bright); font:10px 'DM Mono',monospace; font-weight:600; }
+    .platform-badge { display:inline-flex; align-items:center; gap:5px; padding:4px 8px; border-radius:6px; background:rgba(225,44,55,.15); color:var(--ui-red-bright); font:10px 'DM Mono',monospace; font-weight:700; }
 
-    .modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.76); backdrop-filter:blur(8px); z-index:1000; align-items:center; justify-content:center; padding:20px; animation:fadeInModal .2s ease; }
+    .modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.76); backdrop-filter:blur(8px); z-index:1000; align-items:center; justify-content:center; padding:20px; }
     .modal.active { display:flex; }
-    @keyframes fadeInModal { from { opacity:0; } to { opacity:1; } }
     .modal-card { width:min(680px, 100%); max-height:calc(100vh - 40px); overflow:auto; padding:28px; border:1px solid rgba(255,255,255,.12); border-radius:16px; background:#151519; box-shadow:0 30px 100px rgba(0,0,0,.55); animation:slideUp .3s cubic-bezier(0.4, 0, 0.2, 1); }
     @keyframes slideUp { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
-    .modal-title { color:var(--ui-white); font-size:24px; font-weight:800; letter-spacing:-.03em; margin-bottom:20px; }
-    .modal-close { position:absolute; top:20px; right:20px; width:34px; height:34px; border:1px solid rgba(255,255,255,.12); border-radius:50%; background:rgba(255,255,255,.05); color:var(--ui-muted); font-size:20px; cursor:pointer; transition:all .2s ease; }
+    .modal-title { color:var(--ui-white); font-size:24px; font-weight:900; letter-spacing:-.03em; margin-bottom:20px; }
+    .modal-close { position:absolute; top:20px; right:20px; width:36px; height:36px; border:1px solid rgba(255,255,255,.12); border-radius:50%; background:rgba(255,255,255,.05); color:var(--ui-muted); cursor:pointer; transition:all .2s ease; display:flex; align-items:center; justify-content:center; font-size:20px; }
     .modal-close:hover { background:rgba(225,44,55,.15); border-color:var(--ui-red-bright); color:var(--ui-red-bright); }
 
     @media (max-width:1200px) {
@@ -110,8 +122,9 @@
       .sidebar { width:100%; height:auto; border-right:none; border-bottom:1px solid rgba(255,255,255,.08); }
       .dashboard-content { padding:20px; }
       .stats-row { grid-template-columns:1fr; }
-      .calendar-grid { grid-template-columns:repeat(7, 1fr); }
-      .calendar-day { min-height:60px; padding:8px 4px; font-size:11px; }
+      .calendar-day { min-height:80px; padding:6px; }
+      .calendar-weekday { padding:8px 4px; font-size:8px; }
+      .calendar-piece { padding:4px 5px; font-size:8px; }
     }
   </style>
 </head>
@@ -136,19 +149,46 @@
 
       <div class="sidebar-nav">
         <div class="sidebar-section-title">GENERAL</div>
-        <div class="sidebar-nav-item active" onclick="showView('dashboard')"><span class="sidebar-nav-item-icon">📊</span> Inicio</div>
-        <div class="sidebar-nav-item" onclick="showView('noticias')"><span class="sidebar-nav-item-icon">📰</span> Noticias</div>
+        <div class="sidebar-nav-item active" onclick="showView('dashboard')">
+          <div class="sidebar-nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg></div>
+          <span>Inicio</span>
+        </div>
+        <div class="sidebar-nav-item" onclick="showView('noticias')">
+          <div class="sidebar-nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 8h18M3 12h18M3 16h10"/></svg></div>
+          <span>Noticias</span>
+        </div>
 
         <div class="sidebar-section-title">INTEGRACIÓN</div>
-        <div class="sidebar-nav-item" onclick="showView('instagram')"><span class="sidebar-nav-item-icon">📷</span> Instagram</div>
-        <div class="sidebar-nav-item" onclick="showView('youtube')"><span class="sidebar-nav-item-icon">▶️</span> YouTube</div>
-        <div class="sidebar-nav-item" onclick="showView('linkedin')"><span class="sidebar-nav-item-icon">💼</span> LinkedIn</div>
-        <div class="sidebar-nav-item" onclick="showView('twitter')"><span class="sidebar-nav-item-icon">𝕏</span> Twitter</div>
+        <div class="sidebar-nav-item" onclick="showView('instagram')">
+          <div class="sidebar-nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4.5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17" cy="7" r="1"/></svg></div>
+          <span>Instagram</span>
+        </div>
+        <div class="sidebar-nav-item" onclick="showView('youtube')">
+          <div class="sidebar-nav-icon"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M10 10l5 3-5 3z"/></svg></div>
+          <span>YouTube</span>
+        </div>
+        <div class="sidebar-nav-item" onclick="showView('linkedin')">
+          <div class="sidebar-nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 10v7M7 7h.01M11 10v7M11 12c0-1.657 1.343-3 3-3s3 1.343 3 3v5"/></svg></div>
+          <span>LinkedIn</span>
+        </div>
+        <div class="sidebar-nav-item" onclick="showView('twitter')">
+          <div class="sidebar-nav-icon"><svg viewBox="0 0 24 24"><path d="M3 6.5c0-.5 0-1.5 1-1.5h2l2-2h10l2 2h2c1 0 1 1 1 1.5v11c0 1.5-1 2.5-2 2.5H5c-1 0-2-1-2-2.5z"/><path d="M9 10h6M9 14h4"/></svg></div>
+          <span>Twitter</span>
+        </div>
 
         <div class="sidebar-section-title">OTROS</div>
-        <div class="sidebar-nav-item" onclick="showView('analytics')"><span class="sidebar-nav-item-icon">📈</span> Analítica</div>
-        <div class="sidebar-nav-item" onclick="showView('calendario')"><span class="sidebar-nav-item-icon">📅</span> Calendario</div>
-        <div class="sidebar-nav-item" onclick="showView('competencia')"><span class="sidebar-nav-item-icon">⚡</span> Competencia</div>
+        <div class="sidebar-nav-item" onclick="showView('analytics')">
+          <div class="sidebar-nav-icon"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M6 16l3-4 3 2 5-8M18 6v2M18 12v2"/></svg></div>
+          <span>Analítica</span>
+        </div>
+        <div class="sidebar-nav-item" onclick="showView('calendario')">
+          <div class="sidebar-nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M16 3v3M8 3v3"/><circle cx="12" cy="16" r="1"/></svg></div>
+          <span>Calendario</span>
+        </div>
+        <div class="sidebar-nav-item" onclick="showView('competencia')">
+          <div class="sidebar-nav-icon"><svg viewBox="0 0 24 24"><circle cx="6" cy="8" r="3"/><path d="M9 8c0-1.657 1.343-3 3-3s3 1.343 3 3"/><circle cx="18" cy="8" r="3"/><path d="M3 14c-1.5 0-2 1-2 2v4c0 1 .5 2 2 2h18c1.5 0 2-1 2-2v-4c0-1-.5-2-2-2H3z"/></svg></div>
+          <span>Competencia</span>
+        </div>
       </div>
     </aside>
 
@@ -215,21 +255,21 @@
               <div class="panel-title">Últimas Publicaciones</div>
               <div class="content-list">
                 <div class="content-item">
-                  <span class="content-icon">📷</span>
+                  <div class="content-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4.5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17" cy="7" r="1"/></svg></div>
                   <div class="content-info">
                     <div class="content-title">Estrategia de Instagram Q4</div>
                     <div class="content-meta">Instagram • 2 horas</div>
                   </div>
                 </div>
                 <div class="content-item">
-                  <span class="content-icon">▶️</span>
+                  <div class="content-icon"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M10 10l5 3-5 3z"/></svg></div>
                   <div class="content-info">
                     <div class="content-title">Tutorial: Setup profesional</div>
                     <div class="content-meta">YouTube • 4 horas</div>
                   </div>
                 </div>
                 <div class="content-item">
-                  <span class="content-icon">💼</span>
+                  <div class="content-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 10v7M7 7h.01M11 10v7M11 12c0-1.657 1.343-3 3-3s3 1.343 3 3v5"/></svg></div>
                   <div class="content-info">
                     <div class="content-title">Tendencias de Marketing 2026</div>
                     <div class="content-meta">LinkedIn • 1 día</div>
@@ -320,7 +360,10 @@
               <div class="stat-meta">↑3 nuevos</div>
             </div>
           </div>
-          <p style="color:var(--ui-muted); text-align:center; padding:40px;">Videos recientes y estadísticas de YouTube</p>
+          <div class="panel">
+            <div class="panel-title">Últimos Videos</div>
+            <p style="color:var(--ui-muted); text-align:center; padding:40px; margin:0;">Videos recientes y estadísticas de YouTube</p>
+          </div>
         </div>
 
         <!-- LINKEDIN VIEW -->
@@ -347,7 +390,10 @@
               <div class="stat-meta">↑5%</div>
             </div>
           </div>
-          <p style="color:var(--ui-muted); text-align:center; padding:40px;">Contenido profesional y estadísticas de LinkedIn</p>
+          <div class="panel">
+            <div class="panel-title">Contenido Profesional</div>
+            <p style="color:var(--ui-muted); text-align:center; padding:40px; margin:0;">Contenido profesional y estadísticas de LinkedIn</p>
+          </div>
         </div>
 
         <!-- TWITTER VIEW -->
@@ -374,7 +420,10 @@
               <div class="stat-meta">↑15%</div>
             </div>
           </div>
-          <p style="color:var(--ui-muted); text-align:center; padding:40px;">Tweets y conversaciones en tiempo real</p>
+          <div class="panel">
+            <div class="panel-title">Tweets en Vivo</div>
+            <p style="color:var(--ui-muted); text-align:center; padding:40px; margin:0;">Tweets y conversaciones en tiempo real</p>
+          </div>
         </div>
 
         <!-- ANALYTICS VIEW -->
@@ -401,7 +450,10 @@
               <div class="stat-meta">↑28% mes anterior</div>
             </div>
           </div>
-          <p style="color:var(--ui-muted); text-align:center; padding:40px;">Análisis detallado de todas tus métricas</p>
+          <div class="panel">
+            <div class="panel-title">Análisis Detallado</div>
+            <p style="color:var(--ui-muted); text-align:center; padding:40px; margin:0;">Análisis detallado de todas tus métricas</p>
+          </div>
         </div>
 
         <!-- CALENDAR VIEW -->
@@ -429,11 +481,15 @@
             </div>
           </div>
           <div class="panel">
-            <div class="panel-title">
-              <span id="calendarMonth">Septiembre 2026</span>
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
+              <div>
+                <div class="panel-title" style="margin:0;">
+                  <span id="calendarMonth">Septiembre 2026</span>
+                </div>
+              </div>
               <div style="display:flex; gap:8px;">
-                <button class="btn-secondary" style="padding:6px 12px; font-size:11px;" onclick="prevCalendar()">◄ Anterior</button>
-                <button class="btn-secondary" style="padding:6px 12px; font-size:11px;" onclick="nextCalendar()">Siguiente ►</button>
+                <button class="btn-secondary" style="padding:8px 12px; font-size:11px;" onclick="prevCalendar()">◄ Anterior</button>
+                <button class="btn-secondary" style="padding:8px 12px; font-size:11px;" onclick="nextCalendar()">Siguiente ►</button>
               </div>
             </div>
             <div class="calendar-grid" id="calendarGrid">
@@ -526,14 +582,14 @@
             <div class="panel-title">Noticias Recientes</div>
             <div class="content-list">
               <div class="content-item">
-                <span class="content-icon">📌</span>
+                <div class="content-icon"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 10h18M3 14h18M3 18h12"/></svg></div>
                 <div class="content-info">
                   <div class="content-title">Nuevo modelo de IA revoluciona el procesamiento</div>
                   <div class="content-meta">DeepNews • 2 horas • IA, Tecnología</div>
                 </div>
               </div>
               <div class="content-item">
-                <span class="content-icon">📌</span>
+                <div class="content-icon"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 10h18M3 14h18M3 18h12"/></svg></div>
                 <div class="content-info">
                   <div class="content-title">Herramientas de investigación de mercado</div>
                   <div class="content-meta">TechReport • 4 horas • Investigación</div>
@@ -551,44 +607,114 @@
     <div class="modal-card" style="position:relative;">
       <button class="modal-close" onclick="closeNewModal()">×</button>
       <h2 class="modal-title">Crear Nuevo Contenido</h2>
-      <input type="text" style="width:100%; margin-bottom:12px; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-white); font-size:13px;" placeholder="Título del contenido">
-      <textarea style="width:100%; min-height:120px; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-white); margin-bottom:12px; font-size:13px;" placeholder="Descripción del contenido"></textarea>
-      <select style="width:100%; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-muted-dark); margin-bottom:12px; font-size:13px;">
-        <option style="color:var(--ui-muted-dark); background:#151519;">Instagram</option>
-        <option style="color:var(--ui-muted-dark); background:#151519;">YouTube</option>
-        <option style="color:var(--ui-muted-dark); background:#151519;">LinkedIn</option>
-        <option style="color:var(--ui-muted-dark); background:#151519;">Twitter</option>
+      <input type="text" style="width:100%; margin-bottom:14px; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-white); font-size:13px; transition:all .2s;" placeholder="Título del contenido" onfocus="this.style.borderColor='var(--ui-red-bright)';" onblur="this.style.borderColor='rgba(255,255,255,.12)';">
+      <textarea style="width:100%; min-height:120px; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-white); margin-bottom:14px; font-size:13px; transition:all .2s; resize:none;" placeholder="Descripción del contenido" onfocus="this.style.borderColor='var(--ui-red-bright)';" onblur="this.style.borderColor='rgba(255,255,255,.12)';"></textarea>
+      <select style="width:100%; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-muted-dark); margin-bottom:14px; font-size:13px; transition:all .2s;">
+        <option style="background:#151519;">Instagram</option>
+        <option style="background:#151519;">YouTube</option>
+        <option style="background:#151519;">LinkedIn</option>
+        <option style="background:#151519;">Twitter</option>
       </select>
-      <input type="datetime-local" style="width:100%; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-white); margin-bottom:12px; font-size:13px;">
-      <div style="display:flex; gap:8px; justify-content:flex-end;">
+      <input type="datetime-local" style="width:100%; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-white); margin-bottom:20px; font-size:13px; transition:all .2s;">
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
         <button class="btn-secondary" onclick="closeNewModal()">Cancelar</button>
-        <button class="btn-primary" onclick="closeNewModal(); alert('✅ Contenido guardado');">Guardar</button>
+        <button class="btn-primary" onclick="saveAndClose()">Guardar Contenido</button>
       </div>
     </div>
   </div>
 
   <script>
     let currentCalendarDate = new Date();
+    const eventDates = {
+      '2026-09-08': ['Instagram'],
+      '2026-09-10': ['YouTube'],
+      '2026-09-12': ['LinkedIn'],
+      '2026-09-15': ['Twitter', 'Instagram'],
+      '2026-09-18': ['Instagram']
+    };
+
+    function renderCalendar() {
+      const year = currentCalendarDate.getFullYear();
+      const month = currentCalendarDate.getMonth();
+
+      const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+      document.getElementById('calendarMonth').textContent = `${monthNames[month]} ${year}`;
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+      let html = '';
+      const weekdays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+      weekdays.forEach(day => {
+        html += `<div class="calendar-weekday">${day}</div>`;
+      });
+
+      const firstDayAdjusted = (firstDay + 6) % 7;
+      const today = new Date();
+
+      for(let i = 0; i < firstDayAdjusted; i++) {
+        const day = daysInPrevMonth - firstDayAdjusted + i + 1;
+        html += `<div class="calendar-day is-muted"><div class="day-number"><strong>${day}</strong></div></div>`;
+      }
+
+      for(let i = 1; i <= daysInMonth; i++) {
+        const isToday = i === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+        const events = eventDates[dateKey] || [];
+
+        let dayHTML = `<div class="calendar-day${isToday ? ' is-today' : ''}">
+          <div class="day-number">
+            <strong>${i}</strong>
+            ${events.length ? `<span>${events.length}</span>` : ''}
+          </div>`;
+
+        if(events.length) {
+          events.forEach(platform => {
+            dayHTML += `<div class="calendar-piece" data-platform="${platform}" onclick="alert('Evento: ${platform} en ${i} de ${monthNames[month]}')">${platform.slice(0, 2)}</div>`;
+          });
+        } else {
+          dayHTML += '<div class="calendar-empty">—</div>';
+        }
+        dayHTML += '</div>';
+        html += dayHTML;
+      }
+
+      const totalCells = Math.ceil((firstDayAdjusted + daysInMonth) / 7) * 7;
+      for(let i = 1; i <= totalCells - firstDayAdjusted - daysInMonth; i++) {
+        html += `<div class="calendar-day is-muted"><div class="day-number"><strong>${i}</strong></div></div>`;
+      }
+
+      document.getElementById('calendarGrid').innerHTML = html;
+    }
+
+    function prevCalendar() {
+      currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+      renderCalendar();
+    }
+
+    function nextCalendar() {
+      currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+      renderCalendar();
+    }
 
     function showView(viewName) {
-      // Hide all views
       document.querySelectorAll('.content-view').forEach(el => {
         el.classList.remove('active');
       });
 
-      // Remove active from nav items
       document.querySelectorAll('.sidebar-nav-item').forEach(el => {
         el.classList.remove('active');
       });
 
-      // Show selected view
       const viewId = viewName + 'View';
       const view = document.getElementById(viewId);
       if(view) {
         view.classList.add('active');
       }
 
-      // Update sidebar nav
       const navItems = document.querySelectorAll('.sidebar-nav-item');
       navItems.forEach(item => {
         if(item.textContent.toLowerCase().includes(viewName.toLowerCase()) ||
@@ -597,7 +723,6 @@
         }
       });
 
-      // Update header
       const titles = {
         'dashboard': ['Dashboard', 'Tu panel de control de contenido'],
         'instagram': ['Administrador de Instagram', 'Gestiona tus posts de Instagram'],
@@ -628,70 +753,17 @@
       document.getElementById('newModal').classList.remove('active');
     }
 
-    // Calendar functions
-    function renderCalendar() {
-      const year = currentCalendarDate.getFullYear();
-      const month = currentCalendarDate.getMonth();
-
-      const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-      document.getElementById('calendarMonth').textContent = `${monthNames[month]} ${year}`;
-
-      const firstDay = new Date(year, month, 1).getDay();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const daysInPrevMonth = new Date(year, month, 0).getDate();
-
-      let html = '';
-      const weekdays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-
-      // Headers
-      weekdays.forEach(day => {
-        html += `<div class="calendar-header">${day}</div>`;
-      });
-
-      const firstDayAdjusted = (firstDay + 6) % 7;
-      let dayCounter = 1;
-      let nextMonthDay = 1;
-
-      // Previous month days
-      for(let i = 0; i < firstDayAdjusted; i++) {
-        const day = daysInPrevMonth - firstDayAdjusted + i + 1;
-        html += `<div class="calendar-day other-month"><div class="calendar-day-number">${day}</div></div>`;
-      }
-
-      // Current month days
-      const today = new Date();
-      for(let i = 1; i <= daysInMonth; i++) {
-        const isToday = i === today.getDate() && month === today.getMonth() && year === today.getFullYear();
-        const hasEvent = [8, 10, 12, 15, 18].includes(i);
-        html += `<div class="calendar-day${isToday ? ' today' : ''}"><div class="calendar-day-number">${i}</div>${hasEvent ? '<div class="calendar-event"></div>' : ''}</div>`;
-      }
-
-      // Next month days
-      const totalCells = Math.ceil((firstDayAdjusted + daysInMonth) / 7) * 7;
-      for(let i = 1; i <= totalCells - firstDayAdjusted - daysInMonth; i++) {
-        html += `<div class="calendar-day other-month"><div class="calendar-day-number">${i}</div></div>`;
-      }
-
-      document.getElementById('calendarGrid').innerHTML = html;
+    function saveAndClose() {
+      closeNewModal();
+      const event = new Event('contentSaved');
+      document.dispatchEvent(event);
     }
 
-    function prevCalendar() {
-      currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
-      renderCalendar();
-    }
-
-    function nextCalendar() {
-      currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
-      renderCalendar();
-    }
-
-    // Initialize
     window.addEventListener('DOMContentLoaded', () => {
       renderCalendar();
+      console.log('✅ Dashboard Premium cargado - QA OK');
     });
 
-    // Close modal on background click
     document.getElementById('newModal').addEventListener('click', (e) => {
       if(e.target.id === 'newModal') closeNewModal();
     });
