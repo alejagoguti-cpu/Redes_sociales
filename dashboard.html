@@ -1,4 +1,4 @@
-<!-- Bitaxus Dashboard - Redes Sociales -->
+<!-- Bitaxus Dashboard -->
 <!doctype html>
 <html lang="es">
 <head>
@@ -8,973 +8,739 @@
   <link rel="stylesheet" href="assets/bitaxus-ui.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/supabase-client.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; scrollbar-width:thin; scrollbar-color:var(--ui-red-bright) #17171b; }
-    *::-webkit-scrollbar { width:10px; height:10px; }
-    *::-webkit-scrollbar-track { background:#17171b; border-radius:10px; }
-    *::-webkit-scrollbar-thumb { border:2px solid #17171b; border-radius:10px; background:linear-gradient(180deg,var(--ui-red-bright),var(--ui-red)); }
-    *::-webkit-scrollbar-thumb:hover { background:var(--ui-coral); }
+    .dashboard-tabs { display:flex; gap:8px; margin:0 0 24px; border-bottom:1px solid var(--ui-line-soft); padding-bottom:16px; }
+    .dashboard-tabs button { padding:8px 16px; border:none; background:transparent; color:var(--ui-muted); font-size:13px; font-weight:600; letter-spacing:.05em; cursor:pointer; border-bottom:2px solid transparent; transition:all .2s ease; }
+    .dashboard-tabs button:hover { color:var(--ui-white); }
+    .dashboard-tabs button.active { color:var(--ui-red-bright); border-bottom-color:var(--ui-red-bright); }
 
-    body { display:flex; height:100vh; background:#0F0F13; }
-
-    .sidebar { width:280px; background:#151519; border-right:1px solid var(--ui-line-soft); padding:24px; overflow-y:auto; display:flex; flex-direction:column; }
-    .sidebar-profile { display:flex; align-items:center; gap:12px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid var(--ui-line-soft); cursor:pointer; }
-    .sidebar-profile:hover { opacity:.8; }
-    .sidebar-profile-img { width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, #E12C37, #FF6B5B); }
-    .sidebar-profile-info { flex:1; }
-    .sidebar-profile-name { color:var(--ui-white); font-size:13px; font-weight:600; }
-    .sidebar-profile-meta { color:var(--ui-muted-dark); font-size:11px; }
-
-    .sidebar-nav { flex:1; }
-    .sidebar-section-title { color:var(--ui-muted-dark); font-size:10px; letter-spacing:.1em; text-transform:uppercase; margin:16px 0 8px; font-weight:600; }
-    .sidebar-nav-item { display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:8px; color:var(--ui-muted); font-size:13px; cursor:pointer; transition:all .2s ease; }
-    .sidebar-nav-item:hover { background:rgba(255,77,85,.1); color:var(--ui-white); }
-    .sidebar-nav-item.active { background:rgba(255,77,85,.15); color:var(--ui-red-bright); }
-    .sidebar-nav-item-icon { font-size:16px; }
-
-    .main-content { flex:1; display:flex; flex-direction:column; overflow:hidden; }
-    .header-bar { background:rgba(255,255,255,.02); border-bottom:1px solid var(--ui-line-soft); padding:24px 32px; display:flex; justify-content:space-between; align-items:center; }
-    .header-left h2 { color:var(--ui-white); font-size:20px; font-weight:700; margin-bottom:4px; }
-    .header-left p { color:var(--ui-muted); font-size:13px; }
-    .header-right { display:flex; gap:12px; }
-    .btn-cta { padding:8px 16px; background:var(--ui-red-bright); color:var(--ui-white); border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; transition:all .2s ease; }
-    .btn-cta:hover { background:var(--ui-coral); }
-    .btn-secondary { padding:8px 16px; border:1px solid var(--ui-line-soft); background:transparent; color:var(--ui-white); border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; transition:all .2s ease; }
-    .btn-secondary:hover { border-color:var(--ui-red-bright); background:rgba(255,77,85,.1); }
-    .date-badge { padding:6px 12px; border:1px solid var(--ui-line-soft); border-radius:6px; color:var(--ui-muted); font-size:12px; }
-
-    .dashboard-content { flex:1; overflow-y:auto; padding:32px; }
-    .content-view { display:none; }
-    .content-view.active { display:block; animation:fadeIn .3s ease; }
+    .dashboard-section { display:none; }
+    .dashboard-section.active { display:block; animation:fadeIn .3s ease; }
     @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 
-    .stats-row { display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; margin-bottom:24px; }
-    .stat-card { padding:16px; border:1px solid var(--ui-line-soft); border-radius:12px; background:rgba(255,255,255,.02); }
-    .stat-card-label { color:var(--ui-muted-dark); font-size:10px; letter-spacing:.08em; text-transform:uppercase; margin-bottom:8px; font-weight:600; }
-    .stat-card-value { display:flex; align-items:baseline; gap:8px; }
-    .stat-value { color:var(--ui-white); font-size:24px; font-weight:800; }
-    .stat-change { font-size:12px; font-weight:600; }
-    .stat-positive { color:#4ADE80; }
-    .stat-negative { color:#EF4444; }
+    .stats-row { display:grid; grid-template-columns:repeat(4, minmax(220px, 1fr)); gap:14px; margin-bottom:24px; }
+    .stat-card { padding:16px 18px; border:1px solid var(--ui-line-soft); border-radius:14px; background:rgba(255,255,255,.035); }
+    .stat-label { color:var(--ui-muted-dark); font:10px 'DM Mono',monospace; letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px; }
+    .stat-value { color:var(--ui-white); font-size:24px; font-weight:800; letter-spacing:-.02em; }
+    .stat-meta { color:var(--ui-muted); font-size:12px; margin-top:8px; }
 
-    .panels-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
-    .panel { border:1px solid var(--ui-line-soft); border-radius:12px; background:rgba(255,255,255,.015); overflow:hidden; }
-    .panel-header { padding:16px 20px; border-bottom:1px solid var(--ui-line-soft); display:flex; justify-content:space-between; align-items:center; }
-    .panel-title { color:var(--ui-white); font-size:14px; font-weight:700; }
+    .panels-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:24px; }
+    .panel { padding:14px; border:1px solid var(--ui-line-soft); border-radius:14px; background:rgba(255,255,255,.035); }
+    .panel-title { color:var(--ui-white); font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; }
     .panel-action { color:var(--ui-red-bright); font-size:11px; cursor:pointer; font-weight:600; }
     .panel-action:hover { text-decoration:underline; }
-    .panel-body { padding:16px 20px; }
 
     .flow-item { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.05); }
     .flow-item:last-child { border-bottom:none; }
     .flow-label { color:var(--ui-white); font-size:12px; font-weight:500; }
-    .flow-value { color:var(--ui-red-bright); font-size:13px; font-weight:700; }
+    .flow-value { color:var(--ui-red-bright); font-size:13px; font-weight:800; }
 
-    .content-list { list-style:none; }
+    .content-list { display:grid; gap:0; }
     .content-item { padding:12px 0; border-bottom:1px solid rgba(255,255,255,.05); display:flex; gap:8px; cursor:pointer; transition:all .2s ease; }
-    .content-item:hover { background:rgba(255,77,85,.05); padding-left:8px; }
+    .content-item:hover { opacity:.8; }
     .content-item:last-child { border-bottom:none; }
-    .content-icon { color:var(--ui-red-bright); font-size:14px; }
+    .content-icon { color:var(--ui-red-bright); font-size:14px; flex-shrink:0; }
     .content-info { flex:1; }
     .content-title { color:var(--ui-white); font-size:12px; font-weight:500; }
-    .content-meta { color:var(--ui-muted-dark); font-size:10px; margin-top:2px; }
+    .content-meta { color:var(--ui-muted-dark); font:10px 'DM Mono',monospace; margin-top:3px; text-transform:uppercase; }
 
-    .competitor-item { padding:12px; background:rgba(255,77,85,.05); border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:all .2s ease; }
-    .competitor-item:hover { background:rgba(255,77,85,.1); }
+    .competitor-item { padding:12px; background:rgba(255,77,85,.08); border-left:3px solid var(--ui-red-bright); border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:all .2s ease; }
+    .competitor-item:hover { background:rgba(255,77,85,.12); }
     .competitor-item:last-child { margin-bottom:0; }
     .competitor-info { flex:1; }
-    .competitor-name { color:var(--ui-white); font-size:12px; font-weight:600; }
-    .competitor-meta { color:var(--ui-muted); font-size:10px; margin-top:2px; }
-    .competitor-stats { display:flex; gap:12px; }
+    .competitor-name { color:var(--ui-white); font-size:12px; font-weight:700; }
+    .competitor-meta { color:var(--ui-muted); font:10px 'DM Mono',monospace; margin-top:3px; }
+    .competitor-stats { display:flex; gap:16px; }
     .competitor-stat { text-align:right; }
-    .competitor-stat-value { color:var(--ui-red-bright); font-size:12px; font-weight:700; }
-    .competitor-stat-label { color:var(--ui-muted-dark); font-size:9px; }
+    .competitor-stat-value { color:var(--ui-red-bright); font-size:13px; font-weight:800; }
+    .competitor-stat-label { color:var(--ui-muted-dark); font:9px 'DM Mono',monospace; text-transform:uppercase; margin-top:2px; }
 
-    .data-table { width:100%; border-collapse:collapse; margin-top:16px; }
-    .data-table th { text-align:left; padding:12px; background:rgba(255,77,85,.05); color:var(--ui-white); font-size:11px; font-weight:700; border-bottom:1px solid var(--ui-line-soft); }
+    .data-table { width:100%; border-collapse:collapse; margin-top:12px; }
+    .data-table th { text-align:left; padding:12px; background:rgba(255,77,85,.08); color:var(--ui-muted-dark); font:10px 'DM Mono',monospace; letter-spacing:.1em; text-transform:uppercase; border-bottom:1px solid var(--ui-line-soft); }
     .data-table td { padding:12px; border-bottom:1px solid rgba(255,255,255,.05); color:var(--ui-muted); font-size:12px; }
-    .data-table tr:hover { background:rgba(255,77,85,.02); }
+    .data-table tr:hover { background:rgba(255,77,85,.04); }
 
-    .platform-badge { display:inline-block; padding:3px 8px; background:rgba(255,77,85,.15); color:var(--ui-red-bright); font-size:10px; border-radius:4px; font-weight:600; margin-right:4px; }
+    .platform-badge { display:inline-flex; align-items:center; gap:5px; padding:4px 8px; border-radius:6px; background:rgba(255,77,85,.15); color:var(--ui-red-bright); font:10px 'DM Mono',monospace; font-weight:600; }
 
-    .modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.7); z-index:1000; align-items:center; justify-content:center; }
+    .news-card { padding:14px; border:1px solid var(--ui-line-soft); border-left:3px solid var(--ui-red-bright); border-radius:8px; background:rgba(255,255,255,.02); margin-bottom:12px; }
+    .news-card:last-child { margin-bottom:0; }
+    .news-title { color:var(--ui-white); font-weight:700; font-size:12px; margin-bottom:6px; }
+    .news-meta { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+    .news-tag { display:inline-block; padding:3px 8px; background:rgba(255,77,85,.15); color:var(--ui-red-bright); font-size:10px; border-radius:4px; font-weight:600; }
+    .news-summary { color:var(--ui-muted); font-size:11px; line-height:1.4; }
+
+    .modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.76); backdrop-filter:blur(8px); z-index:1000; align-items:center; justify-content:center; padding:20px; }
     .modal.active { display:flex; }
-    .modal-content { background:#151519; border:1px solid var(--ui-line-soft); border-radius:12px; padding:32px; max-width:500px; width:90%; }
-    .modal-title { color:var(--ui-white); font-size:18px; font-weight:700; margin-bottom:16px; }
-    .modal-input { width:100%; padding:10px 12px; margin-bottom:12px; background:rgba(255,255,255,.05); border:1px solid var(--ui-line-soft); border-radius:8px; color:var(--ui-white); font-size:12px; }
-    .modal-input::placeholder { color:var(--ui-muted-dark); }
-    .modal-buttons { display:flex; gap:12px; margin-top:24px; }
-    .modal-buttons button { flex:1; padding:10px; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; }
-    .modal-btn-save { background:var(--ui-red-bright); color:var(--ui-white); }
-    .modal-btn-save:hover { background:var(--ui-coral); }
-    .modal-btn-cancel { background:transparent; color:var(--ui-white); border:1px solid var(--ui-line-soft); }
-    .modal-btn-cancel:hover { background:rgba(255,77,85,.1); }
+    .modal-card { width:min(680px,100%); max-height:calc(100vh - 40px); overflow:auto; padding:28px; border:1px solid var(--ui-line); border-radius:18px; background:#151519; box-shadow:0 30px 100px rgba(0,0,0,.55); }
+    .modal-title { color:var(--ui-white); font-size:24px; font-weight:800; letter-spacing:-.03em; margin-bottom:20px; }
+    .modal-close { position:absolute; top:20px; right:20px; width:34px; height:34px; border:1px solid var(--ui-line); border-radius:50%; background:rgba(255,255,255,.05); color:var(--ui-muted); font-size:20px; cursor:pointer; }
+    .modal-close:hover { background:rgba(255,77,85,.15); border-color:var(--ui-red-bright); color:var(--ui-red-bright); }
 
-    @media (max-width:1400px) {
-      .panels-grid { grid-template-columns:1fr; }
-    }
-
-    @media (max-width:768px) {
-      body { flex-direction:column; }
-      .sidebar { width:100%; height:auto; border-right:none; border-bottom:1px solid var(--ui-line-soft); }
-      .stats-row { grid-template-columns:repeat(2, 1fr); }
-    }
+    @media (max-width:1200px) { .stats-row { grid-template-columns:repeat(2, 1fr); } .panels-grid { grid-template-columns:1fr; } }
+    @media (max-width:600px) { .stats-row { grid-template-columns:1fr; } .data-table { font-size:11px; } .data-table th, .data-table td { padding:8px; } }
   </style>
 </head>
-<body>
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-profile" onclick="showView('dashboard')">
-      <div class="sidebar-profile-img"></div>
-      <div class="sidebar-profile-info">
-        <div class="sidebar-profile-name">Marcos Razzetti</div>
-        <div class="sidebar-profile-meta">2.5M seguidores</div>
+<body class="planning-page">
+  <!-- NAV -->
+  <nav class="site-nav" aria-label="Navegación principal">
+    <a class="site-brand" href="index.html" aria-label="Bitaxus, inicio"><img src="assets/bitaxus-logo-white.png" alt="Bitaxus"><span class="site-context">Community<br>Operations</span></a>
+    <div class="site-nav-links"><a class="site-nav-cta" href="editorial.html">Piezas</a><a href="dashboard.html" style="font-weight:600;color:var(--ui-red-bright);">Dashboard</a><a href="bitaxus-cm-guide.html">Guías</a><a href="index.html">Inicio</a></div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="container">
+    <header>
+      <div>
+        <h1>Dashboard</h1>
+        <p class="subtitle">Gestiona todo tu contenido desde un solo lugar.</p>
+      </div>
+      <div class="sync-note" data-supabase-status data-state="info">Conectando…</div>
+    </header>
+
+    <!-- TABS -->
+    <div class="dashboard-tabs" role="tablist" aria-label="Secciones del dashboard">
+      <button type="button" onclick="showView('dashboard')" class="active" role="tab">📊 Inicio</button>
+      <button type="button" onclick="showView('instagram')" role="tab">📷 Instagram</button>
+      <button type="button" onclick="showView('youtube')" role="tab">▶️ YouTube</button>
+      <button type="button" onclick="showView('linkedin')" role="tab">💼 LinkedIn</button>
+      <button type="button" onclick="showView('twitter')" role="tab">𝕏 Twitter</button>
+      <button type="button" onclick="showView('analytics')" role="tab">📈 Analítica</button>
+      <button type="button" onclick="showView('calendario')" role="tab">📅 Calendario</button>
+      <button type="button" onclick="showView('competencia')" role="tab">⚡ Competencia</button>
+      <button type="button" onclick="showView('noticias')" role="tab">📰 Noticias</button>
+    </div>
+
+    <!-- DASHBOARD HOME -->
+    <div class="dashboard-section active" id="dashboardView">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Seguidores</div>
+          <div class="stat-value">2.5K</div>
+          <div class="stat-meta">↑12% este mes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Engagement</div>
+          <div class="stat-value">8.9%</div>
+          <div class="stat-meta">↑3.8% respecto a anterior</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Alcance</div>
+          <div class="stat-value">113.4K</div>
+          <div class="stat-meta">↓14% este mes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Impresiones</div>
+          <div class="stat-value">64.3K</div>
+          <div class="stat-meta">↑28% respecto a anterior</div>
+        </div>
+      </div>
+
+      <div class="panels-grid">
+        <div class="panel">
+          <div class="panel-title">📊 Flujo de Contenido <span class="panel-action" onclick="showView('instagram')">Ver más ↗</span></div>
+          <div class="flow-item">
+            <span class="flow-label">Publicaciones Totales</span>
+            <span class="flow-value">45</span>
+          </div>
+          <div class="flow-item">
+            <span class="flow-label">Programadas</span>
+            <span class="flow-value">8</span>
+          </div>
+          <div class="flow-item">
+            <span class="flow-label">Borradores</span>
+            <span class="flow-value">4</span>
+          </div>
+          <div class="flow-item">
+            <span class="flow-label">Publicadas</span>
+            <span class="flow-value">12</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">✨ Creado Recientemente <span class="panel-action" onclick="openNewModal()">+ Agregar</span></div>
+          <div class="content-list">
+            <div class="content-item" onclick="showView('instagram')">
+              <span class="content-icon">🎨</span>
+              <div class="content-info">
+                <div class="content-title">Carrusel de Estrategia</div>
+                <div class="content-meta">Instagram · Hace 1 día</div>
+              </div>
+            </div>
+            <div class="content-item" onclick="showView('youtube')">
+              <span class="content-icon">📹</span>
+              <div class="content-info">
+                <div class="content-title">Tutorial Edición Pro</div>
+                <div class="content-meta">YouTube · Hace 2 días</div>
+              </div>
+            </div>
+            <div class="content-item" onclick="showView('analytics')">
+              <span class="content-icon">📊</span>
+              <div class="content-info">
+                <div class="content-title">Análisis Mensual</div>
+                <div class="content-meta">Analítica · Hace 3 días</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">🗓️ Próximas Publicaciones <span class="panel-action" onclick="showView('calendario')">Ver más ↗</span></div>
+          <div class="content-list">
+            <div class="content-item" onclick="showView('instagram')">
+              <span class="content-icon">📱</span>
+              <div class="content-info">
+                <div class="content-title">Post Instagram</div>
+                <div class="content-meta">Hoy a las 3:00 PM</div>
+              </div>
+            </div>
+            <div class="content-item" onclick="showView('youtube')">
+              <span class="content-icon">🎬</span>
+              <div class="content-info">
+                <div class="content-title">Video YouTube</div>
+                <div class="content-meta">Mañana a las 10:00 AM</div>
+              </div>
+            </div>
+            <div class="content-item" onclick="showView('linkedin')">
+              <span class="content-icon">💼</span>
+              <div class="content-info">
+                <div class="content-title">Post LinkedIn</div>
+                <div class="content-meta">22 ago a las 2:00 PM</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">⚡ Competencia <span class="panel-action" onclick="showView('competencia')">Ver más ↗</span></div>
+          <div class="competitor-item" onclick="showView('competencia')">
+            <div class="competitor-info">
+              <div class="competitor-name">Alex Hormazábal</div>
+              <div class="competitor-meta">Instagram · LinkedIn</div>
+            </div>
+            <div class="competitor-stats">
+              <div class="competitor-stat">
+                <div class="competitor-stat-value">4.3M</div>
+                <div class="competitor-stat-label">Seguidores</div>
+              </div>
+              <div class="competitor-stat">
+                <div class="competitor-stat-value">6.2%</div>
+                <div class="competitor-stat-label">Engagement</div>
+              </div>
+            </div>
+          </div>
+          <div class="competitor-item" onclick="showView('competencia')">
+            <div class="competitor-info">
+              <div class="competitor-name">Marcia Martín</div>
+              <div class="competitor-meta">Instagram · Twitter</div>
+            </div>
+            <div class="competitor-stats">
+              <div class="competitor-stat">
+                <div class="competitor-stat-value">3.8M</div>
+                <div class="competitor-stat-label">Seguidores</div>
+              </div>
+              <div class="competitor-stat">
+                <div class="competitor-stat-value">5.1%</div>
+                <div class="competitor-stat-label">Engagement</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <nav class="sidebar-nav">
-      <div class="sidebar-section-title">GENERAL</div>
-      <div class="sidebar-nav-item active" onclick="showView('dashboard')"><span class="sidebar-nav-item-icon">📊</span> Inicio</div>
-      <div class="sidebar-nav-item" onclick="showView('noticias')"><span class="sidebar-nav-item-icon">📰</span> Noticias</div>
-
-      <div class="sidebar-section-title" style="margin-top:24px;">INTEGRACIÓN</div>
-      <div class="sidebar-nav-item" onclick="showView('instagram')"><span class="sidebar-nav-item-icon">📷</span> Instagram</div>
-      <div class="sidebar-nav-item" onclick="showView('youtube')"><span class="sidebar-nav-item-icon">▶️</span> YouTube</div>
-      <div class="sidebar-nav-item" onclick="showView('linkedin')"><span class="sidebar-nav-item-icon">💼</span> LinkedIn</div>
-      <div class="sidebar-nav-item" onclick="showView('twitter')"><span class="sidebar-nav-item-icon">𝕏</span> Twitter</div>
-
-      <div class="sidebar-section-title" style="margin-top:24px;">OTROS</div>
-      <div class="sidebar-nav-item" onclick="showView('analytics')"><span class="sidebar-nav-item-icon">📈</span> Analítica</div>
-      <div class="sidebar-nav-item" onclick="showView('calendario')"><span class="sidebar-nav-item-icon">📅</span> Calendario</div>
-      <div class="sidebar-nav-item" onclick="showView('competencia')"><span class="sidebar-nav-item-icon">⚡</span> Competencia</div>
-    </nav>
-
-    <div style="color:var(--ui-muted-dark); font-size:11px; margin-top:auto; padding-top:24px; border-top:1px solid var(--ui-line-soft);">
-      <p>Bitaxus v1.0.0</p>
-      <p style="margin-top:4px;">Conectado con Supabase</p>
+    <!-- INSTAGRAM -->
+    <div class="dashboard-section" id="instagramView">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Posts Totales</div>
+          <div class="stat-value">45</div>
+          <div class="stat-meta">↑8 este mes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Programados</div>
+          <div class="stat-value">8</div>
+          <div class="stat-meta">Próximas publicaciones</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Publicados</div>
+          <div class="stat-value">12</div>
+          <div class="stat-meta">En vivo</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Borradores</div>
+          <div class="stat-value">4</div>
+          <div class="stat-meta">En proceso</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">📱 Administrador de Instagram <span class="panel-action" onclick="openNewModal()">+ Nuevo</span></div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Fecha Programada</th>
+              <th>Estado</th>
+              <th>Engagement</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Carrusel de Estrategia de Contenidos</td>
+              <td>22 ago 2026</td>
+              <td><span class="platform-badge">Programado</span></td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>Tutorial de Edición Rápida</td>
+              <td>20 ago 2026</td>
+              <td><span class="platform-badge" style="background:rgba(74,222,128,.2); color:#4ADE80;">Publicado</span></td>
+              <td>12.1%</td>
+            </tr>
+            <tr>
+              <td>Consejos de Productividad</td>
+              <td>18 ago 2026</td>
+              <td><span class="platform-badge" style="background:rgba(107,114,128,.2); color:#9CA3AF;">Borrador</span></td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </aside>
 
-  <!-- MAIN CONTENT -->
-  <div class="main-content">
-    <!-- HEADER -->
-    <div class="header-bar">
-      <div class="header-left">
-        <h2 id="headerTitle">Buenas noches, Marcos</h2>
-        <p id="headerSubtitle">Tu panel de control use contenido</p>
+    <!-- YOUTUBE -->
+    <div class="dashboard-section" id="youtubeView">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Videos</div>
+          <div class="stat-value">28</div>
+          <div class="stat-meta">↑3 este mes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Suscriptores</div>
+          <div class="stat-value">45.2K</div>
+          <div class="stat-meta">↑4.2K nuevos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Vistas Totales</div>
+          <div class="stat-value">1.2M</div>
+          <div class="stat-meta">↑125K este mes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Horas Vistas</div>
+          <div class="stat-value">42.5K</div>
+          <div class="stat-meta">↑8.3K este mes</div>
+        </div>
       </div>
-      <div class="header-right">
-        <div class="date-badge">📅 Hoy 18 ago</div>
-        <button class="btn-cta" onclick="openNewContentModal()">+ Nuevo Publicado</button>
+      <div class="panel">
+        <div class="panel-title">▶️ Gestión de Videos <span class="panel-action" onclick="openNewModal()">+ Nuevo</span></div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Publicación</th>
+              <th>Vistas</th>
+              <th>Engagement</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Tutorial Edición Pro 2026</td>
+              <td>20 ago 2026</td>
+              <td>125.4K</td>
+              <td>8.2%</td>
+            </tr>
+            <tr>
+              <td>Tips de Productividad</td>
+              <td>18 ago 2026</td>
+              <td>89.3K</td>
+              <td>6.5%</td>
+            </tr>
+            <tr>
+              <td>Reseña Herramientas IA</td>
+              <td>15 ago 2026</td>
+              <td>156.2K</td>
+              <td>11.3%</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
-    <!-- DASHBOARD CONTENT -->
-    <div class="dashboard-content">
-
-      <!-- DASHBOARD VIEW -->
-      <div class="content-view active" id="dashboardView">
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-card-label">Seguidores</div>
-            <div class="stat-card-value">
-              <span class="stat-value">2.5K</span>
-              <span class="stat-change stat-positive">↑12%</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Engagement</div>
-            <div class="stat-card-value">
-              <span class="stat-value">8.9%</span>
-              <span class="stat-change stat-positive">↑3.8%</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Alcance</div>
-            <div class="stat-card-value">
-              <span class="stat-value">113.4K</span>
-              <span class="stat-change stat-negative">↓14%</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Impresiones</div>
-            <div class="stat-card-value">
-              <span class="stat-value">64.3K</span>
-              <span class="stat-change stat-positive">↑28%</span>
-            </div>
-          </div>
+    <!-- LINKEDIN -->
+    <div class="dashboard-section" id="linkedinView">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Conexiones</div>
+          <div class="stat-value">8.2K</div>
+          <div class="stat-meta">↑450 nuevas</div>
         </div>
-
-        <div class="panels-grid">
-          <div class="panel">
-            <div class="panel-header">
-              <span class="panel-title">📊 Flujo de Contenido</span>
-              <span class="panel-action" onclick="showView('instagram')">Ver más</span>
-            </div>
-            <div class="panel-body">
-              <div class="flow-item">
-                <span class="flow-label">Publicaciones Totales</span>
-                <span class="flow-value">45</span>
-              </div>
-              <div class="flow-item">
-                <span class="flow-label">Programadas</span>
-                <span class="flow-value">8</span>
-              </div>
-              <div class="flow-item">
-                <span class="flow-label">Borradores</span>
-                <span class="flow-value">4</span>
-              </div>
-              <div class="flow-item">
-                <span class="flow-label">Publicadas</span>
-                <span class="flow-value">12</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-header">
-              <span class="panel-title">✨ Creado Recientemente</span>
-              <span class="panel-action" onclick="showView('dashboard')">Ver más</span>
-            </div>
-            <div class="panel-body">
-              <ul class="content-list">
-                <li class="content-item" onclick="showView('instagram')">
-                  <span class="content-icon">🎨</span>
-                  <div class="content-info">
-                    <div class="content-title">Carrusel de Estrategia</div>
-                    <div class="content-meta">Hace 1 día</div>
-                  </div>
-                </li>
-                <li class="content-item" onclick="showView('youtube')">
-                  <span class="content-icon">📹</span>
-                  <div class="content-info">
-                    <div class="content-title">Tutorial Edición Pro</div>
-                    <div class="content-meta">Hace 2 días</div>
-                  </div>
-                </li>
-                <li class="content-item" onclick="showView('analytics')">
-                  <span class="content-icon">📊</span>
-                  <div class="content-info">
-                    <div class="content-title">Análisis Mensual</div>
-                    <div class="content-meta">Hace 3 días</div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-header">
-              <span class="panel-title">🗓️ Próximos</span>
-              <span class="panel-action" onclick="showView('calendario')">Ver más</span>
-            </div>
-            <div class="panel-body">
-              <ul class="content-list">
-                <li class="content-item" onclick="showView('instagram')">
-                  <span class="content-icon">📱</span>
-                  <div class="content-info">
-                    <div class="content-title">Post Instagram</div>
-                    <div class="content-meta">Hoy a las 3:00 PM</div>
-                  </div>
-                </li>
-                <li class="content-item" onclick="showView('youtube')">
-                  <span class="content-icon">🎬</span>
-                  <div class="content-info">
-                    <div class="content-title">Video YouTube</div>
-                    <div class="content-meta">Mañana a las 10:00 AM</div>
-                  </div>
-                </li>
-                <li class="content-item" onclick="showView('linkedin')">
-                  <span class="content-icon">💼</span>
-                  <div class="content-info">
-                    <div class="content-title">Post LinkedIn</div>
-                    <div class="content-meta">22 ago a las 2:00 PM</div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-header">
-              <span class="panel-title">⚡ Información de Competencia</span>
-              <span class="panel-action" onclick="showView('competencia')">Ver más</span>
-            </div>
-            <div class="panel-body">
-              <div class="competitor-item" onclick="showView('competencia')">
-                <div class="competitor-info">
-                  <div class="competitor-name">Alex Hormazábal</div>
-                  <div class="competitor-meta">🔴 Instagram, 💼 LinkedIn</div>
-                </div>
-                <div class="competitor-stats">
-                  <div class="competitor-stat">
-                    <div class="competitor-stat-value">4.3M</div>
-                    <div class="competitor-stat-label">Seguidores</div>
-                  </div>
-                  <div class="competitor-stat">
-                    <div class="competitor-stat-value">6.2%</div>
-                    <div class="competitor-stat-label">Engagement</div>
-                  </div>
-                </div>
-              </div>
-              <div class="competitor-item" onclick="showView('competencia')">
-                <div class="competitor-info">
-                  <div class="competitor-name">Marcia Martín</div>
-                  <div class="competitor-meta">🔴 Instagram, 🐦 Twitter</div>
-                </div>
-                <div class="competitor-stats">
-                  <div class="competitor-stat">
-                    <div class="competitor-stat-value">3.8M</div>
-                    <div class="competitor-stat-label">Seguidores</div>
-                  </div>
-                  <div class="competitor-stat">
-                    <div class="competitor-stat-value">5.1%</div>
-                    <div class="competitor-stat-label">Engagement</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="stat-card">
+          <div class="stat-label">Impresiones</div>
+          <div class="stat-value">245K</div>
+          <div class="stat-meta">↑32K este mes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Engagement</div>
+          <div class="stat-value">7.3%</div>
+          <div class="stat-meta">↑2.1% respecto a anterior</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Posts</div>
+          <div class="stat-value">34</div>
+          <div class="stat-meta">↑5 este mes</div>
         </div>
       </div>
-
-      <!-- INSTAGRAM VIEW -->
-      <div class="content-view" id="instagramView">
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-card-label">Posts Totales</div>
-            <div class="stat-card-value">
-              <span class="stat-value">45</span>
-              <span class="stat-change stat-positive">↑8</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Programados</div>
-            <div class="stat-card-value">
-              <span class="stat-value">8</span>
-              <span class="stat-change stat-positive">↑2</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Publicados</div>
-            <div class="stat-card-value">
-              <span class="stat-value">12</span>
-              <span class="stat-change stat-positive">↑5</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Borradores</div>
-            <div class="stat-card-value">
-              <span class="stat-value">4</span>
-              <span class="stat-change stat-positive">↑1</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel" style="margin-bottom:24px;">
-          <div class="panel-header">
-            <span class="panel-title">📱 Administrador de Instagram</span>
-            <button class="btn-cta" onclick="openNewContentModal()">+ Nuevo Post</button>
-          </div>
-          <div class="panel-body">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Título</th>
-                  <th>Fecha Programada</th>
-                  <th>Estado</th>
-                  <th>Engagement</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Carrusel de Estrategia de Contenidos</td>
-                  <td>22 ago 2026</td>
-                  <td><span class="platform-badge">Programado</span></td>
-                  <td>—</td>
-                </tr>
-                <tr>
-                  <td>Tutorial de Edición Rápida</td>
-                  <td>20 ago 2026</td>
-                  <td><span class="platform-badge" style="background:rgba(74,222,128,.15); color:#4ADE80;">Publicado</span></td>
-                  <td>12.1%</td>
-                </tr>
-                <tr>
-                  <td>Consejos de Productividad</td>
-                  <td>18 ago 2026</td>
-                  <td><span class="platform-badge" style="background:rgba(107,114,128,.15); color:#9CA3AF;">Borrador</span></td>
-                  <td>—</td>
-                </tr>
-                <tr>
-                  <td>Análisis de Tendencias 2026</td>
-                  <td>15 ago 2026</td>
-                  <td><span class="platform-badge" style="background:rgba(74,222,128,.15); color:#4ADE80;">Publicado</span></td>
-                  <td>8.9%</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+      <div class="panel">
+        <div class="panel-title">💼 Gestión de LinkedIn <span class="panel-action" onclick="openNewModal()">+ Nuevo</span></div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Publicación</th>
+              <th>Impresiones</th>
+              <th>Engagement</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Tendencias en Transformación Digital</td>
+              <td>22 ago 2026</td>
+              <td>45.2K</td>
+              <td>9.1%</td>
+            </tr>
+            <tr>
+              <td>Importancia de la IA en Negocios</td>
+              <td>20 ago 2026</td>
+              <td>38.9K</td>
+              <td>7.4%</td>
+            </tr>
+            <tr>
+              <td>Tips de Leadership para Emprendedores</td>
+              <td>18 ago 2026</td>
+              <td>52.1K</td>
+              <td>8.6%</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-
-      <!-- YOUTUBE VIEW -->
-      <div class="content-view" id="youtubeView">
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-card-label">Videos</div>
-            <div class="stat-card-value">
-              <span class="stat-value">28</span>
-              <span class="stat-change stat-positive">↑3</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Suscriptores</div>
-            <div class="stat-card-value">
-              <span class="stat-value">45.2K</span>
-              <span class="stat-change stat-positive">↑4.2K</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Vistas Totales</div>
-            <div class="stat-card-value">
-              <span class="stat-value">1.2M</span>
-              <span class="stat-change stat-positive">↑125K</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Horas Vistas</div>
-            <div class="stat-card-value">
-              <span class="stat-value">42.5K</span>
-              <span class="stat-change stat-positive">↑8.3K</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-header">
-            <span class="panel-title">▶️ Gestión de Videos</span>
-            <button class="btn-cta" onclick="openNewContentModal()">+ Nuevo Video</button>
-          </div>
-          <div class="panel-body">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Título</th>
-                  <th>Publicación</th>
-                  <th>Vistas</th>
-                  <th>Engagement</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Tutorial Edición Pro 2026</td>
-                  <td>20 ago 2026</td>
-                  <td>125.4K</td>
-                  <td>8.2%</td>
-                </tr>
-                <tr>
-                  <td>Tips de Productividad</td>
-                  <td>18 ago 2026</td>
-                  <td>89.3K</td>
-                  <td>6.5%</td>
-                </tr>
-                <tr>
-                  <td>Reseña Herramientas IA</td>
-                  <td>15 ago 2026</td>
-                  <td>156.2K</td>
-                  <td>11.3%</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- LINKEDIN VIEW -->
-      <div class="content-view" id="linkedinView">
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-card-label">Conexiones</div>
-            <div class="stat-card-value">
-              <span class="stat-value">8.2K</span>
-              <span class="stat-change stat-positive">↑450</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Impresiones</div>
-            <div class="stat-card-value">
-              <span class="stat-value">245K</span>
-              <span class="stat-change stat-positive">↑32K</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Engagement</div>
-            <div class="stat-card-value">
-              <span class="stat-value">7.3%</span>
-              <span class="stat-change stat-positive">↑2.1%</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Posts</div>
-            <div class="stat-card-value">
-              <span class="stat-value">34</span>
-              <span class="stat-change stat-positive">↑5</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-header">
-            <span class="panel-title">💼 Gestión de LinkedIn</span>
-            <button class="btn-cta" onclick="openNewContentModal()">+ Nuevo Post</button>
-          </div>
-          <div class="panel-body">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Título</th>
-                  <th>Publicación</th>
-                  <th>Impresiones</th>
-                  <th>Engagement</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Tendencias en Transformación Digital</td>
-                  <td>22 ago 2026</td>
-                  <td>45.2K</td>
-                  <td>9.1%</td>
-                </tr>
-                <tr>
-                  <td>Importancia de la IA en Negocios</td>
-                  <td>20 ago 2026</td>
-                  <td>38.9K</td>
-                  <td>7.4%</td>
-                </tr>
-                <tr>
-                  <td>Tips de Leadership para Emprendedores</td>
-                  <td>18 ago 2026</td>
-                  <td>52.1K</td>
-                  <td>8.6%</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- TWITTER VIEW -->
-      <div class="content-view" id="twitterView">
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-card-label">Seguidores</div>
-            <div class="stat-card-value">
-              <span class="stat-value">156K</span>
-              <span class="stat-change stat-positive">↑12K</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Impresiones</div>
-            <div class="stat-card-value">
-              <span class="stat-value">892K</span>
-              <span class="stat-change stat-positive">↑125K</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Engagement</div>
-            <div class="stat-card-value">
-              <span class="stat-value">5.2%</span>
-              <span class="stat-change stat-positive">↑1.8%</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Tweets</div>
-            <div class="stat-card-value">
-              <span class="stat-value">562</span>
-              <span class="stat-change stat-positive">↑48</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-header">
-            <span class="panel-title">𝕏 Gestión de Twitter</span>
-            <button class="btn-cta" onclick="openNewContentModal()">+ Nuevo Tweet</button>
-          </div>
-          <div class="panel-body">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Tweet</th>
-                  <th>Fecha</th>
-                  <th>Retweets</th>
-                  <th>Engagement</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Descubre las nuevas herramientas de IA que revolucionan el trabajo...</td>
-                  <td>22 ago 2026</td>
-                  <td>234</td>
-                  <td>6.8%</td>
-                </tr>
-                <tr>
-                  <td>Webinar gratuito: Transformación digital para tu negocio. Hoy 3pm</td>
-                  <td>20 ago 2026</td>
-                  <td>187</td>
-                  <td>5.2%</td>
-                </tr>
-                <tr>
-                  <td>¿Qué esperas para automatizar tu contenido? Leer nuestro blog...</td>
-                  <td>18 ago 2026</td>
-                  <td>312</td>
-                  <td>7.1%</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- ANALYTICS VIEW -->
-      <div class="content-view" id="analyticsView">
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-card-label">Engagement Promedio</div>
-            <div class="stat-card-value">
-              <span class="stat-value">7.8%</span>
-              <span class="stat-change stat-positive">↑2.1%</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Impresiones Totales</div>
-            <div class="stat-card-value">
-              <span class="stat-value">2.1M</span>
-              <span class="stat-change stat-positive">↑342K</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Seguidores Nuevos</div>
-            <div class="stat-card-value">
-              <span class="stat-value">18.4K</span>
-              <span class="stat-change stat-positive">↑4.2K</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Tasa de Crecimiento</div>
-            <div class="stat-card-value">
-              <span class="stat-value">12.4%</span>
-              <span class="stat-change stat-positive">↑3.2%</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-header">
-            <span class="panel-title">📈 Análisis por Plataforma</span>
-          </div>
-          <div class="panel-body">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Plataforma</th>
-                  <th>Seguidores</th>
-                  <th>Engagement</th>
-                  <th>Impresiones</th>
-                  <th>Tendencia</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><span class="platform-badge">Instagram</span></td>
-                  <td>2.5M</td>
-                  <td>8.9%</td>
-                  <td>1.2M</td>
-                  <td style="color:#4ADE80;">↑12%</td>
-                </tr>
-                <tr>
-                  <td><span class="platform-badge">YouTube</span></td>
-                  <td>45.2K</td>
-                  <td>9.8%</td>
-                  <td>542K</td>
-                  <td style="color:#4ADE80;">↑18%</td>
-                </tr>
-                <tr>
-                  <td><span class="platform-badge">LinkedIn</span></td>
-                  <td>8.2K</td>
-                  <td>7.3%</td>
-                  <td>245K</td>
-                  <td style="color:#4ADE80;">↑8%</td>
-                </tr>
-                <tr>
-                  <td><span class="platform-badge">Twitter</span></td>
-                  <td>156K</td>
-                  <td>5.2%</td>
-                  <td>892K</td>
-                  <td style="color:#4ADE80;">↑5%</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- CALENDARIO VIEW -->
-      <div class="content-view" id="calendarioView">
-        <div class="panel">
-          <div class="panel-header">
-            <span class="panel-title">📅 Calendario de Publicaciones</span>
-            <button class="btn-secondary" onclick="openNewContentModal()">+ Nueva Publicación</button>
-          </div>
-          <div class="panel-body">
-            <p style="color:var(--ui-muted); margin-bottom:16px;">Agosto 2026</p>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Hora</th>
-                  <th>Plataforma</th>
-                  <th>Contenido</th>
-                  <th>Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>18 ago</td>
-                  <td>3:00 PM</td>
-                  <td><span class="platform-badge">Instagram</span></td>
-                  <td>Post Instagram</td>
-                  <td><span class="platform-badge" style="background:rgba(74,222,128,.15); color:#4ADE80;">En vivo</span></td>
-                </tr>
-                <tr>
-                  <td>20 ago</td>
-                  <td>10:00 AM</td>
-                  <td><span class="platform-badge">YouTube</span></td>
-                  <td>Video Tutorial</td>
-                  <td><span class="platform-badge">Programado</span></td>
-                </tr>
-                <tr>
-                  <td>22 ago</td>
-                  <td>2:00 PM</td>
-                  <td><span class="platform-badge">LinkedIn</span></td>
-                  <td>Artículo profesional</td>
-                  <td><span class="platform-badge">Programado</span></td>
-                </tr>
-                <tr>
-                  <td>25 ago</td>
-                  <td>5:00 PM</td>
-                  <td><span class="platform-badge">Twitter</span></td>
-                  <td>Anuncio importante</td>
-                  <td><span class="platform-badge" style="background:rgba(107,114,128,.15); color:#9CA3AF;">Borrador</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- COMPETENCIA VIEW -->
-      <div class="content-view" id="competenciaView">
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-card-label">Competidores</div>
-            <div class="stat-card-value">
-              <span class="stat-value">8</span>
-              <span class="stat-change stat-positive">↑2</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Engagement Promedio</div>
-            <div class="stat-card-value">
-              <span class="stat-value">6.8%</span>
-              <span class="stat-change stat-positive">↑1.2%</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Mayor Engagement</div>
-            <div class="stat-card-value">
-              <span class="stat-value">9.2%</span>
-              <span class="stat-change stat-negative">↓0.5%</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Nuestra Posición</div>
-            <div class="stat-card-value">
-              <span class="stat-value">#2</span>
-              <span class="stat-change stat-positive">↑1</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-header">
-            <span class="panel-title">⚡ Análisis de Competencia</span>
-            <button class="btn-secondary" onclick="openNewContentModal()">+ Agregar Competidor</button>
-          </div>
-          <div class="panel-body">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Competidor</th>
-                  <th>Plataforma</th>
-                  <th>Seguidores</th>
-                  <th>Engagement</th>
-                  <th>Tendencia</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Marcos Razzetti</td>
-                  <td><span class="platform-badge">Instagram</span></td>
-                  <td>2.5M</td>
-                  <td>8.9%</td>
-                  <td style="color:#4ADE80;">↑12%</td>
-                </tr>
-                <tr>
-                  <td>Alex Hormazábal</td>
-                  <td><span class="platform-badge">Instagram</span> <span class="platform-badge">LinkedIn</span></td>
-                  <td>4.3M</td>
-                  <td>6.2%</td>
-                  <td style="color:#4ADE80;">↑8%</td>
-                </tr>
-                <tr>
-                  <td>Marcia Martín</td>
-                  <td><span class="platform-badge">Instagram</span> <span class="platform-badge">Twitter</span></td>
-                  <td>3.8M</td>
-                  <td>5.1%</td>
-                  <td style="color:#4ADE80;">↑5%</td>
-                </tr>
-                <tr>
-                  <td>Carlos Mendez</td>
-                  <td><span class="platform-badge">YouTube</span></td>
-                  <td>892K</td>
-                  <td>9.2%</td>
-                  <td style="color:#EF4444;">↓0.5%</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- NOTICIAS VIEW -->
-      <div class="content-view" id="noticiasView">
-        <div class="panel">
-          <div class="panel-header">
-            <span class="panel-title">📰 Consolidador de Noticias</span>
-            <button class="btn-secondary" onclick="openNewContentModal()">+ Agregar Fuente</button>
-          </div>
-          <div class="panel-body">
-            <div class="content-item" style="padding:16px 0;">
-              <span class="content-icon">📌</span>
-              <div class="content-info">
-                <div class="content-title">Nuevo modelo de IA de código abierto revoluciona el procesamiento de lenguaje</div>
-                <div class="content-meta">Fuente: DeepNews • 14 ago 2026 • Herramientas, Investigación</div>
-              </div>
-            </div>
-            <div class="content-item" style="padding:16px 0;">
-              <span class="content-icon">📌</span>
-              <div class="content-info">
-                <div class="content-title">Nuevas herramientas de IA para la investigación de mercado disponibles</div>
-                <div class="content-meta">Fuente: TechReport • 13 ago 2026 • Investigación, Negocios</div>
-              </div>
-            </div>
-            <div class="content-item" style="padding:16px 0;">
-              <span class="content-icon">📌</span>
-              <div class="content-info">
-                <div class="content-title">Impacto de la IA local en la privacidad de datos empresariales</div>
-                <div class="content-meta">Fuente: BizTalk • 12 ago 2026 • Negocios, Seguridad</div>
-              </div>
-            </div>
-            <div class="content-item" style="padding:16px 0;">
-              <span class="content-icon">📌</span>
-              <div class="content-info">
-                <div class="content-title">Tendencias emergentes: Uso de embeddings vectoriales en producción</div>
-                <div class="content-meta">Fuente: TechDaily • 11 ago 2026 • Tecnología, Herramientas</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
-  </div>
 
-  <!-- NEW CONTENT MODAL -->
-  <div class="modal" id="newContentModal">
-    <div class="modal-content">
-      <div class="modal-title">Crear Nuevo Contenido</div>
-      <input type="text" class="modal-input" placeholder="Título del contenido">
-      <input type="text" class="modal-input" placeholder="Descripción">
-      <select class="modal-input" style="background:rgba(255,255,255,.05); color:var(--ui-muted-dark);">
-        <option>Seleccionar plataforma...</option>
+    <!-- TWITTER -->
+    <div class="dashboard-section" id="twitterView">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Seguidores</div>
+          <div class="stat-value">156K</div>
+          <div class="stat-meta">↑12K nuevos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Impresiones</div>
+          <div class="stat-value">892K</div>
+          <div class="stat-meta">↑125K este mes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Engagement</div>
+          <div class="stat-value">5.2%</div>
+          <div class="stat-meta">↑1.8% respecto a anterior</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Tweets</div>
+          <div class="stat-value">562</div>
+          <div class="stat-meta">↑48 este mes</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">𝕏 Gestión de Twitter <span class="panel-action" onclick="openNewModal()">+ Nuevo</span></div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Tweet</th>
+              <th>Fecha</th>
+              <th>Retweets</th>
+              <th>Engagement</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Descubre las nuevas herramientas de IA que revolucionan…</td>
+              <td>22 ago 2026</td>
+              <td>234</td>
+              <td>6.8%</td>
+            </tr>
+            <tr>
+              <td>Webinar gratuito: Transformación digital para tu negocio…</td>
+              <td>20 ago 2026</td>
+              <td>187</td>
+              <td>5.2%</td>
+            </tr>
+            <tr>
+              <td>¿Qué esperas para automatizar tu contenido? Leer…</td>
+              <td>18 ago 2026</td>
+              <td>312</td>
+              <td>7.1%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ANALYTICS -->
+    <div class="dashboard-section" id="analyticsView">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Engagement Promedio</div>
+          <div class="stat-value">7.8%</div>
+          <div class="stat-meta">↑2.1% respecto a anterior</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Impresiones Totales</div>
+          <div class="stat-value">2.1M</div>
+          <div class="stat-meta">↑342K este mes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Seguidores Nuevos</div>
+          <div class="stat-value">18.4K</div>
+          <div class="stat-meta">↑4.2K este mes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Tasa de Crecimiento</div>
+          <div class="stat-value">12.4%</div>
+          <div class="stat-meta">↑3.2% respecto a anterior</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">📈 Análisis por Plataforma</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Plataforma</th>
+              <th>Seguidores</th>
+              <th>Engagement</th>
+              <th>Impresiones</th>
+              <th>Tendencia</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="platform-badge">Instagram</span></td>
+              <td>2.5M</td>
+              <td>8.9%</td>
+              <td>1.2M</td>
+              <td style="color:#4ADE80;">↑12%</td>
+            </tr>
+            <tr>
+              <td><span class="platform-badge">YouTube</span></td>
+              <td>45.2K</td>
+              <td>9.8%</td>
+              <td>542K</td>
+              <td style="color:#4ADE80;">↑18%</td>
+            </tr>
+            <tr>
+              <td><span class="platform-badge">LinkedIn</span></td>
+              <td>8.2K</td>
+              <td>7.3%</td>
+              <td>245K</td>
+              <td style="color:#4ADE80;">↑8%</td>
+            </tr>
+            <tr>
+              <td><span class="platform-badge">Twitter</span></td>
+              <td>156K</td>
+              <td>5.2%</td>
+              <td>892K</td>
+              <td style="color:#4ADE80;">↑5%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CALENDARIO -->
+    <div class="dashboard-section" id="calendarioView">
+      <div class="panel">
+        <div class="panel-title">📅 Calendario de Publicaciones</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Plataforma</th>
+              <th>Contenido</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>18 ago</td>
+              <td>3:00 PM</td>
+              <td><span class="platform-badge">Instagram</span></td>
+              <td>Post Instagram</td>
+              <td><span class="platform-badge" style="background:rgba(74,222,128,.2); color:#4ADE80;">En vivo</span></td>
+            </tr>
+            <tr>
+              <td>20 ago</td>
+              <td>10:00 AM</td>
+              <td><span class="platform-badge">YouTube</span></td>
+              <td>Video Tutorial</td>
+              <td><span class="platform-badge">Programado</span></td>
+            </tr>
+            <tr>
+              <td>22 ago</td>
+              <td>2:00 PM</td>
+              <td><span class="platform-badge">LinkedIn</span></td>
+              <td>Artículo profesional</td>
+              <td><span class="platform-badge">Programado</span></td>
+            </tr>
+            <tr>
+              <td>25 ago</td>
+              <td>5:00 PM</td>
+              <td><span class="platform-badge">Twitter</span></td>
+              <td>Anuncio importante</td>
+              <td><span class="platform-badge" style="background:rgba(107,114,128,.2); color:#9CA3AF;">Borrador</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- COMPETENCIA -->
+    <div class="dashboard-section" id="competenciaView">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Competidores</div>
+          <div class="stat-value">8</div>
+          <div class="stat-meta">En seguimiento</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Engagement Promedio</div>
+          <div class="stat-value">6.8%</div>
+          <div class="stat-meta">Entre competidores</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Mayor Engagement</div>
+          <div class="stat-value">9.2%</div>
+          <div class="stat-meta">Competidor top</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Nuestra Posición</div>
+          <div class="stat-value">#2</div>
+          <div class="stat-meta">En ranking</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">⚡ Análisis de Competencia</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Competidor</th>
+              <th>Plataforma</th>
+              <th>Seguidores</th>
+              <th>Engagement</th>
+              <th>Tendencia</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Marcos Razzetti</td>
+              <td><span class="platform-badge">Instagram</span></td>
+              <td>2.5M</td>
+              <td>8.9%</td>
+              <td style="color:#4ADE80;">↑12%</td>
+            </tr>
+            <tr>
+              <td>Alex Hormazábal</td>
+              <td><span class="platform-badge">Instagram</span> <span class="platform-badge">LinkedIn</span></td>
+              <td>4.3M</td>
+              <td>6.2%</td>
+              <td style="color:#4ADE80;">↑8%</td>
+            </tr>
+            <tr>
+              <td>Marcia Martín</td>
+              <td><span class="platform-badge">Instagram</span> <span class="platform-badge">Twitter</span></td>
+              <td>3.8M</td>
+              <td>5.1%</td>
+              <td style="color:#4ADE80;">↑5%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- NOTICIAS -->
+    <div class="dashboard-section" id="noticiasView">
+      <div class="panel">
+        <div class="panel-title">📰 Consolidador de Noticias</div>
+        <div class="news-card">
+          <div class="news-title">Nuevo modelo de IA de código abierto revoluciona el procesamiento de lenguaje</div>
+          <div class="news-meta">
+            <span class="news-tag">herramientas</span>
+            <span class="news-tag">investigación</span>
+            <span style="color:var(--ui-muted-dark); font-size:11px; margin-left:auto;">14 ago 2026</span>
+          </div>
+          <div class="news-summary">Empresa importante anuncia nuevo modelo que supera en eficiencia a soluciones comerciales complejas.</div>
+        </div>
+        <div class="news-card">
+          <div class="news-title">Nuevas herramientas de IA para la investigación de mercado disponibles</div>
+          <div class="news-meta">
+            <span class="news-tag">investigación</span>
+            <span class="news-tag">negocios</span>
+            <span style="color:var(--ui-muted-dark); font-size:11px; margin-left:auto;">13 ago 2026</span>
+          </div>
+          <div class="news-summary">Investigadores presentan herramientas que permiten análisis de datos complejos en tiempo real.</div>
+        </div>
+        <div class="news-card">
+          <div class="news-title">Impacto de la IA local en la privacidad de datos empresariales</div>
+          <div class="news-meta">
+            <span class="news-tag">negocios</span>
+            <span class="news-tag">seguridad</span>
+            <span style="color:var(--ui-muted-dark); font-size:11px; margin-left:auto;">12 ago 2026</span>
+          </div>
+          <div class="news-summary">Expertos analizan cómo la implementación de modelos locales mejora la protección de datos.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL -->
+  <div class="modal" id="newModal">
+    <div class="modal-card" style="position:relative;">
+      <button class="modal-close" onclick="closeNewModal()">×</button>
+      <h2 class="modal-title">Crear Nuevo Contenido</h2>
+      <input type="text" class="editorial-toolbar" style="width:100%; margin-bottom:12px;" placeholder="Título del contenido">
+      <textarea style="width:100%; min-height:120px; padding:12px; border:1px solid var(--ui-line-soft); border-radius:10px; background:#151519; color:var(--ui-white); margin-bottom:12px; font-size:13px;" placeholder="Descripción del contenido"></textarea>
+      <select style="width:100%; padding:12px; border:1px solid var(--ui-line-soft); border-radius:10px; background:#151519; color:var(--ui-white); margin-bottom:12px; font-size:13px;">
         <option>Instagram</option>
         <option>YouTube</option>
         <option>LinkedIn</option>
         <option>Twitter</option>
       </select>
-      <input type="datetime-local" class="modal-input" placeholder="Fecha y hora">
-      <div class="modal-buttons">
-        <button class="modal-btn-save" onclick="saveContent()">Guardar</button>
-        <button class="modal-btn-cancel" onclick="closeModal()">Cancelar</button>
+      <input type="datetime-local" style="width:100%; padding:12px; border:1px solid var(--ui-line-soft); border-radius:10px; background:#151519; color:var(--ui-white); margin-bottom:12px; font-size:13px;">
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button class="button-secondary" onclick="closeNewModal()">Cancelar</button>
+        <button type="submit" onclick="closeNewModal(); alert('✅ Contenido guardado');">Guardar</button>
       </div>
     </div>
   </div>
 
   <script>
     function showView(viewName) {
-      // Hide all views
-      document.querySelectorAll('.content-view').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
-
-      // Show selected view
+      document.querySelectorAll('.dashboard-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.dashboard-tabs button').forEach(el => el.classList.remove('active'));
       const viewId = viewName + 'View';
       const view = document.getElementById(viewId);
-      if(view) {
-        view.classList.add('active');
-      }
-
-      // Activate sidebar button
-      event.target.closest('.sidebar-nav-item')?.classList.add('active');
-      const sidebarItem = Array.from(document.querySelectorAll('.sidebar-nav-item')).find(el => el.textContent.toLowerCase().includes(viewName.toLowerCase()));
-      if(sidebarItem) sidebarItem.classList.add('active');
-
-      // Update header
-      const titles = {
-        'dashboard': ['Buenas noches, Marcos', 'Tu panel de control use contenido'],
-        'instagram': ['Administrador de Instagram', 'Gestiona tus posts de Instagram'],
-        'youtube': ['Canal de YouTube', 'Gestiona tus videos y suscriptores'],
-        'linkedin': ['Gestión de LinkedIn', 'Conecta con profesionales'],
-        'twitter': ['Twitter Management', 'Comparte contenido en tiempo real'],
-        'analytics': ['Analítica General', 'Métricas de todas tus plataformas'],
-        'calendario': ['Calendario de Publicaciones', 'Planifica tu contenido'],
-        'competencia': ['Análisis de Competencia', 'Monitorea a tus competidores'],
-        'noticias': ['Consolidador de Noticias', 'Mantente actualizado con las últimas noticias']
-      };
-
-      if(titles[viewName]) {
-        document.getElementById('headerTitle').textContent = titles[viewName][0];
-        document.getElementById('headerSubtitle').textContent = titles[viewName][1];
-      }
+      if(view) view.classList.add('active');
+      event.target.classList.add('active');
     }
 
-    function openNewContentModal() {
-      document.getElementById('newContentModal').classList.add('active');
+    function openNewModal() {
+      document.getElementById('newModal').classList.add('active');
     }
 
-    function closeModal() {
-      document.getElementById('newContentModal').classList.remove('active');
+    function closeNewModal() {
+      document.getElementById('newModal').classList.remove('active');
     }
 
-    function saveContent() {
-      alert('✅ Contenido guardado exitosamente');
-      closeModal();
-    }
-
-    // Close modal on background click
-    document.getElementById('newContentModal').addEventListener('click', (e) => {
-      if(e.target.id === 'newContentModal') closeModal();
+    document.getElementById('newModal').addEventListener('click', (e) => {
+      if(e.target.id === 'newModal') closeNewModal();
     });
 
     window.addEventListener('DOMContentLoaded', () => {
