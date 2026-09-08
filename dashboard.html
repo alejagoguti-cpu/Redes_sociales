@@ -617,6 +617,30 @@
     </div>
   </div>
 
+  <!-- EDIT MODAL -->
+  <div class="modal" id="editModal">
+    <div class="modal-card" style="position:relative;">
+      <button class="modal-close" onclick="closeEditModal()">×</button>
+      <h2 class="modal-title">Editar Contenido</h2>
+      <input type="hidden" id="editPostId">
+      <input type="text" id="editModalTitle" style="width:100%; margin-bottom:14px; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-white); font-size:13px; transition:all .2s;" placeholder="Título del contenido" onfocus="this.style.borderColor='var(--ui-red-bright)';" onblur="this.style.borderColor='rgba(255,255,255,.12)';">
+      <textarea id="editModalDescription" style="width:100%; min-height:120px; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-white); margin-bottom:14px; font-size:13px; transition:all .2s; resize:none;" placeholder="Descripción del contenido" onfocus="this.style.borderColor='var(--ui-red-bright)';" onblur="this.style.borderColor='rgba(255,255,255,.12)';"></textarea>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+        <select id="editModalPlatform" style="padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-muted-dark); font-size:13px; transition:all .2s;">
+          <option style="background:#151519;">Instagram</option>
+          <option style="background:#151519;">YouTube</option>
+          <option style="background:#151519;">LinkedIn</option>
+          <option style="background:#151519;">Twitter</option>
+        </select>
+        <input type="datetime-local" id="editModalDate" style="padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#1a1a1f; color:var(--ui-white); font-size:13px; transition:all .2s;">
+      </div>
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button class="btn-secondary" onclick="closeEditModal()">Cancelar</button>
+        <button class="btn-primary" onclick="saveEditedPost()">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+
   <!-- N8N SETTINGS MODAL -->
   <div class="modal" id="n8nModal">
     <div class="modal-card" style="position:relative; max-width:500px;">
@@ -777,10 +801,7 @@
         if (post.scheduled_date) {
           const dateKey = post.scheduled_date.split('T')[0];
           if (!eventDates[dateKey]) eventDates[dateKey] = [];
-          const platform = post.platform || 'Otro';
-          if (!eventDates[dateKey].includes(platform)) {
-            eventDates[dateKey].push(platform);
-          }
+          eventDates[dateKey].push(post);
         }
       });
     }
@@ -900,9 +921,11 @@
       }
 
       let html = '';
-      instagram.forEach(post => {
+      instagram.forEach((post, idx) => {
         const date = new Date(post.Date).toLocaleDateString('es-ES');
-        html += `<tr>
+        const postId = post.id || 'instagram_' + idx;
+        const editCall = `openEditModal('${postId}', '${post['Post Title'].replace(/'/g, "\\'")}', '', 'Instagram', '${post.Date}')`;
+        html += `<tr style="cursor:pointer;" onclick="${editCall}" onmouseover="this.style.background='rgba(225,44,55,.1)'" onmouseout="this.style.background=''">
           <td>${date}</td>
           <td>${post['Post Title']}</td>
           <td>${post['Post Type'] || '-'}</td>
@@ -924,9 +947,11 @@
       }
 
       let html = '';
-      linkedin.forEach(post => {
+      linkedin.forEach((post, idx) => {
         const date = new Date(post.Date).toLocaleDateString('es-ES');
-        html += `<tr>
+        const postId = post.id || 'linkedin_' + idx;
+        const editCall = `openEditModal('${postId}', '${post['Post Title'].replace(/'/g, "\\'")}', '', 'LinkedIn', '${post.Date}')`;
+        html += `<tr style="cursor:pointer;" onclick="${editCall}" onmouseover="this.style.background='rgba(225,44,55,.1)'" onmouseout="this.style.background=''">
           <td>${date}</td>
           <td>${post['Post Title']}</td>
           <td>${post['Engagement (%)'].toFixed(1)}%</td>
@@ -948,9 +973,11 @@
       }
 
       let html = '';
-      twitter.forEach(post => {
+      twitter.forEach((post, idx) => {
         const date = new Date(post.Date).toLocaleDateString('es-ES');
-        html += `<tr>
+        const postId = post.id || 'twitter_' + idx;
+        const editCall = `openEditModal('${postId}', '${post['Post Title'].replace(/'/g, "\\'")}', '', 'Twitter', '${post.Date}')`;
+        html += `<tr style="cursor:pointer;" onclick="${editCall}" onmouseover="this.style.background='rgba(225,44,55,.1)'" onmouseout="this.style.background=''">
           <td>${date}</td>
           <td>${post['Post Title']}</td>
           <td>${post['Engagement (%)'].toFixed(1)}%</td>
@@ -1036,8 +1063,12 @@
           </div>`;
 
         if(events.length) {
-          events.forEach(platform => {
-            dayHTML += `<div class="calendar-piece" data-platform="${platform}" onclick="alert('Evento: ${platform} en ${i} de ${monthNames[month]}')">${platform.slice(0, 2)}</div>`;
+          events.forEach(post => {
+            const platform = post.platform || 'Otro';
+            const postId = post.id || 'cal_' + Math.random();
+            const title = post.title || 'Sin título';
+            const editCall = `openEditModal('${postId}', '${title.replace(/'/g, "\\'")}', '', '${platform}', '${post.scheduled_date}')`;
+            dayHTML += `<div class="calendar-piece" data-platform="${platform}" onclick="${editCall}" style="cursor:pointer;">${platform.slice(0, 2)}</div>`;
           });
         } else {
           dayHTML += '<div class="calendar-empty">—</div>';
@@ -1249,6 +1280,71 @@
         console.warn('⚠️ n8n integration: ' + error.message);
         console.log('📝 Para activar n8n: abre DevTools > Console y ejecuta:');
         console.log('localStorage.setItem("n8n_webhook_url", "TU_URL_WEBHOOK")');
+      }
+    }
+
+    function openEditModal(postId, title, description, platform, scheduledDate) {
+      document.getElementById('editPostId').value = postId;
+      document.getElementById('editModalTitle').value = title;
+      document.getElementById('editModalDescription').value = description;
+      document.getElementById('editModalPlatform').value = platform;
+
+      const dateObj = new Date(scheduledDate);
+      const isoString = dateObj.toISOString().slice(0, 16);
+      document.getElementById('editModalDate').value = isoString;
+
+      document.getElementById('editModal').classList.add('active');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').classList.remove('active');
+      document.getElementById('editPostId').value = '';
+      document.getElementById('editModalTitle').value = '';
+      document.getElementById('editModalDescription').value = '';
+      document.getElementById('editModalDate').value = '';
+    }
+
+    async function saveEditedPost() {
+      const postId = document.getElementById('editPostId').value;
+      const title = document.getElementById('editModalTitle').value.trim();
+      const description = document.getElementById('editModalDescription').value.trim();
+      const platform = document.getElementById('editModalPlatform').value;
+      const dateStr = document.getElementById('editModalDate').value;
+
+      if (!title || !dateStr) {
+        alert('Por favor completa título y fecha');
+        return;
+      }
+
+      try {
+        const scheduledDate = new Date(dateStr).toISOString();
+        const updates = {
+          title: title,
+          content: description,
+          platform: platform,
+          scheduled_date: scheduledDate,
+          updated_at: new Date().toISOString()
+        };
+
+        // Update in Supabase
+        if (window.bitaxusData) {
+          await window.bitaxusData.updatePost(postId, updates);
+          console.log('✅ Post actualizado en Supabase');
+        }
+
+        alert('✅ Contenido actualizado exitosamente');
+        closeEditModal();
+        loadSupabaseData();
+
+        // Refresh the current view
+        const activeView = document.querySelector('.content-view.active');
+        if (activeView) {
+          const viewName = activeView.id.replace('View', '');
+          showView(viewName);
+        }
+      } catch (error) {
+        console.error('❌ Error:', error);
+        alert('Error: ' + error.message);
       }
     }
 
