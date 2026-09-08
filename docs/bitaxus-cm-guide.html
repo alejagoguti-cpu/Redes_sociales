@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Bitaxus Community Manager - Guía Completa</title>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+	<style>
+		:root {
+			--red: #D1232E;
+			--dark-bg: #0A0A1A;
+			--dark-card: #1A1A2E;
+			--dark-border: #2D2D44;
+			--text-primary: #E5E5E5;
+			--text-secondary: #999999;
+			--text-accent: #CCCCCC;
+		}
+
+		@media (prefers-color-scheme: light) {
+			:root:not([data-theme="dark"]) {
+				--dark-bg: #FFFFFF;
+				--dark-card: #F8F8F8;
+				--dark-border: #E5E5E5;
+				--text-primary: #0A0A1A;
+				--text-secondary: #666666;
+				--text-accent: #333333;
+			}
+		}
+
+		:root[data-theme="light"] {
+			--dark-bg: #FFFFFF;
+			--dark-card: #F8F8F8;
+			--dark-border: #E5E5E5;
+			--text-primary: #0A0A1A;
+			--text-secondary: #666666;
+			--text-accent: #333333;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+			background-color: var(--dark-bg);
+			color: var(--text-primary);
+			line-height: 1.6;
+		}
+
+		.container {
+			display: grid;
+			grid-template-columns: 260px 1fr;
+			min-height: 100vh;
+		}
+
+		/* Sidebar */
+		.sidebar {
+			background: linear-gradient(135deg, #1a1a2e 0%, #0a0a1a 100%);
+			border-right: 1px solid var(--red);
+			padding: 2rem 1.5rem;
+			position: sticky;
+			top: 0;
+			height: 100vh;
+			overflow-y: auto;
+		}
+
+		.logo {
+			font-size: 1.5rem;
+			font-weight: 700;
+			margin-bottom: 2rem;
+			background: linear-gradient(135deg, var(--red), #ff6b6b);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-clip: text;
+		}
+
+		.nav-section {
+			margin-bottom: 2rem;
+		}
+
+		.nav-section-title {
+			font-size: 0.75rem;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			color: var(--red);
+			font-weight: 600;
+			margin-bottom: 0.75rem;
+		}
+
+		.nav-link {
+			display: block;
+			padding: 0.75rem 1rem;
+			color: var(--text-secondary);
+			text-decoration: none;
+			border-radius: 6px;
+			margin-bottom: 0.5rem;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			font-size: 0.9rem;
+		}
+
+		.nav-link:hover,
+		.nav-link.active {
+			background-color: rgba(209, 35, 46, 0.1);
+			color: var(--red);
+		}
+
+		/* Main Content */
+		.main {
+			padding: 3rem;
+			overflow-y: auto;
+			max-height: 100vh;
+		}
+
+		header {
+			margin-bottom: 3rem;
+		}
+
+		h1 {
+			font-size: 2.5rem;
+			font-weight: 700;
+			margin-bottom: 0.5rem;
+		}
+
+		.subtitle {
+			color: var(--text-secondary);
+			font-size: 1.1rem;
+		}
+
+		h2 {
+			font-size: 1.8rem;
+			font-weight: 600;
+			margin-top: 2.5rem;
+			margin-bottom: 1.5rem;
+			padding-bottom: 1rem;
+			border-bottom: 2px solid var(--dark-border);
+		}
+
+		h3 {
+			font-size: 1.2rem;
+			font-weight: 600;
+			margin-top: 1.5rem;
+			margin-bottom: 0.75rem;
+			color: var(--red);
+		}
+
+		.section {
+			display: none;
+			animation: fadeIn 0.3s ease-in;
+		}
+
+		.section.active {
+			display: block;
+		}
+
+		@keyframes fadeIn {
+			from { opacity: 0; transform: translateY(10px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+
+		.card {
+			background: var(--dark-card);
+			border: 1px solid var(--dark-border);
+			border-radius: 8px;
+			padding: 1.5rem;
+			margin-bottom: 1rem;
+			cursor: pointer;
+			transition: all 0.3s ease;
+		}
+
+		.card:hover {
+			border-color: var(--red);
+			box-shadow: 0 4px 12px rgba(209, 35, 46, 0.15);
+			transform: translateY(-2px);
+		}
+
+		.card-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.card-title {
+			font-weight: 600;
+			margin-bottom: 0.5rem;
+		}
+
+		.card-toggle {
+			color: var(--red);
+			font-size: 1.5rem;
+			user-select: none;
+		}
+
+		.card-content {
+			display: none;
+			margin-top: 1rem;
+			padding-top: 1rem;
+			border-top: 1px solid var(--dark-border);
+			color: var(--text-secondary);
+			line-height: 1.8;
+		}
+
+		.card-content.open {
+			display: block;
+		}
+
+		.color-swatch {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.75rem;
+			margin-right: 1.5rem;
+			margin-bottom: 1rem;
+		}
+
+		.swatch {
+			width: 40px;
+			height: 40px;
+			border-radius: 6px;
+			border: 1px solid var(--dark-border);
+		}
+
+		.feature-list {
+			list-style: none;
+			margin: 1rem 0;
+		}
+
+		.feature-list li {
+			padding: 0.5rem 0;
+			display: flex;
+			align-items: flex-start;
+			gap: 0.75rem;
+		}
+
+		.feature-list li::before {
+			content: "→";
+			color: var(--red);
+			font-weight: 600;
+			flex-shrink: 0;
+		}
+
+		.controls {
+			display: flex;
+			gap: 1rem;
+			margin-bottom: 2rem;
+			flex-wrap: wrap;
+		}
+
+		input {
+			flex: 1;
+			min-width: 200px;
+			padding: 0.75rem 1rem;
+			background: var(--dark-card);
+			border: 1px solid var(--dark-border);
+			border-radius: 6px;
+			color: var(--text-primary);
+			font-family: inherit;
+		}
+
+		input:focus {
+			outline: none;
+			border-color: var(--red);
+			box-shadow: 0 0 0 2px rgba(209, 35, 46, 0.1);
+		}
+
+		button {
+			padding: 0.75rem 1.5rem;
+			background: var(--red);
+			color: white;
+			border: none;
+			border-radius: 6px;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		button:hover {
+			background: #B81C28;
+			transform: translateY(-2px);
+		}
+
+		.theme-toggle {
+			background: var(--dark-card);
+			color: var(--text-primary);
+			border: 1px solid var(--dark-border);
+		}
+
+		.theme-toggle:hover {
+			border-color: var(--red);
+			background: rgba(209, 35, 46, 0.05);
+		}
+
+		.badge {
+			display: inline-block;
+			padding: 0.35rem 0.75rem;
+			background: rgba(209, 35, 46, 0.1);
+			color: var(--red);
+			border-radius: 4px;
+			font-size: 0.85rem;
+			font-weight: 500;
+			margin-right: 0.5rem;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin: 1.5rem 0;
+		}
+
+		th, td {
+			padding: 0.75rem;
+			text-align: left;
+			border-bottom: 1px solid var(--dark-border);
+		}
+
+		th {
+			background: rgba(209, 35, 46, 0.1);
+			color: var(--red);
+			font-weight: 600;
+		}
+
+		tr:hover {
+			background: rgba(209, 35, 46, 0.05);
+		}
+
+		code {
+			background: rgba(0, 0, 0, 0.3);
+			padding: 0.2rem 0.5rem;
+			border-radius: 3px;
+			font-size: 0.9em;
+			color: var(--text-accent);
+		}
+
+		@media (max-width: 768px) {
+			.container {
+				grid-template-columns: 1fr;
+			}
+
+			.sidebar {
+				max-height: 200px;
+				overflow-x: auto;
+				overflow-y: hidden;
+				display: flex;
+				gap: 2rem;
+				border-right: none;
+				border-bottom: 1px solid var(--red);
+				padding: 1rem 1.5rem;
+				position: static;
+				height: auto;
+			}
+
+			.nav-section {
+				min-width: max-content;
+				margin-bottom: 0;
+			}
+
+			.main {
+				padding: 1.5rem;
+			}
+
+			h1 {
+				font-size: 1.8rem;
+			}
+
+			h2 {
+				font-size: 1.4rem;
+			}
+		}
+	</style>
+	<link rel="stylesheet" href="assets/bitaxus-ui.css">
+</head>
+<body class="guide-page">
+	<nav class="site-nav" aria-label="Navegación principal">
+		<a class="site-brand" href="index.html" aria-label="Bitaxus, inicio">
+			<img src="assets/bitaxus-logo-white.png" alt="Bitaxus">
+			<span class="site-context">Community<br>Operations</span>
+		</a>
+		<div class="site-nav-links">
+<a class="site-nav-cta" href="editorial.html">Piezas</a>
+					<a href="editorial.html?view=calendar">Calendario</a>
+					<a href="dashboards/index.html">Recursos</a>
+			<a href="dashboards/analytics.html">Analytics</a>
+			<a class="site-nav-cta" href="index.html">Inicio</a>
+		</div>
+	</nav>
+	<div class="container">
+		<!-- Sidebar -->
+		<div class="sidebar">
+			<div class="logo">BITAXUS</div>
+
+			<div class="nav-section">
+				<div class="nav-section-title">Principal</div>
+				<a class="nav-link active" onclick="showSection('brand')">Brand Kit</a>
+				<a class="nav-link" onclick="showSection('calendar')">Q1 2025</a>
+				<a class="nav-link" onclick="showSection('moderation')">Moderación</a>
+				<a class="nav-link" onclick="showSection('workflow')">Workflow</a>
+			</div>
+
+			<div class="nav-section">
+				<div class="nav-section-title">Herramientas</div>
+				<a class="nav-link" onclick="showSection('dashboards')">Dashboards</a>
+				<a class="nav-link" onclick="showSection('resources')">Recursos</a>
+			</div>
+
+			<div class="nav-section">
+				<div class="nav-section-title">Sistema</div>
+				<button class="theme-toggle" onclick="toggleTheme()">Tema</button>
+			</div>
+		</div>
+
+		<!-- Main Content -->
+		<main class="main">
+			<!-- Brand Kit Section -->
+			<section id="brand" class="section active">
+				<header>
+					<h1>Brand Kit Bitaxus</h1>
+					<p class="subtitle">Identidad visual y tono de voz</p>
+				</header>
+
+				<h2>Paleta de Colores</h2>
+				<div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 1.5rem 0;">
+					<div class="color-swatch">
+						<div class="swatch" style="background: #D1232E;"></div>
+						<div>
+							<div style="font-weight: 600;">Rojo Primario</div>
+							<code>#D1232E</code>
+						</div>
+					</div>
+					<div class="color-swatch">
+						<div class="swatch" style="background: #0A0A1A;"></div>
+						<div>
+							<div style="font-weight: 600;">Dark Base</div>
+							<code>#0A0A1A</code>
+						</div>
+					</div>
+					<div class="color-swatch">
+						<div class="swatch" style="background: #999999;"></div>
+						<div>
+							<div style="font-weight: 600;">Gris Secundario</div>
+							<code>#999999</code>
+						</div>
+					</div>
+				</div>
+
+				<h2>Tipografía</h2>
+				<ul class="feature-list">
+					<li><strong>Familia:</strong> Inter (400, 500, 600, 700)</li>
+					<li><strong>H1:</strong> 28px, 700</li>
+					<li><strong>Body:</strong> 16px, 400</li>
+					<li><strong>Caption:</strong> 13px, 400</li>
+				</ul>
+
+				<h2>Tono de Voz</h2>
+				<div class="card">
+					<div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+						<div class="card-title">✅ Usa estos tonos</div>
+						<div class="card-toggle">+</div>
+					</div>
+					<div class="card-content">
+						<ul class="feature-list">
+							<li>Inteligente — Explica sin tecnicismos</li>
+							<li>Cálido — Conversacional, humano</li>
+							<li>Directo — Sin rodeos, sin hype</li>
+							<li>Colaborativo — "Junto a ti", no "te vendemos"</li>
+							<li>Contexto — Siempre explica el por qué</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+						<div class="card-title">❌ Evita estos tonos</div>
+						<div class="card-toggle">+</div>
+					</div>
+					<div class="card-content">
+						<ul class="feature-list">
+							<li>Innovación — Somos prácticos, no innovadores</li>
+							<li>Soluciones escalables — Muy corporativo</li>
+							<li>Empoderamiento — Suena a motivacional barato</li>
+							<li>Jargon cripto — Sin términos si no son necesarios</li>
+							<li>Hype — No somos una pump-and-dump</li>
+						</ul>
+					</div>
+				</div>
+
+				<h2>Palabras Clave</h2>
+				<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+					<div class="card">
+						<div class="card-title" style="color: var(--red); margin-bottom: 1rem;">Usa frecuentemente:</div>
+						<ul class="feature-list">
+							<li>Claridad</li>
+							<li>Contexto</li>
+							<li>Acompañamiento</li>
+							<li>Sin fricción</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+
+			<!-- Q1 2025 Section -->
+			<section id="calendar" class="section">
+				<header>
+					<h1>Plan Q1 2025</h1>
+					<p class="subtitle">36 posts + 3 blogs organizados por semana</p>
+				</header>
+
+				<div class="card">
+					<div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+						<div class="card-title">Resumen Q1</div>
+						<div class="card-toggle">+</div>
+					</div>
+					<div class="card-content">
+						<table>
+							<tr>
+								<td><strong>Total Posts</strong></td>
+								<td>36 posts (3 por semana)</td>
+							</tr>
+							<tr>
+								<td><strong>Plataformas</strong></td>
+								<td>LinkedIn, Instagram, Twitter</td>
+							</tr>
+							<tr>
+								<td><strong>Blogs</strong></td>
+								<td>3 blogs profundos (1 por mes)</td>
+							</tr>
+							<tr>
+								<td><strong>4 Pilares</strong></td>
+								<td>Money Movement, Security & Trust, Business Decisions, Real Stories</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+
+				<h2>Ver Calendario Interactiva</h2>
+				<p style="margin: 1rem 0; color: var(--text-secondary);">
+					Usa <strong>editorial.html?view=calendar</strong> para ver todos los posts organizados por semana y mes.
+				</p>
+				<button onclick="window.open('editorial.html?view=calendar')">Abrir Calendario →</button>
+			</section>
+
+			<!-- Moderation Section -->
+			<section id="moderation" class="section">
+				<header>
+					<h1>💬 Guía de Moderación</h1>
+					<p class="subtitle">Marco para responder preguntas frecuentes</p>
+				</header>
+
+				<h2>5 Principios Core</h2>
+				<div class="card">
+					<div class="card-title">1. Educador, no Vendedor</div>
+					<div class="card-content" style="display: block;">
+						Tu trabajo es contextualizar, no vender. Responde por qué algo funciona, no solo que funciona.
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-title">2. Honestidad</div>
+					<div class="card-content" style="display: block;">
+						Si no sabes, lo dices. Si hay limitaciones, las mencionas. Construimos confianza con claridad.
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-title">3. Consistencia</div>
+					<div class="card-content" style="display: block;">
+						Las respuestas deben ser consistentes entre plataformas y personas. Usa templates.
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-title">4. Escucha Activa</div>
+					<div class="card-content" style="display: block;">
+						Lee la pregunta completa. A veces la pregunta real está detrás de la aparente.
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-title">5. Moderación Inteligente</div>
+					<div class="card-content" style="display: block;">
+						No censures, pero guía. Si algo no suma, redirecciona la conversación.
+					</div>
+				</div>
+
+				<h2>Tipos de Respuesta</h2>
+				<table>
+					<tr>
+						<th>Tipo</th>
+						<th>Tiempo</th>
+						<th>Cuando Usarla</th>
+					</tr>
+					<tr>
+						<td><span class="badge">Simple</span></td>
+						<td>&lt; 2 min</td>
+						<td>FAQ directo, respuesta corta</td>
+					</tr>
+					<tr>
+						<td><span class="badge">Educativa</span></td>
+						<td>2-5 min</td>
+						<td>Pregunta que necesita contexto</td>
+					</tr>
+					<tr>
+						<td><span class="badge">Compleja</span></td>
+						<td>5+ min</td>
+						<td>Tema nuevo o que merece blog</td>
+					</tr>
+				</table>
+
+			</section>
+
+			<!-- Workflow Section -->
+			<section id="workflow" class="section">
+				<header>
+					<h1>Flujo de Trabajo Real</h1>
+					<p class="subtitle">Qué hacer cada día de la semana</p>
+				</header>
+
+				<div class="card">
+					<div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+						<div class="card-title">📍 LUNES: Planificación (45 min)</div>
+						<div class="card-toggle">+</div>
+					</div>
+					<div class="card-content">
+						<strong>9:00 — Revisión de Fin de Semana (15 min)</strong>
+						<ul class="feature-list" style="margin-top: 0.5rem;">
+							<li>Revisa comentarios viernes-domingo</li>
+							<li>Prioriza preguntas sin responder</li>
+							<li>Nota patrones emergentes</li>
+						</ul>
+						<strong style="display: block; margin-top: 1rem;">9:15 — Programa 3 Posts (20 min)</strong>
+						<ul class="feature-list" style="margin-top: 0.5rem;">
+							<li>Abre calendar-view.html</li>
+							<li>Copia contenido de la semana</li>
+							<li>Adapta al tono Bitaxus (ver brand kit)</li>
+							<li>Programa en Buffer/Later</li>
+						</ul>
+						<strong style="display: block; margin-top: 1rem;">9:35 — Identifica Temas Blog (10 min)</strong>
+						<ul class="feature-list" style="margin-top: 0.5rem;">
+							<li>Revisa FAQ log de la semana anterior</li>
+							<li>Nota temas que se repiten</li>
+							<li>Suma a ideas para blog del mes</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+						<div class="card-title">MARTES-JUEVES: Ejecución (15-30 min/día)</div>
+						<div class="card-toggle">+</div>
+					</div>
+					<div class="card-content">
+						<strong>Responde FAQ (10-15 min)</strong>
+						<ul class="feature-list" style="margin-top: 0.5rem;">
+								<li>Abre el Centro Editorial y revisa el contexto</li>
+							<li>Busca preguntas nuevas en redes</li>
+								<li>Redacta y adapta la respuesta al contexto</li>
+							<li>Objetivo: &lt; 4 horas de respuesta</li>
+						</ul>
+						<strong style="display: block; margin-top: 1rem;">Participa en Conversaciones (5-10 min)</strong>
+						<ul class="feature-list" style="margin-top: 0.5rem;">
+							<li>Busca 1-2 hilos relevantes por plataforma</li>
+							<li>Agrega contexto, no venda</li>
+							<li>Tono: educador, colaborador</li>
+						</ul>
+						<strong style="display: block; margin-top: 1rem;">Log de Interacciones (2-3 min)</strong>
+						<ul class="feature-list" style="margin-top: 0.5rem;">
+							<li>Abre engagement-tracker.csv</li>
+							<li>Registra cada interacción importante</li>
+							<li>Guarda preguntas nuevas en faq-log.md</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+						<div class="card-title">VIERNES: Análisis (60 min)</div>
+						<div class="card-toggle">+</div>
+					</div>
+					<div class="card-content">
+						<strong>Colecta Datos (15 min)</strong>
+						<ul class="feature-list" style="margin-top: 0.5rem;">
+							<li>Abre analytics.html</li>
+							<li>Importa CSV del tracker</li>
+							<li>Extrae métricas de 3 plataformas</li>
+						</ul>
+						<strong style="display: block; margin-top: 1rem;">Analiza Patrones (20 min)</strong>
+						<ul class="feature-list" style="margin-top: 0.5rem;">
+							<li>Revisa FAQ log: ¿qué se repite?</li>
+							<li>Calcula engagement rate promedio</li>
+							<li>Identifica pillar con mejor performance</li>
+						</ul>
+						<strong style="display: block; margin-top: 1rem;">Reporta a Ale (15 min)</strong>
+						<ul class="feature-list" style="margin-top: 0.5rem;">
+							<li>Completa weekly-report.md</li>
+							<li>Suma: KPIs, insight top 1, próxima semana</li>
+							<li>Propone 1 tema para blog</li>
+						</ul>
+						<strong style="display: block; margin-top: 1rem;">Planea Próxima Semana (10 min)</strong>
+						<ul class="feature-list" style="margin-top: 0.5rem;">
+							<li>Abre calendar para próxima semana</li>
+							<li>Identifica 3 posts a programar lunes</li>
+							<li>Nota si hay blog programado</li>
+						</ul>
+					</div>
+				</div>
+
+				<h2>KPIs Semanales (Objetivos)</h2>
+				<table>
+					<tr>
+						<th>KPI</th>
+						<th>Target</th>
+						<th>Cómo Trackear</th>
+					</tr>
+					<tr>
+						<td>Posts Publicados</td>
+						<td>3</td>
+						<td>Buffer/Later calendar</td>
+					</tr>
+					<tr>
+						<td>Engagement Rate</td>
+						<td>4%+</td>
+						<td>analytics.html</td>
+					</tr>
+					<tr>
+						<td>Tasa de Respuesta</td>
+						<td>95%+</td>
+						<td>FAQ log semanal</td>
+					</tr>
+					<tr>
+						<td>Patrones Identificados</td>
+						<td>2-3</td>
+						<td>FAQ log review</td>
+					</tr>
+				</table>
+			</section>
+
+			<!-- Dashboards Section -->
+			<section id="dashboards" class="section">
+				<header>
+					<h1>Dashboards y recursos</h1>
+					<p class="subtitle">Recursos operativos para la gestión diaria</p>
+				</header>
+
+					<h2>Recursos operativos</h2>
+
+				<div class="card">
+					<div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+						<div class="card-title">Calendario</div>
+						<div class="card-toggle">+</div>
+					</div>
+					<div class="card-content">
+						Visualiza todos los 36 posts Q1 por semana/mes. Click en cada post para ver detalles.
+						<br><br>
+						<button onclick="window.open('editorial.html?view=calendar')">Ver Calendario</button>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+						<div class="card-title">📊 Analytics Dashboard</div>
+						<div class="card-toggle">+</div>
+					</div>
+					<div class="card-content">
+						Importa CSV, mira métricas, exporta reportes. Todo lo que necesitas para medir impacto.
+						<br><br>
+						<button onclick="window.open('dashboards/analytics.html')">Abrir Analytics</button>
+					</div>
+				</div>
+
+				<h2>Hub Central</h2>
+				<p style="margin: 1rem 0; color: var(--text-secondary);">
+					Acceso centralizado a todos los dashboards y documentos en <strong>dashboards/index.html</strong>
+				</p>
+				<button onclick="window.open('dashboards/index.html')">Ir al Hub Central</button>
+			</section>
+
+			<!-- Resources Section -->
+			<section id="resources" class="section">
+				<header>
+					<h1>Recursos</h1>
+					<p class="subtitle">Templates, datos, documentación</p>
+				</header>
+
+				<h2>Templates Descargables</h2>
+				<ul class="feature-list">
+					<li><strong>weekly-report.md</strong> — Template para reporte semanal a Ale</li>
+					<li><strong>engagement-tracker.csv</strong> — Importa en analytics.html</li>
+					<li><strong>faq-log.md</strong> — Tracking de preguntas nuevas</li>
+					<li><strong>calendar.json</strong> — Datos Q1 completos</li>
+				</ul>
+
+				<h2>Documentación Completa</h2>
+				<ul class="feature-list">
+					<li><strong>docs/WORKFLOW_PROCESS.md</strong> — Flujo detallado día a día</li>
+					<li><strong>docs/BRAND_KIT.md</strong> — Brand completo (colores, tono, rules)</li>
+					<li><strong>docs/MODERATION_GUIDE.md</strong> — Frameworks para responder</li>
+					<li><strong>docs/DEPLOYMENT.md</strong> — Cómo deployar en diferentes plataformas</li>
+				</ul>
+
+				<h2>Acceso Online</h2>
+				<ul class="feature-list">
+					<li><strong>GitHub:</strong> alejagoguti-cpu/Redes_sociales</li>
+					<li><strong>GitHub Pages:</strong> alejagoguti-cpu.github.io/Redes_sociales</li>
+					<li><strong>Main Guide:</strong> bitaxus-cm-guide.html (aquí mismo)</li>
+				</ul>
+			</section>
+		</main>
+	</div>
+
+	<script>
+		function showSection(sectionId) {
+			// Hide all sections
+			document.querySelectorAll('.section').forEach(el => {
+				el.classList.remove('active');
+			});
+
+			// Show selected section
+			document.getElementById(sectionId).classList.add('active');
+
+			// Update nav
+			document.querySelectorAll('.nav-link').forEach(link => {
+				link.classList.remove('active');
+			});
+			event.target.classList.add('active');
+
+			// Scroll to top
+			document.querySelector('.main').scrollTo(0, 0);
+		}
+
+		function toggleTheme() {
+			const html = document.documentElement;
+			const current = html.getAttribute('data-theme');
+			const newTheme = current === 'dark' ? 'light' : (current === 'light' ? '' : 'dark');
+			if (newTheme === '') {
+				html.removeAttribute('data-theme');
+			} else {
+				html.setAttribute('data-theme', newTheme);
+			}
+			localStorage.setItem('theme', newTheme);
+		}
+
+		// Restore theme on load
+		window.addEventListener('DOMContentLoaded', () => {
+			const theme = localStorage.getItem('theme');
+			if (theme) {
+				document.documentElement.setAttribute('data-theme', theme);
+			}
+		});
+
+		// Card toggle functionality
+		document.querySelectorAll('.card-header').forEach(header => {
+			header.addEventListener('click', (e) => {
+				if (e.target.closest('.card-toggle')) {
+					const card = header.parentElement;
+					card.classList.toggle('open');
+					const toggle = header.querySelector('.card-toggle');
+					toggle.textContent = card.classList.contains('open') ? '−' : '+';
+				}
+			});
+		});
+
+		// Update card content displays
+		document.querySelectorAll('.card').forEach(card => {
+			const toggle = card.querySelector('.card-toggle');
+			if (toggle) {
+				toggle.textContent = card.classList.contains('open') ? '−' : '+';
+			}
+		});
+	</script>
+</body>
+</html>
