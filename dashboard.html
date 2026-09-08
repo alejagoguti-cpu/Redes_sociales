@@ -100,6 +100,19 @@
     .calendar-piece[data-platform="Twitter"] { border-left-color:#1da1f2; background:rgba(29,161,242,.12); }
     .calendar-empty { color:var(--ui-muted-dark); font-size:10px; }
 
+    .calendar-posts-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px; }
+    .calendar-post-card { padding:14px; background:rgba(225,44,55,.12); border:1px solid rgba(225,44,55,.3); border-radius:12px; transition:all .2s ease; cursor:pointer; position:relative; }
+    .calendar-post-card:hover { background:rgba(225,44,55,.18); border-color:var(--ui-red-bright); transform:translateY(-2px); box-shadow:0 6px 16px rgba(225,44,55,.2); }
+    .calendar-post-delete { position:absolute; top:8px; right:8px; width:24px; height:24px; display:flex; align-items:center; justify-content:center; background:rgba(225,44,55,.2); border:1px solid rgba(225,44,55,.3); border-radius:6px; color:var(--ui-red-bright); cursor:pointer; font-size:14px; font-weight:700; transition:all .2s ease; }
+    .calendar-post-delete:hover { background:var(--ui-red-bright); color:var(--ui-white); border-color:var(--ui-red-bright); }
+    .calendar-post-title { color:var(--ui-white); font-size:13px; font-weight:700; margin-bottom:8px; padding-right:28px; line-height:1.3; }
+    .calendar-post-platform { display:inline-block; padding:4px 8px; border-radius:6px; background:rgba(225,44,55,.25); color:var(--ui-red-bright); font:9px 'DM Mono',monospace; font-weight:700; margin-bottom:8px; }
+    .calendar-post-date { color:var(--ui-muted); font:10px 'DM Mono',monospace; margin-bottom:8px; }
+    .calendar-post-status { display:inline-block; padding:4px 8px; border-radius:4px; font:9px 'DM Mono',monospace; font-weight:600; }
+    .calendar-post-status.draft { background:rgba(100,150,200,.15); color:#64a8ff; }
+    .calendar-post-status.scheduled { background:rgba(255,180,0,.15); color:#ffc44d; }
+    .calendar-post-status.published { background:rgba(100,200,100,.15); color:#64c864; }
+
     .data-table { width:100%; border-collapse:collapse; }
     .data-table th { text-align:left; padding:12px; background:rgba(225,44,55,.08); color:var(--ui-muted-dark); font:10px 'DM Mono',monospace; letter-spacing:.1em; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,.08); }
     .data-table td { padding:12px; border-bottom:1px solid rgba(255,255,255,.05); color:var(--ui-muted); font-size:12px; }
@@ -494,43 +507,49 @@
 
         <!-- CALENDAR VIEW -->
         <div class="content-view" id="calendarioView">
-          <div class="stats-row">
-            <div class="stat-card">
-              <div class="stat-label">Publicaciones Programadas</div>
-              <div class="stat-value">12</div>
-              <div class="stat-meta">↑4 esta semana</div>
+          <!-- Calendar Controls Bar -->
+          <div style="display:flex; gap:12px; margin-bottom:24px; align-items:center; flex-wrap:wrap; padding:16px; background:rgba(255,255,255,.025); border:1px solid rgba(255,255,255,.08); border-radius:14px;">
+            <input type="text" id="calendarSearch" placeholder="Buscar por título o copy..." style="flex:1; min-width:200px; padding:10px 14px; background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.1); border-radius:8px; color:var(--ui-white); font-size:13px;" onkeyup="updateCalendarFilter()">
+            <select id="calendarPlatformFilter" style="padding:10px 14px; background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.1); border-radius:8px; color:var(--ui-muted); font-size:13px; cursor:pointer;" onchange="updateCalendarFilter()">
+              <option value="">Todas las plataformas</option>
+              <option value="Instagram">Instagram</option>
+              <option value="YouTube">YouTube</option>
+              <option value="LinkedIn">LinkedIn</option>
+              <option value="Twitter">Twitter</option>
+            </select>
+            <select id="calendarStatusFilter" style="padding:10px 14px; background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.1); border-radius:8px; color:var(--ui-muted); font-size:13px; cursor:pointer;" onchange="updateCalendarFilter()">
+              <option value="">Todos los estados</option>
+              <option value="Borrador">Borrador</option>
+              <option value="Programado">Programado</option>
+              <option value="Publicado">Publicado</option>
+            </select>
+          </div>
+
+          <!-- Calendar Navigation Bar -->
+          <div style="display:flex; gap:12px; margin-bottom:20px; align-items:center; justify-content:space-between;">
+            <div style="display:flex; gap:8px;">
+              <button class="btn-secondary" style="padding:8px 12px; font-size:11px;" onclick="todayCalendar()">Hoy</button>
+              <button class="btn-secondary" style="padding:8px 12px; font-size:11px;" onclick="prevCalendar()">◄ Anterior</button>
+              <button class="btn-secondary" style="padding:8px 12px; font-size:11px;" onclick="nextCalendar()">Siguiente ►</button>
+              <span style="color:var(--ui-muted); font-size:13px; font-weight:600; margin-left:8px; padding:8px 14px; background:rgba(225,44,55,.1); border-radius:8px;" id="calendarMonth">Septiembre 2026</span>
             </div>
-            <div class="stat-card">
-              <div class="stat-label">Próximos 7 días</div>
-              <div class="stat-value">5</div>
-              <div class="stat-meta">publicaciones</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">En Borrador</div>
-              <div class="stat-value">3</div>
-              <div class="stat-meta">listas para revisar</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">Publicadas</div>
-              <div class="stat-value">89</div>
-              <div class="stat-meta">este mes</div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-secondary" style="padding:8px 12px; font-size:11px;" onclick="showView('tablero')">Tablero</button>
+              <button class="btn-secondary" style="padding:8px 12px; font-size:11px; background:rgba(225,44,55,.15); border-color:var(--ui-red-bright); color:var(--ui-red-bright);">Calendario</button>
+              <button class="btn-primary" style="padding:10px 14px; font-size:11px;" onclick="openNewModal()">+ Nueva pieza</button>
             </div>
           </div>
-          <div class="panel">
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
-              <div>
-                <div class="panel-title" style="margin:0;">
-                  <span id="calendarMonth">Septiembre 2026</span>
-                </div>
-              </div>
-              <div style="display:flex; gap:8px;">
-                <button class="btn-secondary" style="padding:8px 12px; font-size:11px;" onclick="prevCalendar()">◄ Anterior</button>
-                <button class="btn-secondary" style="padding:8px 12px; font-size:11px;" onclick="nextCalendar()">Siguiente ►</button>
-              </div>
-            </div>
+
+          <!-- Calendar Grid -->
+          <div class="panel" style="padding:0; overflow:hidden; border:1px solid rgba(255,255,255,.08);">
             <div class="calendar-grid" id="calendarGrid">
               <!-- Calendar rendered here -->
             </div>
+          </div>
+
+          <!-- Filtered Posts Display -->
+          <div style="margin-top:24px;" id="calendarFilteredPosts">
+            <!-- Filtered posts shown as cards below calendar -->
           </div>
         </div>
 
@@ -772,6 +791,7 @@
             buildEventDates();
             updateDashboard();
             renderCalendar();
+            updateCalendarFilter();
             return;
           }
         }
@@ -808,6 +828,7 @@
         setTimeout(() => {
           updateDashboard();
           renderCalendar();
+          updateCalendarFilter();
           renderBoard();
           console.log('✅ Dashboard updated with ' + allMetrics.length + ' metrics');
         }, 100);
@@ -820,6 +841,7 @@
         setTimeout(() => {
           updateDashboard();
           renderCalendar();
+          updateCalendarFilter();
           console.log('✅ Dashboard updated with ' + allMetrics.length + ' metrics (demo)');
         }, 100);
       }
@@ -1085,10 +1107,10 @@
         const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
         const events = eventDates[dateKey] || [];
 
-        let dayHTML = `<div class="calendar-day${isToday ? ' is-today' : ''}">
+        let dayHTML = `<div class="calendar-day${isToday ? ' is-today' : ''}" style="position:relative;">
           <div class="day-number">
             <strong>${i}</strong>
-            ${events.length ? `<span>${events.length}</span>` : ''}
+            ${events.length ? `<span style="background:var(--ui-red-bright); color:#fff; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700;">${events.length}</span>` : ''}
           </div>`;
 
         if(events.length) {
@@ -1096,8 +1118,9 @@
             const platform = post.platform || 'Otro';
             const postId = post.id || 'cal_' + Math.random();
             const title = post.title || 'Sin título';
-            const editCall = `openEditModal('${postId}', '${title.replace(/'/g, "\\'")}', '', '${platform}', '${post.scheduled_date}')`;
-            dayHTML += `<div class="calendar-piece" data-platform="${platform}" onclick="${editCall}" style="cursor:pointer;">${platform.slice(0, 2)}</div>`;
+            const titleShort = title.length > 12 ? title.substring(0, 12) + '...' : title;
+            const editCall = `openEditModal('${postId}', '${title.replace(/'/g, "\\'")}', '${(post.description || '').replace(/'/g, "\\'")}', '${platform}', '${post.scheduled_date}')`;
+            dayHTML += `<div class="calendar-piece" data-platform="${platform}" onclick="${editCall}" title="${title}" style="cursor:pointer; font-size:10px; padding:5px 6px; white-space:normal; line-height:1.2;">${titleShort}</div>`;
           });
         } else {
           dayHTML += '<div class="calendar-empty">—</div>';
@@ -1117,11 +1140,59 @@
     function prevCalendar() {
       currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
       renderCalendar();
+      updateCalendarFilter();
     }
 
     function nextCalendar() {
       currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
       renderCalendar();
+      updateCalendarFilter();
+    }
+
+    function todayCalendar() {
+      currentCalendarDate = new Date();
+      renderCalendar();
+      updateCalendarFilter();
+    }
+
+    function updateCalendarFilter() {
+      const searchTerm = document.getElementById('calendarSearch').value.toLowerCase();
+      const platformFilter = document.getElementById('calendarPlatformFilter').value;
+      const statusFilter = document.getElementById('calendarStatusFilter').value;
+
+      let allPosts = [];
+      Object.values(eventDates).forEach(postsArray => {
+        allPosts = allPosts.concat(Array.isArray(postsArray) ? postsArray : [postsArray]);
+      });
+
+      const filteredPosts = allPosts.filter(post => {
+        const titleMatch = !searchTerm || (post.title && post.title.toLowerCase().includes(searchTerm)) || (post.description && post.description.toLowerCase().includes(searchTerm));
+        const platformMatch = !platformFilter || post.platform === platformFilter;
+        const statusMatch = !statusFilter || post.status === statusFilter;
+        return titleMatch && platformMatch && statusMatch;
+      });
+
+      let html = '';
+      if(filteredPosts.length > 0) {
+        html = '<div style="margin-top:16px;"><p style="color:var(--ui-muted-dark); font-size:11px; margin-bottom:12px; text-transform:uppercase; font-weight:600; letter-spacing:.08em;">Resultados de búsqueda (' + filteredPosts.length + ')</p><div class="calendar-posts-grid">';
+        filteredPosts.forEach(post => {
+          const statusClass = post.status ? post.status.toLowerCase() : 'draft';
+          html += `
+            <div class="calendar-post-card" onclick="openEditModal('${post.id}', '${post.title.replace(/'/g, "\\'")}', '${post.description.replace(/'/g, "\\'")}', '${post.platform}', '${post.scheduled_date}')">
+              <div class="calendar-post-delete" onclick="event.stopPropagation(); if(confirm('¿Eliminar esta publicación?')) deletePost('${post.id}')">×</div>
+              <div class="calendar-post-title">${post.title}</div>
+              <div class="calendar-post-platform">${post.platform}</div>
+              <div class="calendar-post-date">${post.scheduled_date}</div>
+              <div class="calendar-post-status ${statusClass}">${post.status || 'Borrador'}</div>
+            </div>
+          `;
+        });
+        html += '</div></div>';
+      } else if(searchTerm || platformFilter || statusFilter) {
+        html = '<div style="text-align:center; padding:32px; color:var(--ui-muted);"><p>No hay publicaciones que coincidan con los filtros seleccionados</p></div>';
+      }
+
+      document.getElementById('calendarFilteredPosts').innerHTML = html;
     }
 
     function showView(viewName) {
@@ -1166,6 +1237,7 @@
 
       if(viewName === 'calendario') {
         renderCalendar();
+        updateCalendarFilter();
       }
       if(viewName === 'instagram') {
         updateInstagramTable();
@@ -1443,6 +1515,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       renderCalendar();
+      updateCalendarFilter();
       loadSupabaseData();
       console.log('✅ Dashboard Premium cargado - Cargando datos de Supabase...');
     });
