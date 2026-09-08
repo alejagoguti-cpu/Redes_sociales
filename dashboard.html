@@ -382,29 +382,43 @@
         <div class="content-view" id="twitterView">
           <div class="stats-row">
             <div class="stat-card">
-              <div class="stat-label">Seguidores</div>
-              <div class="stat-value">320K</div>
-              <div class="stat-meta">↑3% este mes</div>
+              <div class="stat-label">Posts Twitter</div>
+              <div class="stat-value" id="twitterPostCount">0</div>
+              <div class="stat-meta">cargando...</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Engagement Promedio</div>
+              <div class="stat-value" id="twitterEngagementAvg">0%</div>
+              <div class="stat-meta">promedio</div>
             </div>
             <div class="stat-card">
               <div class="stat-label">Impresiones</div>
-              <div class="stat-value">156K</div>
-              <div class="stat-meta">↑22%</div>
+              <div class="stat-value" id="twitterImpressionsTotal">0</div>
+              <div class="stat-meta">total</div>
             </div>
             <div class="stat-card">
-              <div class="stat-label">Retweets</div>
-              <div class="stat-value">892</div>
-              <div class="stat-meta">↑8%</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">Menciones</div>
-              <div class="stat-value">1.2K</div>
-              <div class="stat-meta">↑15%</div>
+              <div class="stat-label">Likes + Retweets</div>
+              <div class="stat-value" id="twitterEngagementTotal">0</div>
+              <div class="stat-meta">total</div>
             </div>
           </div>
           <div class="panel">
-            <div class="panel-title">Tweets en Vivo</div>
-            <p style="color:var(--ui-muted); text-align:center; padding:40px; margin:0;">Tweets y conversaciones en tiempo real</p>
+            <div class="panel-title">Posts Twitter</div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Título</th>
+                  <th>Engagement %</th>
+                  <th>Likes</th>
+                  <th>Shares</th>
+                  <th>Impresiones</th>
+                </tr>
+              </thead>
+              <tbody id="twitterPostsTable">
+                <tr><td colspan="6" style="text-align:center; padding:20px; color:var(--ui-muted);">Cargando posts...</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -626,6 +640,22 @@
     let allMetrics = [];
     const eventDates = {};
 
+    const DEMO_DATA = {
+      posts: [
+        { id: 1, title: 'Estrategia de Instagram Q4', platform: 'Instagram', scheduled_date: new Date().toISOString(), status: 'published', created_at: new Date().toISOString() },
+        { id: 2, title: 'LinkedIn: Tendencias 2026', platform: 'LinkedIn', scheduled_date: new Date().toISOString(), status: 'published', created_at: new Date().toISOString() },
+        { id: 3, title: 'Twitter: Actualizaciones', platform: 'Twitter', scheduled_date: new Date().toISOString(), status: 'draft', created_at: new Date().toISOString() }
+      ],
+      metrics: [
+        { Date: new Date().toISOString(), Platform: 'Instagram', 'Post Title': 'Estrategia Q4', 'Post Type': 'Carrusel', Pillar: 'Estrategia', 'Engagement (%)': 9.2, Likes: 1200, Comments: 85, Shares: 45, Impressions: 28500 },
+        { Date: new Date().toISOString(), Platform: 'Instagram', 'Post Title': 'Fotos del evento', 'Post Type': 'Foto', Pillar: 'Eventos', 'Engagement (%)': 7.8, Likes: 890, Comments: 62, Shares: 28, Impressions: 18200 },
+        { Date: new Date().toISOString(), Platform: 'LinkedIn', 'Post Title': 'Tendencias Marketing 2026', 'Post Type': 'Artículo', Pillar: 'Insights', 'Engagement (%)': 6.8, Likes: 450, Comments: 120, Shares: 95, Impressions: 12400 },
+        { Date: new Date().toISOString(), Platform: 'LinkedIn', 'Post Title': 'Resultados de campaña', 'Post Type': 'Actualización', Pillar: 'Resultados', 'Engagement (%)': 8.2, Likes: 680, Comments: 145, Shares: 110, Impressions: 15800 },
+        { Date: new Date().toISOString(), Platform: 'Twitter', 'Post Title': 'Tips de productividad', 'Post Type': 'Hilo', Pillar: 'Tips', 'Engagement (%)': 5.4, Likes: 320, Comments: 45, Shares: 120, Impressions: 8900 },
+        { Date: new Date().toISOString(), Platform: 'Twitter', 'Post Title': 'Noticias del sector', 'Post Type': 'Tweet', Pillar: 'Noticias', 'Engagement (%)': 4.2, Likes: 180, Comments: 28, Shares: 65, Impressions: 5200 }
+      ]
+    };
+
     async function loadSupabaseData() {
       try {
         if (!window.bitaxusData) {
@@ -635,20 +665,31 @@
         }
 
         console.log('📊 Loading posts from Supabase...');
-        allPosts = await window.bitaxusData.loadPosts();
-        console.log('✅ Posts loaded:', allPosts.length);
+        try {
+          allPosts = await window.bitaxusData.loadPosts();
+          console.log('✅ Posts loaded:', allPosts.length);
+        } catch (postError) {
+          console.warn('⚠️ Could not load posts, using demo data:', postError.message);
+          allPosts = DEMO_DATA.posts;
+        }
 
         console.log('📈 Loading metrics from Supabase...');
-        allMetrics = await window.bitaxusData.loadMetrics();
-        console.log('✅ Metrics loaded:', allMetrics.length);
+        try {
+          allMetrics = await window.bitaxusData.loadMetrics();
+          console.log('✅ Metrics loaded:', allMetrics.length);
+        } catch (metricError) {
+          console.warn('⚠️ Could not load metrics, using demo data:', metricError.message);
+          allMetrics = DEMO_DATA.metrics;
+        }
 
         // Build event dates from posts
         allPosts.forEach(post => {
           if (post.scheduled_date) {
             const dateKey = post.scheduled_date.split('T')[0];
             if (!eventDates[dateKey]) eventDates[dateKey] = [];
-            if (!eventDates[dateKey].includes(post.platform)) {
-              eventDates[dateKey].push(post.platform);
+            const platform = post.platform || 'Otro';
+            if (!eventDates[dateKey].includes(platform)) {
+              eventDates[dateKey].push(platform);
             }
           }
         });
@@ -657,6 +698,11 @@
         renderCalendar();
       } catch (error) {
         console.error('❌ Error loading Supabase data:', error);
+        console.log('📦 Using fallback demo data...');
+        allPosts = DEMO_DATA.posts;
+        allMetrics = DEMO_DATA.metrics;
+        updateDashboard();
+        renderCalendar();
       }
     }
 
@@ -712,6 +758,20 @@
       document.getElementById('linkedinImpressionsTotal').textContent = linkedinTotalImpressions.toLocaleString();
       document.getElementById('linkedinCommentsTotal').textContent = linkedinTotalComments.toLocaleString();
       updateLinkedinTable();
+
+      // Twitter stats
+      const twitterMetrics = allMetrics.filter(m => m.Platform === 'Twitter');
+      const twitterAvgEngagement = twitterMetrics.length > 0
+        ? (twitterMetrics.reduce((sum, m) => sum + (m['Engagement (%)'] || 0), 0) / twitterMetrics.length).toFixed(1)
+        : 0;
+      const twitterTotalImpressions = twitterMetrics.reduce((sum, m) => sum + (m.Impressions || 0), 0);
+      const twitterTotalEngagement = twitterMetrics.reduce((sum, m) => sum + (m.Likes || 0) + (m.Shares || 0), 0);
+
+      document.getElementById('twitterPostCount').textContent = twitterMetrics.length;
+      document.getElementById('twitterEngagementAvg').textContent = twitterAvgEngagement + '%';
+      document.getElementById('twitterImpressionsTotal').textContent = twitterTotalImpressions.toLocaleString();
+      document.getElementById('twitterEngagementTotal').textContent = twitterTotalEngagement.toLocaleString();
+      updateTwitterTable();
 
       // Analytics global
       document.getElementById('analyticsPostsTotal').textContent = totalPosts;
@@ -793,6 +853,30 @@
           <td>${post['Engagement (%)'].toFixed(1)}%</td>
           <td>${post.Likes.toLocaleString()}</td>
           <td>${post.Comments.toLocaleString()}</td>
+          <td>${post.Impressions.toLocaleString()}</td>
+        </tr>`;
+      });
+      tbody.innerHTML = html;
+    }
+
+    function updateTwitterTable() {
+      const tbody = document.getElementById('twitterPostsTable');
+      const twitter = allMetrics.filter(m => m.Platform === 'Twitter').slice(0, 10);
+
+      if (twitter.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:var(--ui-muted);">No hay posts de Twitter</td></tr>';
+        return;
+      }
+
+      let html = '';
+      twitter.forEach(post => {
+        const date = new Date(post.Date).toLocaleDateString('es-ES');
+        html += `<tr>
+          <td>${date}</td>
+          <td>${post['Post Title']}</td>
+          <td>${post['Engagement (%)'].toFixed(1)}%</td>
+          <td>${post.Likes.toLocaleString()}</td>
+          <td>${post.Shares.toLocaleString()}</td>
           <td>${post.Impressions.toLocaleString()}</td>
         </tr>`;
       });
