@@ -707,16 +707,22 @@
         }
 
         buildEventDates();
-        updateDashboard();
-        renderCalendar();
+        setTimeout(() => {
+          updateDashboard();
+          renderCalendar();
+          console.log('✅ Dashboard updated with ' + allMetrics.length + ' metrics');
+        }, 100);
       } catch (error) {
         console.error('❌ Error loading Supabase data:', error);
         console.log('📦 Using demo data...');
         allPosts = DEMO_DATA.posts;
         allMetrics = DEMO_DATA.metrics;
         buildEventDates();
-        updateDashboard();
-        renderCalendar();
+        setTimeout(() => {
+          updateDashboard();
+          renderCalendar();
+          console.log('✅ Dashboard updated with ' + allMetrics.length + ' metrics (demo)');
+        }, 100);
       }
     }
 
