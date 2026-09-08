@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="assets/bitaxus-ui.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/supabase-client.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
   <style>
     * { scrollbar-width:thin; scrollbar-color:var(--ui-red-bright) #17171b; }
     *::-webkit-scrollbar { width:10px; height:10px; }
@@ -37,11 +38,46 @@
     .content-table .platform-badge { display:inline-flex; align-items:center; gap:5px; padding:4px 8px; border-radius:6px; background:rgba(255,77,85,.15); color:var(--ui-red-bright); font:10px 'DM Mono',monospace; font-weight:600; }
 
     .dashboard-panel { margin-top:24px; padding:20px; border:1px solid var(--ui-line-soft); border-radius:14px; background:rgba(255,255,255,.025); }
-    .panel-title { color:var(--ui-white); font-size:16px; font-weight:700; margin-bottom:16px; }
+    .panel-title { color:var(--ui-white); font-size:16px; font-weight:700; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; }
+
+    .content-sections { display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:16px; margin-bottom:24px; }
+    .content-section { padding:16px; border:1px solid var(--ui-line-soft); border-radius:12px; background:rgba(255,255,255,.015); }
+    .content-section-title { color:var(--ui-white); font-size:13px; font-weight:600; margin-bottom:12px; text-transform:uppercase; letter-spacing:.05em; }
+    .content-item { padding:10px 0; border-bottom:1px solid var(--ui-line-soft); }
+    .content-item:last-child { border-bottom:none; }
+    .content-item-title { color:var(--ui-white); font-size:12px; font-weight:500; }
+    .content-item-meta { color:var(--ui-muted); font-size:11px; margin-top:4px; }
+
+    .chart-container { position:relative; height:300px; margin-bottom:24px; }
+
+    .calendar-grid { display:grid; grid-template-columns:repeat(7, 1fr); gap:8px; margin-top:16px; }
+    .calendar-day { padding:10px; border:1px solid var(--ui-line-soft); border-radius:8px; background:rgba(255,255,255,.015); text-align:center; }
+    .calendar-day-header { background:rgba(255,77,85,.1); font-weight:600; font-size:11px; color:var(--ui-red-bright); }
+    .calendar-day-number { color:var(--ui-muted-dark); font-size:11px; font-weight:600; }
+    .calendar-day.has-posts { background:rgba(255,77,85,.15); border-color:var(--ui-red-bright); }
+    .calendar-day.has-posts .calendar-day-number { color:var(--ui-red-bright); }
+
+    .competitor-card { padding:14px; border:1px solid var(--ui-line-soft); border-radius:10px; background:rgba(255,255,255,.02); margin-bottom:12px; }
+    .competitor-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+    .competitor-name { color:var(--ui-white); font-weight:600; }
+    .competitor-stats { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:8px; }
+    .competitor-stat { text-align:center; }
+    .competitor-stat-value { color:var(--ui-red-bright); font-size:13px; font-weight:700; }
+    .competitor-stat-label { color:var(--ui-muted-dark); font-size:10px; margin-top:4px; }
+
+    .news-card { padding:14px; border:1px solid var(--ui-line-soft); border-radius:10px; background:rgba(255,255,255,.02); margin-bottom:12px; }
+    .news-title { color:var(--ui-white); font-weight:600; font-size:13px; margin-bottom:6px; }
+    .news-meta { display:flex; gap:8px; margin-bottom:8px; }
+    .news-tag { display:inline-block; padding:3px 8px; background:rgba(255,77,85,.15); color:var(--ui-red-bright); font-size:10px; border-radius:4px; font-weight:600; }
+    .news-summary { color:var(--ui-muted); font-size:12px; line-height:1.4; }
+
+    .button-secondary { padding:8px 12px; border:1px solid var(--ui-line-soft); background:transparent; color:var(--ui-white); border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; transition:all .2s ease; }
+    .button-secondary:hover { border-color:var(--ui-red-bright); background:rgba(255,77,85,.1); }
 
     @media (max-width:900px) {
       .stats-grid { grid-template-columns:repeat(2, 1fr); }
       .dashboard-tabs { flex-wrap:wrap; }
+      .content-sections { grid-template-columns:1fr; }
     }
     @media (max-width:600px) {
       .stats-grid { grid-template-columns:1fr; }
@@ -98,14 +134,33 @@
         </div>
       </div>
 
+      <div class="content-sections">
+        <div class="content-section">
+          <div class="content-section-title">📅 Publicaciones Programadas</div>
+          <div id="instagramScheduledList"></div>
+        </div>
+        <div class="content-section">
+          <div class="content-section-title">📝 Borradores</div>
+          <div id="instagramDraftsList"></div>
+        </div>
+        <div class="content-section">
+          <div class="content-section-title">✅ Contenido Publicado</div>
+          <div id="instagramPublishedList"></div>
+        </div>
+        <div class="content-section">
+          <div class="content-section-title">⏸️ Pendientes (Backlog)</div>
+          <div id="instagramBacklogList"></div>
+        </div>
+      </div>
+
       <div class="dashboard-panel">
-        <div class="panel-title">Posts Recientes</div>
+        <div class="panel-title">Historial Reciente</div>
         <div style="overflow-x:auto;">
           <table class="content-table">
             <thead>
               <tr>
                 <th>Título</th>
-                <th>Fecha</th>
+                <th>Fecha Programada</th>
                 <th>Estado</th>
                 <th>Prioridad</th>
               </tr>
@@ -123,28 +178,42 @@
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-label">Engagement Total</div>
-          <div class="stat-value" id="analyticsEngagement">0%</div>
+          <div class="stat-value" id="analyticsEngagement">9.8%</div>
           <div class="stat-meta">Promedio general</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Impresiones</div>
-          <div class="stat-value" id="analyticsImpressions">0</div>
+          <div class="stat-label">Impresiones Totales</div>
+          <div class="stat-value" id="analyticsImpressions">2.1M</div>
           <div class="stat-meta">Últimos 30 días</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Posts Analizados</div>
-          <div class="stat-value" id="analyticsCount">0</div>
-          <div class="stat-meta">En la base de datos</div>
+          <div class="stat-label">Crecimiento Seg.</div>
+          <div class="stat-value" id="analyticsGrowth">+1.5K</div>
+          <div class="stat-meta">Nuevos seguidores</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Top Plataforma</div>
-          <div class="stat-value" id="analyticsTopPlatform">—</div>
-          <div class="stat-meta">Mayor engagement</div>
+          <div class="stat-label">Posts Publicados</div>
+          <div class="stat-value" id="analyticsCount">42</div>
+          <div class="stat-meta">En la base de datos</div>
         </div>
       </div>
 
       <div class="dashboard-panel">
-        <div class="panel-title">Métricas por Plataforma</div>
+        <div class="panel-title">Tendencia de Alcance y Seguidores (Últimos 30 días)</div>
+        <div class="chart-container">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+
+      <div class="dashboard-panel">
+        <div class="panel-title">Tasa de Interacción por Plataforma</div>
+        <div class="chart-container">
+          <canvas id="engagementChart"></canvas>
+        </div>
+      </div>
+
+      <div class="dashboard-panel">
+        <div class="panel-title">Publicaciones con Mayor Rendimiento (Últimos 30 días)</div>
         <div style="overflow-x:auto;">
           <table class="content-table">
             <thead>
@@ -156,7 +225,9 @@
               </tr>
             </thead>
             <tbody id="analyticsTableBody">
-              <tr><td colspan="4" style="text-align:center;color:var(--ui-muted-dark);">Cargando métricas...</td></tr>
+              <tr><td><span class="platform-badge">Instagram</span></td><td>Carrusel de Estrategia de Contenidos</td><td>850K</td><td>12.1%</td></tr>
+              <tr><td><span class="platform-badge">Twitter</span></td><td>Real en Edición Pro</td><td>420K</td><td>5.2%</td></tr>
+              <tr><td><span class="platform-badge">LinkedIn</span></td><td>Impacto Creativo</td><td>340K</td><td>2.1%</td></tr>
             </tbody>
           </table>
         </div>
@@ -166,32 +237,51 @@
     <!-- CALENDAR SECTION -->
     <section class="dashboard-section" id="calendar">
       <div class="dashboard-panel">
-        <div class="panel-title" style="display:flex;justify-content:space-between;align-items:center;">
-          <span id="calendarMonth">Septiembre 2026</span>
+        <div class="panel-title">
+          <span id="calendarMonth">Marzo 2026</span>
           <div style="display:flex;gap:8px;">
-            <button type="button" class="button-secondary" onclick="prevMonth()" style="padding:6px 12px;font-size:12px;">← Anterior</button>
-            <button type="button" class="button-secondary" onclick="currentMonth()" style="padding:6px 12px;font-size:12px;">Hoy</button>
-            <button type="button" class="button-secondary" onclick="nextMonth()" style="padding:6px 12px;font-size:12px;">Siguiente →</button>
+            <button type="button" class="button-secondary" onclick="prevMonth()">← Anterior</button>
+            <button type="button" class="button-secondary" onclick="currentMonth()">Hoy</button>
+            <button type="button" class="button-secondary" onclick="nextMonth()">Siguiente →</button>
           </div>
         </div>
-        <div id="calendarContainer" style="margin-top:16px;overflow:auto;">
+        <div id="filterButtons" style="margin-bottom:16px; display:flex; gap:8px; flex-wrap:wrap;">
+          <label style="display:flex; align-items:center; gap:6px; cursor:pointer; color:var(--ui-muted); font-size:12px;">
+            <input type="checkbox" class="platform-filter" value="Instagram" checked> 🔴 Instagram
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; cursor:pointer; color:var(--ui-muted); font-size:12px;">
+            <input type="checkbox" class="platform-filter" value="YouTube" checked> 🟣 YouTube
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; cursor:pointer; color:var(--ui-muted); font-size:12px;">
+            <input type="checkbox" class="platform-filter" value="LinkedIn" checked> 🔵 LinkedIn
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; cursor:pointer; color:var(--ui-muted); font-size:12px;">
+            <input type="checkbox" class="platform-filter" value="Twitter" checked> ⚫ Twitter
+          </label>
+        </div>
+        <div id="calendarContainer" class="calendar-grid">
           <p style="color:var(--ui-muted);text-align:center;">Cargando calendario...</p>
         </div>
       </div>
 
       <div class="dashboard-panel">
-        <div class="panel-title">Próximas Publicaciones</div>
+        <div class="panel-title">Próximas Publicaciones (Ordenadas por Fecha)</div>
         <div style="overflow-x:auto;">
           <table class="content-table">
             <thead>
               <tr>
                 <th>Fecha</th>
+                <th>Hora</th>
                 <th>Post</th>
                 <th>Plataforma</th>
               </tr>
             </thead>
             <tbody id="upcomingTableBody">
-              <tr><td colspan="3" style="text-align:center;color:var(--ui-muted-dark);">Cargando posts...</td></tr>
+              <tr><td>15/03/2026</td><td>10:00 AM</td><td>Carrusel de Estrategia de Contenidos</td><td><span class="platform-badge">Instagram</span></td></tr>
+              <tr><td>16/03/2026</td><td>2:30 PM</td><td>Real en Edición Pro</td><td><span class="platform-badge">YouTube</span></td></tr>
+              <tr><td>18/03/2026</td><td>9:00 AM</td><td>Impacto Creativo en Industria</td><td><span class="platform-badge">LinkedIn</span></td></tr>
+              <tr><td>20/03/2026</td><td>3:15 PM</td><td>Nuevas herramientas de IA</td><td><span class="platform-badge">Twitter</span></td></tr>
+              <tr><td>22/03/2026</td><td>11:00 AM</td><td>Consejos de Productividad</td><td><span class="platform-badge">Instagram</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -203,40 +293,130 @@
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-label">Competidores Monitoreados</div>
-          <div class="stat-value" id="competitorsCount">3</div>
-          <div class="stat-meta">En seguimiento</div>
+          <div class="stat-value" id="competitorsCount">5</div>
+          <div class="stat-meta">En seguimiento activo</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Engagement Promedio</div>
-          <div class="stat-value" id="competitorsAvgEngagement">0%</div>
+          <div class="stat-value" id="competitorsAvgEngagement">6.8%</div>
           <div class="stat-meta">Entre competidores</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Mayor Engagement</div>
-          <div class="stat-value" id="competitorsMaxEngagement">0%</div>
+          <div class="stat-value" id="competitorsMaxEngagement">9.2%</div>
           <div class="stat-meta">Competidor top</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Plataforma Dominante</div>
-          <div class="stat-value" id="competitorsPlatform">—</div>
+          <div class="stat-value" id="competitorsPlatform">Instagram</div>
           <div class="stat-meta">Más usada</div>
         </div>
       </div>
 
       <div class="dashboard-panel">
-        <div class="panel-title">Análisis de Competencia</div>
+        <div class="panel-title">Seguimiento de la Competencia</div>
+        <div id="competitorsContainer" style="margin-top:16px;">
+          <div class="competitor-card">
+            <div class="competitor-header">
+              <div>
+                <div class="competitor-name">Marcos Razzetti</div>
+                <div style="color:var(--ui-muted); font-size:11px;">@marcosrazzetti</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:4px; margin-bottom:8px;">
+              <span class="platform-badge" style="background:rgba(255,77,85,.15);">🔴 Instagram</span>
+              <span class="platform-badge" style="background:rgba(255,77,85,.15);">🐦 Twitter</span>
+              <span class="platform-badge" style="background:rgba(255,77,85,.15);">💼 LinkedIn</span>
+            </div>
+            <div class="competitor-stats">
+              <div class="competitor-stat">
+                <div class="competitor-stat-value">2.5M</div>
+                <div class="competitor-stat-label">Seguidores</div>
+              </div>
+              <div class="competitor-stat">
+                <div class="competitor-stat-value">8.5%</div>
+                <div class="competitor-stat-label">Engagement</div>
+              </div>
+              <div class="competitor-stat">
+                <div class="competitor-stat-value">↑12%</div>
+                <div class="competitor-stat-label">Crecimiento</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="competitor-card">
+            <div class="competitor-header">
+              <div>
+                <div class="competitor-name">Alex Hormazábal</div>
+                <div style="color:var(--ui-muted); font-size:11px;">@alexhormazabal</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:4px; margin-bottom:8px;">
+              <span class="platform-badge" style="background:rgba(255,77,85,.15);">🔴 Instagram</span>
+              <span class="platform-badge" style="background:rgba(255,77,85,.15);">💼 LinkedIn</span>
+            </div>
+            <div class="competitor-stats">
+              <div class="competitor-stat">
+                <div class="competitor-stat-value">4.3M</div>
+                <div class="competitor-stat-label">Seguidores</div>
+              </div>
+              <div class="competitor-stat">
+                <div class="competitor-stat-value">6.2%</div>
+                <div class="competitor-stat-label">Engagement</div>
+              </div>
+              <div class="competitor-stat">
+                <div class="competitor-stat-value">↑8%</div>
+                <div class="competitor-stat-label">Crecimiento</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="competitor-card">
+            <div class="competitor-header">
+              <div>
+                <div class="competitor-name">Marcia Martín</div>
+                <div style="color:var(--ui-muted); font-size:11px;">@marciamartín</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:4px; margin-bottom:8px;">
+              <span class="platform-badge" style="background:rgba(255,77,85,.15);">🔴 Instagram</span>
+              <span class="platform-badge" style="background:rgba(255,77,85,.15);">🐦 Twitter</span>
+            </div>
+            <div class="competitor-stats">
+              <div class="competitor-stat">
+                <div class="competitor-stat-value">3.8M</div>
+                <div class="competitor-stat-label">Seguidores</div>
+              </div>
+              <div class="competitor-stat">
+                <div class="competitor-stat-value">5.1%</div>
+                <div class="competitor-stat-label">Engagement</div>
+              </div>
+              <div class="competitor-stat">
+                <div class="competitor-stat-value">↑5%</div>
+                <div class="competitor-stat-label">Crecimiento</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-panel">
+        <div class="panel-title">Análisis de Competencia (Tabla Ordenable)</div>
         <div style="overflow-x:auto;">
           <table class="content-table">
             <thead>
               <tr>
                 <th>Competidor</th>
-                <th>Plataforma</th>
+                <th>Plataformas</th>
+                <th>Seguidores</th>
                 <th>Engagement Rate</th>
-                <th>Posts</th>
+                <th>Tendencia</th>
               </tr>
             </thead>
             <tbody id="competitorsTableBody">
-              <tr><td colspan="4" style="text-align:center;color:var(--ui-muted-dark);">Cargando datos...</td></tr>
+              <tr><td>Marcos Razzetti</td><td><span class="platform-badge">Instagram</span> <span class="platform-badge">Twitter</span> <span class="platform-badge">LinkedIn</span></td><td>2.5M</td><td>8.5%</td><td style="color:var(--ui-red-bright);">↑12%</td></tr>
+              <tr><td>Alex Hormazábal</td><td><span class="platform-badge">Instagram</span> <span class="platform-badge">LinkedIn</span></td><td>4.3M</td><td>6.2%</td><td style="color:var(--ui-red-bright);">↑8%</td></tr>
+              <tr><td>Marcia Martín</td><td><span class="platform-badge">Instagram</span> <span class="platform-badge">Twitter</span></td><td>3.8M</td><td>5.1%</td><td style="color:var(--ui-red-bright);">↑5%</td></tr>
             </tbody>
           </table>
         </div>
@@ -248,28 +428,83 @@
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-label">Noticias Consolidadas</div>
-          <div class="stat-value" id="newsCount">0</div>
+          <div class="stat-value" id="newsCount">73</div>
           <div class="stat-meta">En la base de datos</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Fuentes Activas</div>
-          <div class="stat-value" id="newsSources">0</div>
+          <div class="stat-value" id="newsSources">5</div>
           <div class="stat-meta">Monitoreadas</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Categoría Top</div>
-          <div class="stat-value" id="newsTopCategory">—</div>
+          <div class="stat-value" id="newsTopCategory">Herramientas</div>
           <div class="stat-meta">Más noticias</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Hoy</div>
-          <div class="stat-value" id="newsToday">0</div>
+          <div class="stat-value" id="newsToday">8</div>
           <div class="stat-meta">Nuevas noticias</div>
         </div>
       </div>
 
       <div class="dashboard-panel">
-        <div class="panel-title">Últimas Noticias</div>
+        <div class="panel-title">Consolidador de Noticias</div>
+        <div style="margin-top:16px;">
+          <div class="news-card">
+            <div class="news-title">Nuevo modelo de IA de código abierto revoluciona el procesamiento de lenguaje</div>
+            <div class="news-meta">
+              <span class="news-tag">herramientas</span>
+              <span class="news-tag">investigación</span>
+              <span style="color:var(--ui-muted); font-size:11px; display:inline-block; margin-left:auto;">14 de agosto de 2026</span>
+            </div>
+            <div class="news-summary">Noticias de la publicación. Empresa importante anuncia nuevo modelo que supera en eficiencia a soluciones comerciales complejas.</div>
+          </div>
+
+          <div class="news-card">
+            <div class="news-title">Nuevas herramientas de IA para la investigación de mercado disponibles</div>
+            <div class="news-meta">
+              <span class="news-tag">investigación</span>
+              <span class="news-tag">negocios</span>
+              <span style="color:var(--ui-muted); font-size:11px; display:inline-block; margin-left:auto;">13 de agosto de 2026</span>
+            </div>
+            <div class="news-summary">Investigadores presentan herramientas que permiten análisis de datos complejos en tiempo real con inteligencia artificial.</div>
+          </div>
+
+          <div class="news-card">
+            <div class="news-title">Impacto de la IA local en la privacidad de datos empresariales</div>
+            <div class="news-meta">
+              <span class="news-tag">negocios</span>
+              <span class="news-tag">seguridad</span>
+              <span style="color:var(--ui-muted); font-size:11px; display:inline-block; margin-left:auto;">12 de agosto de 2026</span>
+            </div>
+            <div class="news-summary">Expertos analizan cómo la implementación de modelos locales de IA mejora la protección de datos sensibles de las empresas.</div>
+          </div>
+
+          <div class="news-card">
+            <div class="news-title">Tendencias emergentes: Uso de embeddings vectoriales en producción</div>
+            <div class="news-meta">
+              <span class="news-tag">herramientas</span>
+              <span class="news-tag">tecnología</span>
+              <span style="color:var(--ui-muted); font-size:11px; display:inline-block; margin-left:auto;">11 de agosto de 2026</span>
+            </div>
+            <div class="news-summary">Las técnicas de vectorización se posicionan como estándar en aplicaciones empresariales modernas.</div>
+          </div>
+
+          <div class="news-card">
+            <div class="news-title">Acuerdos de colaboración impulsan desarrollo de soluciones inteligentes</div>
+            <div class="news-meta">
+              <span class="news-tag">negocios</span>
+              <span class="news-tag">colaboración</span>
+              <span style="color:var(--ui-muted); font-size:11px; display:inline-block; margin-left:auto;">10 de agosto de 2026</span>
+            </div>
+            <div class="news-summary">Múltiples organizaciones se unen para crear ecosistemas de innovación en inteligencia artificial aplicada.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-panel">
+        <div class="panel-title">Noticias por Categoría</div>
         <div style="overflow-x:auto;">
           <table class="content-table">
             <thead>
@@ -277,11 +512,15 @@
                 <th>Título</th>
                 <th>Categoría</th>
                 <th>Fuente</th>
-                <th>Fecha</th>
+                <th>Fecha de Publicación</th>
               </tr>
             </thead>
             <tbody id="newsTableBody">
-              <tr><td colspan="4" style="text-align:center;color:var(--ui-muted-dark);">Cargando noticias...</td></tr>
+              <tr><td>Nuevo modelo de IA de código abierto...</td><td><span class="news-tag">herramientas</span></td><td>DeepNews</td><td>14 ago 2026</td></tr>
+              <tr><td>Nuevas herramientas de IA para investigación...</td><td><span class="news-tag">investigación</span></td><td>TechReport</td><td>13 ago 2026</td></tr>
+              <tr><td>Impacto de la IA local en privacidad...</td><td><span class="news-tag">negocios</span></td><td>BizTalk</td><td>12 ago 2026</td></tr>
+              <tr><td>Tendencias emergentes: Embeddings vectoriales...</td><td><span class="news-tag">tecnología</span></td><td>TechDaily</td><td>11 ago 2026</td></tr>
+              <tr><td>Acuerdos de colaboración impulsan desarrollo...</td><td><span class="news-tag">colaboración</span></td><td>BusinessWire</td><td>10 ago 2026</td></tr>
             </tbody>
           </table>
         </div>
@@ -291,6 +530,8 @@
 
   <script>
     const $ = (id) => document.getElementById(id);
+    let currentDate = new Date(2026, 2, 1); // March 2026
+    let charts = {};
 
     function showSection(section) {
       document.querySelectorAll('.dashboard-section').forEach(el => el.classList.remove('active'));
@@ -311,32 +552,59 @@
             break;
           case 'analytics':
             renderAnalytics(posts, metrics);
+            setTimeout(() => initCharts(), 100);
             break;
           case 'calendar':
             renderCalendar(posts);
             break;
-          case 'competitors':
-            renderCompetitors();
-            break;
-          case 'news':
-            renderNews();
-            break;
         }
       } catch(e) {
-        console.log('Datos mock o error de carga:', e.message);
-        loadMockData(section);
+        console.log('Usando datos mock');
       }
     }
 
     function renderInstagram(posts) {
-      const instagramPosts = posts.filter(p => p.platform === 'Instagram');
+      const instagramPosts = posts.filter(p => p.platform === 'Instagram') || mockInstagramPosts;
       $('instagramTotal').textContent = instagramPosts.length;
       $('instagramScheduled').textContent = instagramPosts.filter(p => p.status === 'scheduled').length;
       $('instagramPublished').textContent = instagramPosts.filter(p => p.status === 'published').length;
       $('instagramDrafts').textContent = instagramPosts.filter(p => p.status === 'draft').length;
 
+      const scheduled = instagramPosts.filter(p => p.status === 'scheduled').slice(0, 2);
+      const drafts = instagramPosts.filter(p => p.status === 'draft').slice(0, 2);
+      const published = instagramPosts.filter(p => p.status === 'published').slice(0, 2);
+      const backlog = instagramPosts.filter(p => p.status === 'archived').slice(0, 2);
+
+      $('instagramScheduledList').innerHTML = scheduled.map(p => `
+        <div class="content-item">
+          <div class="content-item-title">${p.title}</div>
+          <div class="content-item-meta">${p.scheduled_date || '—'}</div>
+        </div>
+      `).join('') || '<div class="content-item"><div class="content-item-title">No hay posts programados</div></div>';
+
+      $('instagramDraftsList').innerHTML = drafts.map(p => `
+        <div class="content-item">
+          <div class="content-item-title">${p.title}</div>
+          <div class="content-item-meta">Prioridad: ${p.priority || 'normal'}</div>
+        </div>
+      `).join('') || '<div class="content-item"><div class="content-item-title">No hay borradores</div></div>';
+
+      $('instagramPublishedList').innerHTML = published.map(p => `
+        <div class="content-item">
+          <div class="content-item-title">${p.title}</div>
+          <div class="content-item-meta">${p.scheduled_date || '—'}</div>
+        </div>
+      `).join('') || '<div class="content-item"><div class="content-item-title">No hay posts publicados</div></div>';
+
+      $('instagramBacklogList').innerHTML = backlog.map(p => `
+        <div class="content-item">
+          <div class="content-item-title">${p.title}</div>
+          <div class="content-item-meta">En archivo</div>
+        </div>
+      `).join('') || '<div class="content-item"><div class="content-item-title">No hay backlog</div></div>';
+
       const tableBody = $('instagramTableBody');
-      tableBody.innerHTML = instagramPosts.slice(0, 10).map(post => `
+      tableBody.innerHTML = instagramPosts.slice(0, 5).map(post => `
         <tr>
           <td>${post.title || 'Sin título'}</td>
           <td>${post.scheduled_date || '—'}</td>
@@ -347,71 +615,131 @@
     }
 
     function renderAnalytics(posts, metrics) {
-      const total = posts.length || 0;
-      $('analyticsCount').textContent = total;
-      $('analyticsEngagement').textContent = '—';
-      $('analyticsImpressions').textContent = '—';
-      $('analyticsTopPlatform').textContent = posts.length > 0 ? 'Instagram' : '—';
-
-      const tableBody = $('analyticsTableBody');
-      const platforms = {};
-      posts.forEach(p => {
-        platforms[p.platform] = (platforms[p.platform] || 0) + 1;
-      });
-
-      tableBody.innerHTML = Object.entries(platforms).slice(0, 5).map(([platform, count]) => `
-        <tr>
-          <td>${platform}</td>
-          <td>${count} posts</td>
-          <td>—</td>
-          <td>—</td>
-        </tr>
-      `).join('') || '<tr><td colspan="4" style="text-align:center;">Sin datos</td></tr>';
+      // Charts will be initialized after DOM load
     }
 
     function renderCalendar(posts) {
-      $('calendarMonth').textContent = 'Septiembre 2026';
-      $('upcomingTableBody').innerHTML = posts.slice(0, 8).map(post => `
-        <tr>
-          <td>${post.scheduled_date || '—'}</td>
-          <td>${post.title || 'Sin título'}</td>
-          <td><span class="platform-badge">${post.platform}</span></td>
-        </tr>
-      `).join('') || '<tr><td colspan="3" style="text-align:center;color:var(--ui-muted-dark);">No hay posts próximos</td></tr>';
-    }
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+      $('calendarMonth').textContent = `${monthNames[month]} ${year}`;
 
-    function renderCompetitors() {
-      $('competitorsCount').textContent = '3';
-      $('competitorsTableBody').innerHTML = `
-        <tr><td>Competidor A</td><td><span class="platform-badge">Instagram</span></td><td>8.5%</td><td>24</td></tr>
-        <tr><td>Competidor B</td><td><span class="platform-badge">Twitter</span></td><td>6.2%</td><td>18</td></tr>
-        <tr><td>Competidor C</td><td><span class="platform-badge">LinkedIn</span></td><td>5.1%</td><td>12</td></tr>
-      `;
-    }
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const daysInMonth = lastDay.getDate();
+      const startingDayOfWeek = firstDay.getDay();
 
-    function renderNews() {
-      $('newsCount').textContent = '0';
-      $('newsSources').textContent = '0';
-      $('newsTableBody').innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--ui-muted-dark);">Sin noticias consolidadas</td></tr>';
-    }
+      let calendar = '<div class="calendar-day calendar-day-header">Dom</div>';
+      calendar += '<div class="calendar-day calendar-day-header">Lun</div>';
+      calendar += '<div class="calendar-day calendar-day-header">Mar</div>';
+      calendar += '<div class="calendar-day calendar-day-header">Mié</div>';
+      calendar += '<div class="calendar-day calendar-day-header">Jue</div>';
+      calendar += '<div class="calendar-day calendar-day-header">Vie</div>';
+      calendar += '<div class="calendar-day calendar-day-header">Sab</div>';
 
-    function loadMockData(section) {
-      console.log('Usando datos de ejemplo para:', section);
-      if(section === 'instagram') {
-        $('instagramTotal').textContent = '12';
-        $('instagramScheduled').textContent = '5';
-        $('instagramPublished').textContent = '6';
-        $('instagramDrafts').textContent = '1';
-        $('instagramTableBody').innerHTML = '<tr><td>Post de ejemplo</td><td>2026-09-15</td><td><span class="platform-badge">scheduled</span></td><td>normal</td></tr>';
+      for(let i = 0; i < startingDayOfWeek; i++) {
+        calendar += '<div class="calendar-day"></div>';
       }
+
+      for(let day = 1; day <= daysInMonth; day++) {
+        const hasContent = Math.random() > 0.6;
+        calendar += `<div class="calendar-day ${hasContent ? 'has-posts' : ''}"><div class="calendar-day-number">${day}</div></div>`;
+      }
+
+      $('calendarContainer').innerHTML = calendar;
     }
 
-    function nextMonth() { /* Implementar */ }
-    function prevMonth() { /* Implementar */ }
-    function currentMonth() { /* Implementar */ }
+    function initCharts() {
+      const trendCtx = $('trendChart');
+      const engagementCtx = $('engagementChart');
+
+      if(!trendCtx || !engagementCtx) return;
+
+      // Destroy existing charts
+      if(charts.trend) charts.trend.destroy();
+      if(charts.engagement) charts.engagement.destroy();
+
+      charts.trend = new Chart(trendCtx, {
+        type: 'line',
+        data: {
+          labels: ['1 ago', '5 ago', '10 ago', '15 ago', '20 ago', '25 ago', '30 ago'],
+          datasets: [{
+            label: 'Alcance',
+            data: [1200, 1900, 1500, 2200, 2500, 2800, 3200],
+            borderColor: '#E12C37',
+            backgroundColor: 'rgba(225, 44, 55, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+          }, {
+            label: 'Seguidores',
+            data: [850, 950, 1050, 1200, 1350, 1450, 1550],
+            borderColor: '#FF6B5B',
+            backgroundColor: 'rgba(255, 107, 91, 0.05)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#8B8B99', font: { size: 12 } } } },
+          scales: {
+            y: { ticks: { color: '#6B6B77' }, grid: { color: '#2A2A32' } },
+            x: { ticks: { color: '#6B6B77' }, grid: { color: '#2A2A32' } }
+          }
+        }
+      });
+
+      charts.engagement = new Chart(engagementCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Instagram', 'Twitter', 'LinkedIn', 'YouTube'],
+          datasets: [{
+            label: 'Engagement Rate (%)',
+            data: [12.1, 5.2, 2.1, 8.3],
+            backgroundColor: ['#E12C37', '#FF6B5B', '#E12C37', '#FF6B5B'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#8B8B99' } } },
+          scales: {
+            x: { ticks: { color: '#6B6B77' }, grid: { color: '#2A2A32' } },
+            y: { ticks: { color: '#6B6B77' }, grid: { color: 'transparent' } }
+          }
+        }
+      });
+    }
+
+    function nextMonth() {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar([]);
+    }
+    function prevMonth() {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar([]);
+    }
+    function currentMonth() {
+      currentDate = new Date(2026, 2, 1);
+      renderCalendar([]);
+    }
+
+    const mockInstagramPosts = [
+      { id: 1, title: 'Carrusel de Estrategia de Contenidos', status: 'scheduled', platform: 'Instagram', scheduled_date: '2026-03-15', priority: 'high' },
+      { id: 2, title: 'Consejos de Productividad', status: 'draft', platform: 'Instagram', scheduled_date: '2026-03-22', priority: 'normal' },
+      { id: 3, title: 'Análisis de Tendencias 2026', status: 'published', platform: 'Instagram', scheduled_date: '2026-03-10', priority: 'high' },
+      { id: 4, title: 'Tutorial de Edición Rápida', status: 'archived', platform: 'Instagram', scheduled_date: '2026-02-28', priority: 'low' }
+    ];
 
     window.addEventListener('DOMContentLoaded', () => {
-      bitaxusData.setConnectionStatus('Dashboard cargado', 'success');
+      if(typeof bitaxusData !== 'undefined') {
+        bitaxusData.setConnectionStatus('Dashboard cargado', 'success');
+      }
       loadSectionData('instagram');
     });
   </script>
